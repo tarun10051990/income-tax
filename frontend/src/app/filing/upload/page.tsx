@@ -7,6 +7,7 @@ import { useFiling } from "@/contexts/FilingContext";
 import Card, { CardTitle, CardDescription } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Form16Data } from "@/lib/types";
+import { parseForm16PDF } from "@/lib/form16-parser";
 
 // Sample extracted data for demo
 const SAMPLE_FORM16: Form16Data = {
@@ -51,6 +52,7 @@ export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) router.push("/auth/login");
@@ -61,35 +63,58 @@ export default function UploadPage() {
     e.preventDefault();
     setIsDragging(false);
     const dropped = e.dataTransfer.files[0];
-    if (dropped) setFile(dropped);
+    if (dropped) { setFile(dropped); setError(null); }
   }, []);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
-    if (selected) setFile(selected);
+    if (selected) { setFile(selected); setError(null); }
   }, []);
 
   const handleProcess = async () => {
+    if (!file) return;
     setIsProcessing(true);
     setProgress(0);
+    setError(null);
 
-    // Simulate OCR processing with progress
-    const steps = [
-      { progress: 20, delay: 500 },
-      { progress: 40, delay: 700 },
-      { progress: 60, delay: 600 },
-      { progress: 80, delay: 500 },
-      { progress: 100, delay: 400 },
-    ];
+    try {
+      setProgress(10);
+      await new Promise((r) => setTimeout(r, 300));
 
-    for (const step of steps) {
-      await new Promise((r) => setTimeout(r, step.delay));
-      setProgress(step.progress);
+      setProgress(30);
+      const { data } = await parseForm16PDF(file);
+
+      setProgress(70);
+      await new Promise((r) => setTimeout(r, 300));
+
+      // Validate that we extracted at least some meaningful data
+      const hasSalary = data.salary.basicSalary > 0;
+      const hasTDS = data.tax.tdsDeducted > 0;
+      const hasName = data.employee.name !== "Unknown Employee";
+
+      if (!hasSalary && !hasTDS && !hasName) {
+        setIsProcessing(false);
+        setProgress(0);
+        setError(
+          "Could not extract meaningful data from this PDF. Please ensure it is a valid Form 16 document, or try the Sample Data option below."
+        );
+        return;
+      }
+
+      setProgress(100);
+      await new Promise((r) => setTimeout(r, 400));
+
+      setForm16Data(data);
+      setCurrentStep("review");
+      router.push("/filing/review");
+    } catch (err) {
+      console.error("Form 16 extraction failed:", err);
+      setIsProcessing(false);
+      setProgress(0);
+      setError(
+        "Failed to process the uploaded file. Please ensure it is a valid PDF or try the Sample Data option."
+      );
     }
-
-    setForm16Data(SAMPLE_FORM16);
-    setCurrentStep("review");
-    router.push("/filing/review");
   };
 
   const handleUseSample = async () => {
@@ -110,6 +135,18 @@ export default function UploadPage() {
         <h1 className="text-2xl font-bold">Upload Form 16</h1>
         <p className="text-muted mt-1">Upload your Form 16 PDF and our AI will extract all details automatically</p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 flex items-start gap-3">
+          <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <div>
+            <p className="font-medium text-sm">Extraction Failed</p>
+            <p className="text-sm mt-1">{error}</p>
+          </div>
+        </div>
+      )}
 
       {!isProcessing ? (
         <>
