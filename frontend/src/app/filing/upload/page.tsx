@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFiling } from "@/contexts/FilingContext";
@@ -53,6 +53,7 @@ export default function UploadPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!isAuthenticated) router.push("/auth/login");
@@ -198,17 +199,16 @@ export default function UploadPage() {
                     <p className="font-medium">Drop your Form 16 here</p>
                     <p className="text-sm text-muted mt-1">PDF, Image, or Scanned Document (max 10MB)</p>
                   </div>
-                  <label className="inline-block">
-                    <input
-                      type="file"
-                      accept=".pdf,.png,.jpg,.jpeg"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                    <Button variant="outline" className="cursor-pointer" onClick={() => {}}>
-                      Browse Files
-                    </Button>
-                  </label>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    Browse Files
+                  </Button>
                 </div>
               )}
             </div>

@@ -20,10 +20,26 @@ export async function extractTextFromPDF(file: File): Promise<string> {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const strings = content.items
-      .filter((item) => "str" in item && typeof (item as Record<string, unknown>).str === "string")
-      .map((item) => (item as Record<string, unknown>).str as string);
-    pages.push(strings.join(" "));
+    const items = content.items.filter(
+      (item) => "str" in item && typeof (item as Record<string, unknown>).str === "string"
+    ) as Array<{ str: string; transform: number[] }>;
+
+    // Preserve line breaks by detecting Y-position changes
+    let lastY: number | null = null;
+    const lines: string[] = [];
+    let currentLine = "";
+    for (const item of items) {
+      const y = item.transform?.[5] ?? 0;
+      if (lastY !== null && Math.abs(y - lastY) > 2) {
+        lines.push(currentLine.trim());
+        currentLine = item.str;
+      } else {
+        currentLine += (currentLine ? " " : "") + item.str;
+      }
+      lastY = y;
+    }
+    if (currentLine.trim()) lines.push(currentLine.trim());
+    pages.push(lines.join("\n"));
   }
 
   return pages.join("\n");
@@ -67,6 +83,16 @@ function isValidTAN(s: string): boolean {
   return /^[A-Z]{4}[0-9]{5}[A-Z]$/.test(s);
 }
 
+/** Extract all PAN-format strings from text. */
+function findAllPANs(text: string): string[] {
+  return (text.match(/[A-Z]{5}[0-9]{4}[A-Z]/g) || []).filter(isValidPAN);
+}
+
+/** Extract all TAN-format strings from text. */
+function findAllTANs(text: string): string[] {
+  return (text.match(/[A-Z]{4}[0-9]{5}[A-Z]/g) || []).filter(isValidTAN);
+}
+
 // ---------------------------------------------------------------------------
 // Parsing
 // ---------------------------------------------------------------------------
@@ -78,67 +104,139 @@ function isValidTAN(s: string): boolean {
  *   Part A — TDS certificate with employer/employee details, TDS amounts.
  *   Part B — Salary breakdown, deductions under Chapter VI-A, tax computation.
  *
- * We use a collection of regex patterns to handle variations across employers
- * (different software vendors produce slightly different layouts). The patterns
- * are deliberately broad so they work with OCR-extracted text that may have
- * minor whitespace or formatting artefacts.
+ * Many employers only issue Part A digitally. When Part B is missing we derive
+ * salary from the "Amount paid/credited" total in Part A's quarterly summary.
  */
 export function parseForm16Text(text: string): Form16Data {
-  // Normalise whitespace for easier matching
+  // Keep original text with newlines for line-based parsing
+  const original = text;
+  // Also create a single-line version for simpler regex matching
   const t = text.replace(/\s+/g, " ");
+
+  // -- Extract all PANs and TANs first ------------------------------------
+  const allPANs = findAllPANs(t);
+  const allTANs = findAllTANs(t);
 
   // -- Employer details ---------------------------------------------------
 
-  const employerName = findText(t, [
-    /Name\s+(?:and\s+address\s+)?of\s+the\s+(?:Employer|Deductor)[:\s]*([A-Z][A-Za-z0-9 &.,()-]+?)(?:\s+Address|TAN|PAN|\n)/i,
-    /Employer\s*(?:Name)?[:\s]+([A-Z][A-Za-z0-9 &.,()-]+?)(?:\s+Address|\s{2,}|TAN|PAN|\n)/i,
-  ]);
-
-  // TAN — look for labelled value or standalone TAN-format strings
-  let employerTAN = findText(t, [
-    /TAN\s+(?:of\s+(?:the\s+)?(?:Deductor|Employer))?[:\s]*([A-Z]{4}[0-9]{5}[A-Z])/i,
-    /Tax\s+Deduction.*?Account.*?Number[:\s]*([A-Z]{4}[0-9]{5}[A-Z])/i,
-  ]);
-  if (!isValidTAN(employerTAN)) {
-    const tanMatch = t.match(/\b([A-Z]{4}[0-9]{5}[A-Z])\b/);
-    if (tanMatch) employerTAN = tanMatch[1];
-  }
-
-  // Employer PAN
-  let employerPAN = findText(t, [
-    /PAN\s+(?:of\s+(?:the\s+)?(?:Deductor|Employer))[:\s]*([A-Z]{5}[0-9]{4}[A-Z])/i,
-  ]);
-  if (!isValidPAN(employerPAN)) {
-    // look for PAN with company-type 4th char (A, B, C, F, G, H, L, J, P, T, K)
-    const panMatches = t.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/g) || [];
-    for (const p of panMatches) {
-      if (isValidPAN(p) && p !== employerTAN) {
-        employerPAN = p;
+  // Try line-based extraction first (most reliable with preserved line breaks)
+  let employerName = "";
+  const lines = original.split("\n").map(l => l.trim()).filter(Boolean);
+  for (let i = 0; i < lines.length; i++) {
+    if (/Name\s+and\s+address\s+of\s+the\s+Employer/i.test(lines[i]) ||
+        /Name.*Employer.*Specified\s+Bank/i.test(lines[i])) {
+      // The employer name is typically on the next line
+      if (i + 1 < lines.length) {
+        const nextLine = lines[i + 1].trim();
+        // Skip if next line is still part of the label
+        if (nextLine && !nextLine.match(/^(PAN|TAN|Name|Address)/i)) {
+          employerName = nextLine;
+          break;
+        }
+      }
+      // Or it could be on the same line after the label
+      const sameLine = lines[i].replace(/.*(?:Employer|Specified\s+Bank)\s*/i, "").trim();
+      if (sameLine && sameLine.length > 3) {
+        employerName = sameLine;
         break;
       }
     }
   }
 
+  // Fallback to single-line regex if line-based extraction failed
+  if (!employerName) {
+    employerName = findText(t, [
+      /Name\s+(?:and\s+address\s+)?of\s+the\s+(?:Employer|Deductor)[:\s]*([A-Z][A-Za-z0-9 &.,()-]+?)(?:\s+Address|TAN|PAN|\n)/i,
+      /Employer\s*(?:Name)?[:\s]+([A-Z][A-Za-z0-9 &.,()-]+?)(?:\s+Address|\s{2,}|TAN|PAN|\n)/i,
+    ]);
+  }
+
+  // Clean up: remove address fragments (after first comma or at city/pincode)
+  if (employerName) {
+    const commaIdx = employerName.indexOf(",");
+    if (commaIdx > 5) employerName = employerName.substring(0, commaIdx).trim();
+    // Remove trailing city/state names after the employer name if too long
+    if (employerName.length > 50) {
+      employerName = employerName.replace(/\s+[A-Z]{2,10}\s*[-\d].*$/, "").trim();
+    }
+  }
+
+  // TAN — look for labelled value then fall back to all TANs found
+  let employerTAN = findText(t, [
+    /TAN\s+(?:of\s+(?:the\s+)?)?(?:Deductor|Employer)[:\s]*([A-Z]{4}[0-9]{5}[A-Z])/i,
+    /TAN\s+of\s+Employer[:\s]*([A-Z]{4}[0-9]{5}[A-Z])/i,
+    /Tax\s+Deduction.*?Account.*?Number[:\s]*([A-Z]{4}[0-9]{5}[A-Z])/i,
+  ]);
+  if (!isValidTAN(employerTAN) && allTANs.length > 0) {
+    employerTAN = allTANs[0];
+  }
+
+  // Employer PAN
+  let employerPAN = findText(t, [
+    /PAN\s+(?:of\s+(?:the\s+)?)?(?:Deductor|Employer)[:\s]*([A-Z]{5}[0-9]{4}[A-Z])/i,
+  ]);
+  if (!isValidPAN(employerPAN) && allPANs.length > 0) {
+    // First PAN is typically employer's in Form 16
+    employerPAN = allPANs[0];
+  }
+
   const employerAddress = findText(t, [
-    /Address[:\s]+(.+?)(?=\s+TAN|\s+PAN|\s+Employee|\s+Certificate|\s+Name of)/i,
+    /Address[:\s]+(.+?)(?=\s+TAN|\s+PAN|\s+Employee|\s+Certificate|\s+Name\s+of)/i,
   ]);
 
   // -- Employee details ---------------------------------------------------
 
-  const employeeName = findText(t, [
-    /Name\s+(?:of\s+(?:the\s+)?)?Employee[:\s]*([A-Za-z ]+?)(?:\s{2,}|PAN|Designation)/i,
-    /Employee\s*(?:Name)?[:\s]+([A-Za-z ]+?)(?:\s{2,}|PAN|Designation)/i,
-  ]);
+  // Try line-based extraction for employee name
+  let employeeName = "";
+  for (let i = 0; i < lines.length; i++) {
+    if (/Name\s+and\s+address\s+of\s+the\s+Employee/i.test(lines[i]) ||
+        /Name.*Employee.*Specified\s+senior/i.test(lines[i])) {
+      // The employee name is typically on the next line
+      if (i + 1 < lines.length) {
+        const nextLine = lines[i + 1].trim();
+        if (nextLine && !nextLine.match(/^(PAN|TAN|Name|Address|ward)/i)) {
+          // Take just the name part (first word or words before address)
+          employeeName = nextLine.replace(/\s+ward\b.*$/i, "")
+            .replace(/\s+\d+.*$/, "")
+            .replace(/\s+[a-z].*$/, "")
+            .trim();
+          break;
+        }
+      }
+      // Or same line
+      const sameLine = lines[i].replace(/.*(?:Employee|senior\s+citizen)\s*/i, "").trim();
+      if (sameLine && sameLine.length > 2) {
+        employeeName = sameLine.replace(/\s+ward\b.*$/i, "")
+          .replace(/\s+\d+.*$/, "")
+          .replace(/\s+[a-z].*$/, "")
+          .trim();
+        break;
+      }
+    }
+  }
 
-  // Employee PAN — usually labelled; fall back to second PAN in doc
+  // Fallback to single-line regex
+  if (!employeeName) {
+    employeeName = findText(t, [
+      /Name\s+and\s+address\s+of\s+the\s+Employee(?:\/Specified\s+senior\s+citizen)?\s+([A-Z][A-Za-z .]+?)(?:\s+ward|\s+\d|\s+[a-z])/i,
+      /Name\s+(?:of\s+(?:the\s+)?)?Employee[:\s]*([A-Za-z .]+?)(?:\s{2,}|PAN|Designation)/i,
+      /Employee\s*(?:Name)?[:\s]+([A-Za-z .]+?)(?:\s{2,}|PAN|Designation)/i,
+    ]);
+  }
+
+  // Clean up employee name - remove address fragments
+  if (employeeName && /\d/.test(employeeName)) {
+    employeeName = employeeName.replace(/\s+\d.*$/, "").trim();
+  }
+
+  // Employee PAN — usually labelled; fall back to PAN that is not employer's
   let employeePAN = findText(t, [
-    /PAN\s+(?:of\s+(?:the\s+)?)?Employee[:\s]*([A-Z]{5}[0-9]{4}[A-Z])/i,
+    /PAN\s+(?:of\s+(?:the\s+)?)?(?:Employee|Specified\s+senior)[^A-Z]*([A-Z]{5}[0-9]{4}[A-Z])/i,
+    /PAN\s+of\s+Employee[:\s]*([A-Z]{5}[0-9]{4}[A-Z])/i,
   ]);
   if (!isValidPAN(employeePAN)) {
-    const allPANs = (t.match(/\b[A-Z]{5}[0-9]{4}[A-Z]\b/g) || []).filter(
-      (p) => isValidPAN(p) && p !== employerTAN && p !== employerPAN
-    );
-    if (allPANs.length > 0) employeePAN = allPANs[0];
+    const remaining = allPANs.filter(p => p !== employerPAN && p !== employerTAN);
+    if (remaining.length > 0) employeePAN = remaining[0];
   }
 
   const employeeAadhaar = findText(t, [
@@ -149,12 +247,25 @@ export function parseForm16Text(text: string): Form16Data {
     /Designation[:\s]*([A-Za-z ]+?)(?:\s{2,}|\n|$)/i,
   ]);
 
+  // -- Part A: Quarterly summary (Amount paid/credited) --------------------
+  // Pattern: "Total (Rs.) <TDS> <deposited> <amount_paid>"
+  let partATotalPaid = 0;
+  let partATDS = 0;
+  const totalLineMatch = t.match(
+    /Total\s*\(?Rs\.?\)?\s+([\d,.]+)\s+([\d,.]+)\s+([\d,.]+)/i
+  );
+  if (totalLineMatch) {
+    partATDS = Math.round(parseFloat(totalLineMatch[1].replace(/,/g, "")));
+    partATotalPaid = Math.round(parseFloat(totalLineMatch[3].replace(/,/g, "")));
+  }
+
   // -- Salary components (Part B — Annexure) ------------------------------
 
   const grossSalary = findAmount(t, [
     /Gross\s+Salary[\s:]*[\u20B9Rs.]*\s*([\d,]+)/i,
     /1\.\s*Gross\s+Salary[^0-9]*([\d,]+)/i,
     /Total\s+(?:Gross\s+)?Salary[^0-9]*([\d,]+)/i,
+    /Gross\s+Total\s+Income[^0-9]*([\d,]+)/i,
   ]);
 
   const basicSalary = findAmount(t, [
@@ -181,15 +292,18 @@ export function parseForm16Text(text: string): Form16Data {
     /Leave\s+Encashment[^0-9]*([\d,]+)/i,
   ]);
 
+  // Determine gross salary: prefer Part B breakdown, fall back to Part A total
+  const effectiveGross = grossSalary || partATotalPaid;
+
   // If we got grossSalary but not individual components, estimate
   const totalComponents = basicSalary + hra + specialAllowance + bonus + leaveEncashment;
   let otherAllowances = 0;
-  if (grossSalary > 0 && totalComponents > 0 && grossSalary > totalComponents) {
-    otherAllowances = grossSalary - totalComponents;
+  if (effectiveGross > 0 && totalComponents > 0 && effectiveGross > totalComponents) {
+    otherAllowances = effectiveGross - totalComponents;
   }
 
   // If no individual breakdowns were found but gross salary was, make basic = gross
-  const finalBasic = basicSalary || grossSalary;
+  const finalBasic = basicSalary || effectiveGross;
 
   // -- Deductions ---------------------------------------------------------
 
@@ -205,7 +319,7 @@ export function parseForm16Text(text: string): Form16Data {
 
   const standardDeduction = findAmount(t, [
     /Standard\s+Deduction[^0-9]*([\d,]+)/i,
-  ]) || 50000; // 50000 is default for FY 2024-25
+  ]) || 75000; // 75000 is default for FY 2024-25
 
   const section80C = findAmount(t, [
     /(?:Section\s+)?80C[^0-9D]*([\d,]+)/i,
@@ -223,15 +337,23 @@ export function parseForm16Text(text: string): Form16Data {
 
   // -- Tax ----------------------------------------------------------------
 
-  const tdsDeducted = findAmount(t, [
+  // Prefer the Part A total line TDS over regex matches (more reliable)
+  const tdsDeducted = partATDS || findAmount(t, [
     /(?:Tax\s+Deducted\s+at\s+Source|TDS)[^0-9]*([\d,]+)/i,
     /Total\s+(?:Tax\s+)?(?:Deducted|TDS)[^0-9]*([\d,]+)/i,
   ]);
 
-  const taxDeposited = findAmount(t, [
-    /Tax\s+Deposited[^0-9]*([\d,]+)/i,
-    /Total\s+Tax\s+Deposited[^0-9]*([\d,]+)/i,
-  ]) || tdsDeducted; // often same value
+  // Tax deposited: in Part A, the second column of Total line = deposited
+  let taxDeposited = 0;
+  if (totalLineMatch) {
+    taxDeposited = Math.round(parseFloat(totalLineMatch[2].replace(/,/g, "")));
+  }
+  if (!taxDeposited) {
+    taxDeposited = findAmount(t, [
+      /Tax\s+Deposited[^0-9]*([\d,]+)/i,
+      /Total\s+Tax\s+Deposited[^0-9]*([\d,]+)/i,
+    ]) || tdsDeducted;
+  }
 
   const taxableIncome = findAmount(t, [
     /(?:Total\s+)?Taxable\s+Income[^0-9]*([\d,]+)/i,
@@ -270,7 +392,7 @@ export function parseForm16Text(text: string): Form16Data {
     tax: {
       tdsDeducted,
       taxDeposited,
-      taxableIncome,
+      taxableIncome: taxableIncome || (effectiveGross - standardDeduction),
     },
   };
 }

@@ -20,24 +20,29 @@ export default function Navbar() {
               </div>
               <span className="text-xl font-bold text-primary">TaxFilr</span>
             </Link>
-            {isAuthenticated && (
-              <div className="hidden sm:flex items-center gap-6">
-                <Link href="/dashboard" className="text-sm text-muted hover:text-foreground transition-colors">
-                  Dashboard
-                </Link>
-                <Link href="/filing/upload" className="text-sm text-muted hover:text-foreground transition-colors">
-                  File Return
-                </Link>
-                <Link href="/advisor" className="text-sm text-muted hover:text-foreground transition-colors">
-                  AI Advisor
-                </Link>
-                {user?.role === "admin" && (
-                  <Link href="/admin" className="text-sm text-muted hover:text-foreground transition-colors">
-                    Admin
+            <div className="hidden sm:flex items-center gap-6">
+              <Link href="/calculator" className="text-sm text-muted hover:text-foreground transition-colors">
+                Tax Calculator
+              </Link>
+              {isAuthenticated && (
+                <>
+                  <Link href="/dashboard" className="text-sm text-muted hover:text-foreground transition-colors">
+                    Dashboard
                   </Link>
-                )}
-              </div>
-            )}
+                  <Link href="/filing/upload" className="text-sm text-muted hover:text-foreground transition-colors">
+                    File Return
+                  </Link>
+                  <Link href="/advisor" className="text-sm text-muted hover:text-foreground transition-colors">
+                    AI Advisor
+                  </Link>
+                  {user?.role === "admin" && (
+                    <Link href="/admin" className="text-sm text-muted hover:text-foreground transition-colors">
+                      Admin
+                    </Link>
+                  )}
+                </>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-4">
             {isAuthenticated ? (

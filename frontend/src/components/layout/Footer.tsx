@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="bg-surface border-t border-border mt-auto">
@@ -19,28 +21,28 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-sm mb-3">Product</h4>
             <ul className="space-y-2 text-sm text-muted">
-              <li>File ITR</li>
-              <li>Tax Calculator</li>
-              <li>Tax Saving Tips</li>
-              <li>AI Advisor</li>
+              <li><Link href="/filing/upload" className="hover:text-foreground transition-colors">File ITR</Link></li>
+              <li><Link href="/calculator" className="hover:text-foreground transition-colors">Tax Calculator</Link></li>
+              <li><Link href="/filing/suggestions" className="hover:text-foreground transition-colors">Tax Saving Tips</Link></li>
+              <li><Link href="/advisor" className="hover:text-foreground transition-colors">AI Advisor</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-semibold text-sm mb-3">Support</h4>
             <ul className="space-y-2 text-sm text-muted">
-              <li>Help Center</li>
-              <li>Contact Us</li>
-              <li>FAQs</li>
-              <li>Privacy Policy</li>
+              <li><Link href="/help" className="hover:text-foreground transition-colors">Help Center</Link></li>
+              <li><Link href="/contact" className="hover:text-foreground transition-colors">Contact Us</Link></li>
+              <li><Link href="/faq" className="hover:text-foreground transition-colors">FAQs</Link></li>
+              <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="font-semibold text-sm mb-3">Legal</h4>
             <ul className="space-y-2 text-sm text-muted">
-              <li>Terms of Service</li>
-              <li>Privacy Policy</li>
-              <li>DPDP Compliance</li>
-              <li>Security</li>
+              <li><Link href="/terms" className="hover:text-foreground transition-colors">Terms of Service</Link></li>
+              <li><Link href="/privacy" className="hover:text-foreground transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/compliance" className="hover:text-foreground transition-colors">DPDP Compliance</Link></li>
+              <li><Link href="/security" className="hover:text-foreground transition-colors">Security</Link></li>
             </ul>
           </div>
         </div>
