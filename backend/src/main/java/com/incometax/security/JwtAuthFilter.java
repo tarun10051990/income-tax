@@ -40,9 +40,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtUtil.isTokenValid(token)) {
             String email = jwtUtil.extractEmail(token);
             userService.findByEmail(email).ifPresent(user -> {
+                if (!user.isActive()) {
+                    return;
+                }
+                // A staff account that has not completed MFA enrolment may only reach the
+                // enrolment endpoint, so it is granted a placeholder authority instead of its role.
+                String authority = user.isStaff() && !user.isMfaEnabled()
+                        ? "ROLE_MFA_PENDING"
+                        : "ROLE_" + user.getRole().name();
                 var auth = new UsernamePasswordAuthenticationToken(
-                        user, null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                        user, null, List.of(new SimpleGrantedAuthority(authority))
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             });

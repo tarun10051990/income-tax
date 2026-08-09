@@ -1,172 +1,112 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/contexts/AuthContext";
-import Card, { CardTitle } from "@/components/ui/Card";
-import Badge from "@/components/ui/Badge";
-import { formatCurrency, formatNumber } from "@/lib/utils";
 import Link from "next/link";
+import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
+import Badge from "@/components/ui/Badge";
+import DataTable from "@/components/platform/DataTable";
+import StatusBadge, { humanise } from "@/components/platform/StatusBadge";
+import { useApiData } from "@/hooks/useApiData";
+import { adminApi } from "@/lib/endpoints";
+import { CaseSummary } from "@/lib/platform-types";
+import { formatCurrency } from "@/lib/utils";
 
-const MOCK_STATS = {
-  totalUsers: 15420,
-  activeFilings: 8235,
-  completedFilings: 5120,
-  totalRevenue: 2540000,
-  avgFilingTime: "8.5 min",
-  refundsProcessed: 3200,
-};
+const HIGHLIGHTED_KEYS = ["total", "UNDER_REVIEW", "QUERY_RAISED", "READY_FOR_FILING", "FILED", "COMPLETED"];
 
-const RECENT_USERS = [
-  { name: "Priya Singh", email: "priya@email.com", status: "filing", itrType: "ITR-1", date: "2025-07-14" },
-  { name: "Amit Kumar", email: "amit@email.com", status: "completed", itrType: "ITR-1", date: "2025-07-14" },
-  { name: "Sneha Patel", email: "sneha@email.com", status: "review", itrType: "ITR-2", date: "2025-07-13" },
-  { name: "Rajesh Gupta", email: "rajesh@email.com", status: "completed", itrType: "ITR-1", date: "2025-07-13" },
-  { name: "Meera Nair", email: "meera@email.com", status: "draft", itrType: "ITR-4", date: "2025-07-12" },
-];
-
-export default function AdminPage() {
-  const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
-
-  useEffect(() => {
-    if (!isAuthenticated) { router.push("/auth/login"); return; }
-    if (user?.role !== "admin") { router.push("/dashboard"); return; }
-  }, [isAuthenticated, user, router]);
-
-  if (user?.role !== "admin") return null;
+function KpiGrid({ title, counts }: { title: string; counts: Record<string, number> }) {
+  const entries = HIGHLIGHTED_KEYS
+    .filter((key) => counts[key] !== undefined)
+    .map((key) => [key, counts[key]] as const);
+  const extra = Object.entries(counts).filter(([key]) => !HIGHLIGHTED_KEYS.includes(key));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted mt-1">Platform overview and management</p>
-        </div>
-        <div className="flex gap-3">
-          <Link href="/admin/users">
-            <button className="text-sm px-4 py-2 bg-surface border border-border rounded-lg hover:bg-gray-50 transition-colors">
-              Manage Users
-            </button>
-          </Link>
-          <Link href="/admin/rules">
-            <button className="text-sm px-4 py-2 bg-surface border border-border rounded-lg hover:bg-gray-50 transition-colors">
-              Tax Rules
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <StatCard label="Total Users" value={formatNumber(MOCK_STATS.totalUsers)} change="+12%" />
-        <StatCard label="Active Filings" value={formatNumber(MOCK_STATS.activeFilings)} change="+8%" />
-        <StatCard label="Completed Filings" value={formatNumber(MOCK_STATS.completedFilings)} change="+15%" />
-        <StatCard label="Revenue" value={formatCurrency(MOCK_STATS.totalRevenue)} change="+22%" />
-        <StatCard label="Avg Filing Time" value={MOCK_STATS.avgFilingTime} change="-2.5min" />
-        <StatCard label="Refunds Processed" value={formatNumber(MOCK_STATS.refundsProcessed)} change="+10%" />
-      </div>
-
-      {/* Charts / Analytics Placeholder */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <Card variant="bordered">
-          <CardTitle>Filing Trend (Last 7 Days)</CardTitle>
-          <div className="mt-4 h-48 flex items-end gap-2">
-            {[65, 45, 78, 52, 90, 72, 85].map((val, i) => (
-              <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                <div
-                  className="w-full bg-primary/20 rounded-t-lg transition-all hover:bg-primary/40"
-                  style={{ height: `${(val / 100) * 180}px` }}
-                />
-                <span className="text-xs text-muted">
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]}
-                </span>
-              </div>
-            ))}
+    <Card variant="bordered">
+      <CardTitle>{title}</CardTitle>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+        {[...entries, ...extra].map(([key, value]) => (
+          <div key={key}>
+            <p className="text-xs uppercase tracking-wide text-muted">{humanise(`${key}`)}</p>
+            <p className="text-2xl font-semibold">{value}</p>
           </div>
-        </Card>
-
-        <Card variant="bordered">
-          <CardTitle>ITR Type Distribution</CardTitle>
-          <div className="mt-4 space-y-4">
-            {[
-              { type: "ITR-1 (Sahaj)", pct: 72, color: "bg-primary" },
-              { type: "ITR-2", pct: 15, color: "bg-secondary" },
-              { type: "ITR-3", pct: 8, color: "bg-accent" },
-              { type: "ITR-4 (Sugam)", pct: 5, color: "bg-purple-500" },
-            ].map((item) => (
-              <div key={item.type}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>{item.type}</span>
-                  <span className="font-medium">{item.pct}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className={`${item.color} h-full rounded-full transition-all`} style={{ width: `${item.pct}%` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+        ))}
       </div>
-
-      {/* Recent Users */}
-      <Card variant="bordered">
-        <div className="flex items-center justify-between mb-4">
-          <CardTitle>Recent Users</CardTitle>
-          <Link href="/admin/users">
-            <button className="text-sm text-primary hover:underline">View All</button>
-          </Link>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border">
-              <tr>
-                <th className="text-left py-3 px-4 font-medium text-muted">Name</th>
-                <th className="text-left py-3 px-4 font-medium text-muted">Email</th>
-                <th className="text-left py-3 px-4 font-medium text-muted">ITR Type</th>
-                <th className="text-left py-3 px-4 font-medium text-muted">Status</th>
-                <th className="text-left py-3 px-4 font-medium text-muted">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {RECENT_USERS.map((u, i) => (
-                <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-3 px-4 font-medium">{u.name}</td>
-                  <td className="py-3 px-4 text-muted">{u.email}</td>
-                  <td className="py-3 px-4">{u.itrType}</td>
-                  <td className="py-3 px-4">
-                    <Badge
-                      variant={
-                        u.status === "completed" ? "success" :
-                        u.status === "filing" ? "info" :
-                        u.status === "review" ? "warning" : "default"
-                      }
-                    >
-                      {u.status}
-                    </Badge>
-                  </td>
-                  <td className="py-3 px-4 text-muted">{u.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-    </div>
+    </Card>
   );
 }
 
-function StatCard({ label, value, change }: { label: string; value: string; change: string }) {
-  const isPositive = change.startsWith("+") || change.startsWith("-");
+export default function AdminOverviewPage() {
+  const dashboard = useApiData(() => adminApi.dashboard());
+  const integration = useApiData(() => adminApi.integrationStatus());
+
   return (
-    <Card variant="bordered">
-      <p className="text-sm text-muted">{label}</p>
-      <div className="flex items-end justify-between mt-2">
-        <p className="text-2xl font-bold">{value}</p>
-        <span className={`text-xs font-medium ${isPositive ? "text-secondary" : "text-muted"}`}>
-          {change}
-        </span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold text-foreground">Operations overview</h1>
+        <p className="text-sm text-muted">Income tax and GST workload, deadlines and fee collection.</p>
       </div>
-    </Card>
+
+      {dashboard.error !== null && <p className="text-sm text-danger">{dashboard.error}</p>}
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <KpiGrid title="Income tax" counts={dashboard.data?.incomeTaxKpis ?? {}} />
+        <KpiGrid title="GST" counts={dashboard.data?.gstKpis ?? {}} />
+      </div>
+
+      <Card variant="bordered">
+        <CardTitle>Professional fees</CardTitle>
+        <CardDescription>Service fees invoiced by the practice; government tax payable is tracked per case.</CardDescription>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          {Object.entries(dashboard.data?.revenue ?? {}).map(([key, value]) => (
+            <div key={key}>
+              <p className="text-xs uppercase tracking-wide text-muted">{humanise(key)}</p>
+              <p className="text-xl font-semibold">{formatCurrency(value)}</p>
+            </div>
+          ))}
+          {Object.keys(dashboard.data?.revenue ?? {}).length === 0 && (
+            <p className="text-sm text-muted">No fees invoiced yet.</p>
+          )}
+        </div>
+      </Card>
+
+      <Card variant="bordered">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Government filing integration</CardTitle>
+            <CardDescription>
+              Where no adapter is configured, cases stop at ready for filing and an operator records the
+              acknowledgement returned by the portal.
+            </CardDescription>
+          </div>
+        </div>
+        <div className="flex gap-3 mt-4">
+          {Object.entries(integration.data ?? {}).map(([taxType, configured]) => (
+            <Badge key={taxType} variant={configured ? "success" : "warning"}>
+              {humanise(taxType)}: {configured ? "adapter configured" : "manual filing"}
+            </Badge>
+          ))}
+        </div>
+      </Card>
+
+      <Card variant="bordered">
+        <CardTitle>Upcoming deadlines</CardTitle>
+        <DataTable<CaseSummary>
+          rows={dashboard.data?.upcomingDeadlines ?? []}
+          rowKey={(row) => row.id}
+          emptyMessage="No deadlines in the next 30 days."
+          columns={[
+            {
+              header: "Case",
+              cell: (row) => (
+                <Link className="text-primary hover:underline" href={`/admin/cases/${row.id}`}>{row.caseNumber}</Link>
+              ),
+            },
+            { header: "Taxpayer", cell: (row) => row.customer?.name ?? "-" },
+            { header: "Type", cell: (row) => humanise(row.taxType) },
+            { header: "Return", cell: (row) => humanise(row.returnType ?? "-") },
+            { header: "Due", cell: (row) => row.dueDate ?? "-" },
+            { header: "Status", cell: (row) => <StatusBadge status={row.status} /> },
+          ]}
+        />
+      </Card>
+    </div>
   );
 }
