@@ -1,0 +1,704 @@
+[
+  {
+    "ruleKey": "income_tax.slabs.OLD",
+    "taxType": "INCOME_TAX",
+    "category": "SLABS",
+    "description": "Old regime individual slab rates",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "regime": "OLD",
+      "slabs": [
+        {
+          "from": 0,
+          "to": 250000,
+          "rate": 0
+        },
+        {
+          "from": 250000,
+          "to": 500000,
+          "rate": 0.05
+        },
+        {
+          "from": 500000,
+          "to": 1000000,
+          "rate": 0.2
+        },
+        {
+          "from": 1000000,
+          "to": null,
+          "rate": 0.3
+        }
+      ]
+    }
+  },
+  {
+    "ruleKey": "income_tax.slabs.NEW",
+    "taxType": "INCOME_TAX",
+    "category": "SLABS",
+    "description": "New regime slab rates under section 115BAC",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "regime": "NEW",
+      "slabs": [
+        {
+          "from": 0,
+          "to": 300000,
+          "rate": 0
+        },
+        {
+          "from": 300000,
+          "to": 700000,
+          "rate": 0.05
+        },
+        {
+          "from": 700000,
+          "to": 1000000,
+          "rate": 0.1
+        },
+        {
+          "from": 1000000,
+          "to": 1200000,
+          "rate": 0.15
+        },
+        {
+          "from": 1200000,
+          "to": 1500000,
+          "rate": 0.2
+        },
+        {
+          "from": 1500000,
+          "to": null,
+          "rate": 0.3
+        }
+      ]
+    }
+  },
+  {
+    "ruleKey": "income_tax.parameters",
+    "taxType": "INCOME_TAX",
+    "category": "RATES",
+    "description": "Standard deduction, section 87A rebate and cess parameters per regime",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "OLD": {
+        "standardDeduction": 50000,
+        "rebateIncomeLimit": 500000,
+        "rebateMaxAmount": 12500,
+        "cessRate": 0.04
+      },
+      "NEW": {
+        "standardDeduction": 75000,
+        "rebateIncomeLimit": 700000,
+        "rebateMaxAmount": 25000,
+        "cessRate": 0.04
+      }
+    }
+  },
+  {
+    "ruleKey": "income_tax.deduction_limits",
+    "taxType": "INCOME_TAX",
+    "category": "DEDUCTION_LIMITS",
+    "description": "Chapter VI-A and house property deduction ceilings; regimes lists the regimes in which the deduction is allowed",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "80C": {
+        "limit": 150000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80CCD1B": {
+        "limit": 50000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80CCD2": {
+        "limit": 150000,
+        "regimes": [
+          "OLD",
+          "NEW"
+        ]
+      },
+      "80D": {
+        "limit": 25000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80DD": {
+        "limit": 75000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80DDB": {
+        "limit": 40000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80E": {
+        "limit": 1000000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80EEA": {
+        "limit": 150000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80G": {
+        "limit": 1000000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80GG": {
+        "limit": 60000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80TTA": {
+        "limit": 10000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80TTB": {
+        "limit": 50000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "80U": {
+        "limit": 75000,
+        "regimes": [
+          "OLD"
+        ]
+      },
+      "24B": {
+        "limit": 200000,
+        "regimes": [
+          "OLD"
+        ]
+      }
+    }
+  },
+  {
+    "ruleKey": "income_tax.deadlines",
+    "taxType": "INCOME_TAX",
+    "category": "DEADLINES",
+    "description": "Non-audit individual return due dates keyed by assessment year",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "2025-26": "2025-07-31",
+      "2026-27": "2026-07-31",
+      "2027-28": "2027-07-31"
+    }
+  },
+  {
+    "ruleKey": "gst.interest_and_fees",
+    "taxType": "GST",
+    "category": "INTEREST_AND_FEES",
+    "description": "Interest on delayed payment and late filing fee configuration",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "interestRatePerAnnum": 0.18,
+      "lateFeePerDay": 50,
+      "maxLateFee": 5000,
+      "nilReturnLateFeePerDay": 20,
+      "nilReturnMaxLateFee": 500
+    }
+  },
+  {
+    "ruleKey": "gst.deadlines",
+    "taxType": "GST",
+    "category": "DEADLINES",
+    "description": "Monthly return due day of the month following the return period",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "GSTR_1": {
+        "dueDayOfMonth": 11
+      },
+      "GSTR_3B": {
+        "dueDayOfMonth": 20
+      }
+    }
+  },
+  {
+    "ruleKey": "workflow.INCOME_TAX",
+    "taxType": "INCOME_TAX",
+    "category": "VALIDATION",
+    "description": "Permitted income tax case status transitions and the roles that may perform them",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "transitions": [
+        {
+          "from": "DRAFT",
+          "to": "DOCUMENTS_PENDING",
+          "action": "REQUEST_DOCUMENTS",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "DATA_ENTRY_OPERATOR"
+          ]
+        },
+        {
+          "from": "DRAFT",
+          "to": "UNDER_REVIEW",
+          "action": "SUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "DOCUMENTS_PENDING",
+          "to": "UNDER_REVIEW",
+          "action": "SUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "DOCUMENTS_PENDING",
+          "to": "DRAFT",
+          "action": "REOPEN_DRAFT",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "QUERY_RAISED",
+          "action": "RAISE_QUERY",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER",
+            "CUSTOMER_SUPPORT"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "APPROVED",
+          "action": "APPROVE",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "REJECTED",
+          "action": "REJECT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "DOCUMENTS_PENDING",
+          "action": "REQUEST_DOCUMENTS",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "QUERY_RAISED",
+          "to": "USER_ACTION_REQUIRED",
+          "action": "AWAIT_TAXPAYER",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER",
+            "CUSTOMER_SUPPORT"
+          ]
+        },
+        {
+          "from": "USER_ACTION_REQUIRED",
+          "to": "UNDER_REVIEW",
+          "action": "RESUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "QUERY_RAISED",
+          "to": "UNDER_REVIEW",
+          "action": "RESUME_REVIEW",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "APPROVED",
+          "to": "READY_FOR_FILING",
+          "action": "MARK_READY_FOR_FILING",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "APPROVED",
+          "to": "UNDER_REVIEW",
+          "action": "REOPEN_REVIEW",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "READY_FOR_FILING",
+          "to": "FILED",
+          "action": "RECORD_FILING",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "READY_FOR_FILING",
+          "to": "REJECTED",
+          "action": "REJECT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "FILED",
+          "to": "VERIFICATION_PENDING",
+          "action": "AWAIT_EVERIFICATION",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "VERIFICATION_PENDING",
+          "to": "VERIFIED",
+          "action": "RECORD_VERIFICATION",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL",
+            "USER"
+          ]
+        },
+        {
+          "from": "VERIFIED",
+          "to": "COMPLETED",
+          "action": "COMPLETE",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "REJECTED",
+          "to": "DRAFT",
+          "action": "REOPEN_DRAFT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "TAX_PROFESSIONAL"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "ruleKey": "workflow.GST",
+    "taxType": "GST",
+    "category": "VALIDATION",
+    "description": "Permitted GST case status transitions and the roles that may perform them",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "transitions": [
+        {
+          "from": "DRAFT",
+          "to": "DATA_PENDING",
+          "action": "REQUEST_DATA",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "DATA_ENTRY_OPERATOR"
+          ]
+        },
+        {
+          "from": "DRAFT",
+          "to": "DATA_IMPORTED",
+          "action": "IMPORT_DATA",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "DATA_ENTRY_OPERATOR"
+          ]
+        },
+        {
+          "from": "DATA_PENDING",
+          "to": "DATA_IMPORTED",
+          "action": "IMPORT_DATA",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "DATA_ENTRY_OPERATOR"
+          ]
+        },
+        {
+          "from": "DATA_IMPORTED",
+          "to": "RECONCILIATION_PENDING",
+          "action": "START_RECONCILIATION",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "DATA_ENTRY_OPERATOR"
+          ]
+        },
+        {
+          "from": "DATA_IMPORTED",
+          "to": "RECONCILIATION_COMPLETED",
+          "action": "RECONCILE",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "RECONCILIATION_PENDING",
+          "to": "RECONCILIATION_COMPLETED",
+          "action": "RECONCILE",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "RECONCILIATION_COMPLETED",
+          "to": "UNDER_REVIEW",
+          "action": "SUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "DATA_IMPORTED",
+          "to": "UNDER_REVIEW",
+          "action": "SUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "QUERY_RAISED",
+          "action": "RAISE_QUERY",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER",
+            "CUSTOMER_SUPPORT"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "APPROVED",
+          "action": "APPROVE",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "REJECTED",
+          "action": "REJECT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "UNDER_REVIEW",
+          "to": "RECONCILIATION_PENDING",
+          "action": "REWORK_RECONCILIATION",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "QUERY_RAISED",
+          "to": "USER_ACTION_REQUIRED",
+          "action": "AWAIT_TAXPAYER",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER",
+            "CUSTOMER_SUPPORT"
+          ]
+        },
+        {
+          "from": "USER_ACTION_REQUIRED",
+          "to": "UNDER_REVIEW",
+          "action": "RESUBMIT_FOR_REVIEW",
+          "roles": [
+            "USER",
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "QUERY_RAISED",
+          "to": "UNDER_REVIEW",
+          "action": "RESUME_REVIEW",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "APPROVED",
+          "to": "READY_FOR_FILING",
+          "action": "MARK_READY_FOR_FILING",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "APPROVED",
+          "to": "UNDER_REVIEW",
+          "action": "REOPEN_REVIEW",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "READY_FOR_FILING",
+          "to": "FILED",
+          "action": "RECORD_FILING",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "READY_FOR_FILING",
+          "to": "REJECTED",
+          "action": "REJECT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL",
+            "REVIEWER"
+          ]
+        },
+        {
+          "from": "FILED",
+          "to": "ACKNOWLEDGEMENT_RECEIVED",
+          "action": "RECORD_ACKNOWLEDGEMENT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "ACKNOWLEDGEMENT_RECEIVED",
+          "to": "COMPLETED",
+          "action": "COMPLETE",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        },
+        {
+          "from": "REJECTED",
+          "to": "DRAFT",
+          "action": "REOPEN_DRAFT",
+          "roles": [
+            "SUPER_ADMIN",
+            "ADMIN",
+            "GST_PROFESSIONAL"
+          ]
+        }
+      ]
+    }
+  }
+]

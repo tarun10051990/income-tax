@@ -1,17 +1,41 @@
-# TaxFilr — AI-Powered Indian ITR Filing Platform
+# TaxFilr — Indian Income Tax and GST filing platform
 
-An intelligent, modern income tax return filing platform for Indian taxpayers. Upload Form 16, get AI-powered tax-saving suggestions, compare tax regimes, and generate ITR forms ready for e-filing.
+Two portals over one API: a customer portal where taxpayers prepare income tax returns and GST
+returns, and a staff portal where a practice reviews, queries, files and reports on those cases.
 
 ## Features
 
-- **Smart Form 16 Upload** — AI OCR extracts employer, salary, deduction, and TDS details automatically
-- **Tax Computation Engine** — Side-by-side Old vs New regime comparison with recommendation
-- **AI Tax-Saving Advisor** — Personalized investment suggestions (80C, 80D, NPS, etc.)
-- **Investment Recommendations** — Risk-categorized options with expected returns and lock-in periods
-- **ITR Generation** — Auto-generate ITR-1/2/3/4 forms (JSON, Excel, PDF)
-- **AI Financial Chatbot** — Ask tax questions and get personalized answers
-- **Admin Dashboard** — User management, filing analytics, tax rule configuration
-- **Secure** — JWT authentication, RBAC, encryption-ready
+### Customer portal
+
+- **Income tax filing** — Form 16 upload, income sources, deductions, old vs new regime comparison,
+  ITR generation (JSON, Excel, PDF)
+- **GST** — registrations, invoice book (sales, purchases, credit and debit notes, reverse charge,
+  exempt, nil rated, zero rated), CSV import with duplicate detection, reconciliation against portal
+  data, GSTR-1 and GSTR-3B preparation
+- **Case tracking** — status, documents, queries from the practice, notifications
+- **Professional fees** — service fee invoices, kept separate from government tax payable
+
+### Staff portal (`/admin`)
+
+- Separate sign in with mandatory authenticator based MFA and short lived tokens
+- Work queues by tax type and state, case workspace with workflow transitions, assignment, priority,
+  internal and customer visible comments
+- Document verification, query review, fee invoicing, taxpayer directory
+- Reports (filing status, liability, refunds, ITC, reconciliation, mismatches, workload) with CSV,
+  Excel and PDF export
+- Configurable slabs, limits, interest, late fees and deadlines, versioned by effective date
+- Notification templates, staff and role administration, immutable audit trail
+
+### Filing to the government
+
+The platform does **not** submit to the official portals on its own and never generates an
+acknowledgement number. A `GovernmentFilingAdapter` is the only place an official integration can be
+plugged in; with no adapter configured, `GET /api/admin/integrations/status` reports the channel as
+unavailable and cases follow the manual filing path, where a real acknowledgement number is recorded
+by a staff member after filing on the portal.
+
+Security: JWT authentication, role based permissions, mandatory MFA for staff, and an append only
+audit trail of every state change.
 
 ## Tech Stack
 
@@ -20,8 +44,9 @@ An intelligent, modern income tax return filing platform for Indian taxpayers. U
 | Frontend | Next.js 16, React, TypeScript, Tailwind CSS |
 | Backend | Java 17, Spring Boot 3.2, Spring Security |
 | Database | PostgreSQL (H2 for dev) |
-| Auth | JWT + BCrypt |
-| AI | OCR Engine, LLM-powered advisor (pluggable) |
+| Auth | JWT + BCrypt, TOTP for staff |
+| Docs | Springdoc OpenAPI |
+| Exports | Apache POI (Excel), OpenPDF |
 
 ## Project Structure
 
@@ -67,32 +92,62 @@ mvn spring-boot:run
 # API at http://localhost:8080
 ```
 
-### Demo Credentials
+### Configuration
 
-| Role | Email | Password |
-|------|-------|----------|
-| User | demo@taxfiler.in | any |
-| Admin | admin@taxfiler.in | any |
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `JWT_SECRET` | dev value | Signing key; set a real secret outside development |
+| `JWT_EXPIRATION` | `28800000` | Customer token lifetime in ms |
+| `JWT_ADMIN_EXPIRATION` | `3600000` | Staff token lifetime in ms |
+| `SEED_DEMO_USERS` | `false` | Seed demo customer and staff accounts |
+| `SEED_USER_PASSWORD` | empty | Password for the seeded accounts; required when seeding |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:8080/api` | API base URL used by the frontend |
 
-## Tax Filing Flow
+No credentials ship in the repository. For a local walkthrough, seed accounts with a password you
+choose:
 
-1. **Login** — Email/password, Mobile OTP, or Google OAuth
-2. **Onboarding** — Select FY, employment type, regime preference
-3. **Upload Form 16** — PDF/Image upload with AI OCR extraction
-4. **Review Data** — Verify extracted salary, deductions, TDS
-5. **Additional Income** — Interest, capital gains, rental income
-6. **Tax Computation** — Old vs New regime comparison
-7. **Tax-Saving Tips** — Personalized investment recommendations
-8. **Generate ITR** — Download ITR-1/2/3/4 in JSON/Excel/PDF
+```bash
+cd backend
+mvn spring-boot:run -Dspring-boot.run.arguments="--app.seed-demo-users=true --app.seed-user-password=<your-local-password>"
+```
 
-## API Endpoints
+The first staff sign in at `/admin/login` returns a TOTP secret that must be enrolled in an
+authenticator app before the account can reach any admin endpoint.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login with credentials |
-| POST | `/api/tax/compute` | Compute tax (old + new regime) |
-| GET | `/api/tax/slabs` | Get current tax slabs |
+## Filing flow
+
+1. Taxpayer signs in, completes their profile, and starts an income tax or GST return
+2. Documents are uploaded and scanned; invoices can be typed in or imported from CSV
+3. The case moves into review; staff verify documents and raise queries the taxpayer answers
+4. Computation is prepared (regime comparison for income tax, output tax, ITC and net liability for GST)
+5. Staff approve, mark ready for filing, file on the official portal, and record the acknowledgement
+6. Notifications, fee invoices and the audit trail follow the case throughout
+
+## API
+
+OpenAPI is served by the backend:
+
+- Spec: `http://localhost:8080/v3/api-docs`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+
+Every endpoint returns the same envelope: `{ "success", "data", "error", "timestamp" }`.
+
+| Area | Base path |
+|------|-----------|
+| Auth (customer and staff) | `/api/auth/**` |
+| Profile and GST registrations | `/api/profile/**` |
+| Cases, documents, queries, notifications, payments | `/api/cases`, `/api/documents`, `/api/queries`, `/api/notifications`, `/api/payments` |
+| Income tax filing | `/api/income-tax/**` |
+| GST filing, invoices, reconciliation | `/api/gst/**` |
+| Staff portal | `/api/admin/**` |
+
+## Tests
+
+```bash
+cd backend && mvn test          # unit and API integration tests
+cd frontend && npx eslint src/  # lint
+cd frontend && npx next build   # typecheck and production build
+```
 
 ## Tax Engine
 

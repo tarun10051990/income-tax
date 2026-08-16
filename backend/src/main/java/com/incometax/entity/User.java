@@ -42,11 +42,38 @@ public class User {
     private boolean onboardingComplete = false;
 
     @Builder.Default
+    private boolean active = true;
+
+    /** Base32 TOTP secret; mandatory for every administrative role. */
+    private String mfaSecret;
+
+    @Builder.Default
+    private boolean mfaEnabled = false;
+
+    private LocalDateTime lastLoginAt;
+
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime updatedAt;
 
+    public boolean isCustomer() {
+        return role == Role.USER;
+    }
+
+    public boolean isStaff() {
+        return !isCustomer();
+    }
+
     public enum Role {
-        USER, ADMIN
+        /** Taxpayer; sees only their own data. */
+        USER,
+        ADMIN,
+        SUPER_ADMIN,
+        TAX_PROFESSIONAL,
+        GST_PROFESSIONAL,
+        REVIEWER,
+        DATA_ENTRY_OPERATOR,
+        CUSTOMER_SUPPORT
     }
 }

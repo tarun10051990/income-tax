@@ -1,7 +1,21 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useSyncExternalStore, ReactNode } from "react";
 import { User } from "@/lib/types";
+import { ApiError, apiRequest, writeToken } from "@/lib/api";
+import { SessionStore } from "@/lib/session-store";
+
+interface AuthResponse {
+  token: string;
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  phone?: string;
+  pan?: string;
+  onboardingComplete?: boolean;
+  permissions?: string[];
+}
 
 interface AuthContextType {
   user: User | null;
@@ -17,106 +31,85 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Demo users for the MVP
-const DEMO_USERS: Record<string, User> = {
-  "demo@taxfiler.in": {
-    id: "usr_1",
-    name: "Rahul Sharma",
-    email: "demo@taxfiler.in",
-    phone: "9876543210",
-    pan: "ABCPS1234D",
-    role: "user",
-    onboardingComplete: false,
-  },
-  "admin@taxfiler.in": {
-    id: "usr_admin",
-    name: "Admin User",
-    email: "admin@taxfiler.in",
-    phone: "9876543211",
-    pan: "ADMIN1234A",
-    role: "admin",
-    onboardingComplete: true,
-  },
-};
+const userStore = new SessionStore<User>("taxfilr.customer.user");
+
+function toUser(response: AuthResponse): User {
+  return {
+    id: response.id,
+    name: response.name,
+    email: response.email,
+    phone: response.phone ?? "",
+    pan: response.pan ?? "",
+    role: response.role === "USER" ? "user" : "admin",
+    onboardingComplete: response.onboardingComplete ?? false,
+  };
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const user = useSyncExternalStore(userStore.subscribe, userStore.getSnapshot, userStore.getServerSnapshot);
   const [isLoading, setIsLoading] = useState(false);
 
-  const login = useCallback(async (email: string, _password?: string) => {
-    void _password;
-    setIsLoading(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 800));
-    const foundUser = DEMO_USERS[email];
-    if (foundUser) {
-      setUser(foundUser);
-    } else {
-      // Create a new user for any email
-      setUser({
-        id: `usr_${Date.now()}`,
-        name: email.split("@")[0],
-        email,
-        phone: "",
-        pan: "",
-        role: "user",
-        onboardingComplete: false,
-      });
-    }
-    setIsLoading(false);
+  const persist = useCallback((response: AuthResponse) => {
+    writeToken("customer", response.token);
+    userStore.write(toUser(response));
   }, []);
 
-  const loginWithOTP = useCallback(async (phone: string, _otp?: string) => {
-    void _otp;
+  const login = useCallback(async (email: string, password: string) => {
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setUser({
-      id: `usr_${Date.now()}`,
-      name: `User ${phone.slice(-4)}`,
-      email: "",
-      phone,
-      pan: "",
-      role: "user",
-      onboardingComplete: false,
-    });
-    setIsLoading(false);
+    try {
+      persist(await apiRequest<AuthResponse>("/auth/login", {
+        method: "POST",
+        body: { email, password },
+      }));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [persist]);
+
+  const register = useCallback(async (data: {
+    name: string;
+    email: string;
+    phone: string;
+    pan: string;
+    password: string;
+  }) => {
+    setIsLoading(true);
+    try {
+      persist(await apiRequest<AuthResponse>("/auth/register", { method: "POST", body: data }));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [persist]);
+
+  // Neither one-time passwords nor federated sign in is wired to a provider yet; the API only
+  // issues tokens for an email and password, so these paths report that rather than pretend.
+  const loginWithOTP = useCallback(async () => {
+    throw new ApiError(501, "OTP_LOGIN_UNAVAILABLE",
+      "Sign in with a one time password is not enabled yet. Please use your email and password.");
   }, []);
 
   const loginWithGoogle = useCallback(async () => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setUser(DEMO_USERS["demo@taxfiler.in"]);
-    setIsLoading(false);
-  }, []);
-
-  const register = useCallback(async (data: { name: string; email: string; phone: string; pan: string }) => {
-    setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setUser({
-      id: `usr_${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      pan: data.pan,
-      role: "user",
-      onboardingComplete: false,
-    });
-    setIsLoading(false);
+    throw new ApiError(501, "SOCIAL_LOGIN_UNAVAILABLE",
+      "Sign in with Google is not enabled yet. Please use your email and password.");
   }, []);
 
   const logout = useCallback(() => {
-    setUser(null);
+    writeToken("customer", null);
+    userStore.write(null);
   }, []);
 
   const updateUser = useCallback((data: Partial<User>) => {
-    setUser((prev) => (prev ? { ...prev, ...data } : null));
+    const current = userStore.getSnapshot();
+    if (current !== null) {
+      userStore.write({ ...current, ...data });
+    }
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated: user !== null,
         isLoading,
         login,
         loginWithOTP,
