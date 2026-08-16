@@ -25,11 +25,15 @@ public class JwtUtil {
     }
 
     public String generateToken(String email, String role) {
+        return generateToken(email, role, expiration);
+    }
+
+    public String generateToken(String email, String role, long ttlMillis) {
         return Jwts.builder()
                 .subject(email)
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .expiration(new Date(System.currentTimeMillis() + ttlMillis))
                 .signWith(getSigningKey())
                 .compact();
     }
