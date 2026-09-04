@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #1e40af;
-  --color-primary-light: #3b82f6;
-  --color-primary-dark: #1e3a8a;
+  --color-primary: #0f2a5c;
+  --color-primary-light: #1e4fa3;
+  --color-primary-dark: #091a3a;
   --color-secondary: #059669;
+  --color-navy: #0f2a5c;
+  --color-navy-deep: #091a3a;
+  --color-emerald: #059669;
+  --color-emerald-light: #10b981;
   --color-accent: #f59e0b;
   --color-danger: #dc2626;
   --color-background: #f8fafc;
@@ -12,14 +16,99 @@
   --color-surface: #ffffff;
   --color-muted: #64748b;
   --color-border: #e2e8f0;
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-jakarta);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scroll reveal (driven by IntersectionObserver in <Reveal />) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes drawLine {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.process-line.is-visible {
+  animation: drawLine 1.2s ease-out forwards;
+  transform-origin: left;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(15, 42, 92, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 42, 92, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.marketing-prose h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.marketing-prose p,
+.marketing-prose li {
+  color: #475569;
+  line-height: 1.75;
+  margin-bottom: 0.75rem;
+}
+
+.marketing-prose ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .process-line.is-visible {
+    animation: none;
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Custom scrollbar */

@@ -1,228 +1,255 @@
-"use client";
+import type { Metadata } from "next";
+import { Check } from "lucide-react";
+import FaqAccordion from "@/components/marketing/FaqAccordion";
+import HeroVisual from "@/components/marketing/HeroVisual";
+import PricingTabs from "@/components/marketing/PricingTabs";
+import Reveal from "@/components/marketing/Reveal";
+import ServiceCard from "@/components/marketing/ServiceCard";
+import TestimonialCarousel from "@/components/marketing/TestimonialCarousel";
+import JsonLd, { faqSchema, organizationSchema } from "@/components/marketing/JsonLd";
+import { Container, CtaLink, Section, SectionHeading } from "@/components/marketing/primitives";
+import {
+  AudienceCards,
+  FeaturedServices,
+  HowItWorks,
+  LeadCta,
+  LogoCloud,
+  ResourceCard,
+  StatsBand,
+  WhyChooseUs,
+} from "@/components/marketing/sections";
+import { audiences, generalFaqs } from "@/content/marketing";
+import { resourcePosts } from "@/content/resources";
+import { services } from "@/content/services";
+import { siteConfig } from "@/content/site";
 
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import Button from "@/components/ui/Button";
+export const metadata: Metadata = {
+  title: `${siteConfig.name} | Income Tax, GST, Accounting & Compliance Experts in India`,
+  description: siteConfig.description,
+  alternates: { canonical: "/" },
+};
 
-const FEATURES = [
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-      </svg>
-    ),
-    title: "Upload Form 16",
-    description: "Simply upload your Form 16 PDF. Our AI extracts all salary, deduction, and TDS details automatically.",
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-      </svg>
-    ),
-    title: "Smart Tax Computation",
-    description: "Instant comparison of Old vs New tax regime. We recommend the regime that saves you the most.",
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-      </svg>
-    ),
-    title: "AI Tax-Saving Advisor",
-    description: "Personalized investment suggestions to maximize deductions under 80C, 80D, NPS, and more.",
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-    title: "Generate ITR Form",
-    description: "Auto-generate ITR-1, ITR-2, ITR-3, or ITR-4. Download as JSON, Excel, or PDF ready for e-filing.",
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-      </svg>
-    ),
-    title: "AI Financial Chatbot",
-    description: "Ask anything about tax. Get personalized answers based on your actual tax data.",
-  },
-  {
-    icon: (
-      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-      </svg>
-    ),
-    title: "Bank-Grade Security",
-    description: "AES-256 encryption, SSL/TLS, DPDP Act compliant. Your financial data is always protected.",
-  },
-];
-
-const STEPS = [
-  { num: "1", title: "Login", desc: "Mobile OTP, Email, or Google" },
-  { num: "2", title: "Upload Form 16", desc: "PDF, Image, or Scanned" },
-  { num: "3", title: "Review & Edit", desc: "AI-extracted data" },
-  { num: "4", title: "Get Suggestions", desc: "Tax-saving investments" },
-  { num: "5", title: "Compare Regimes", desc: "Old vs New side-by-side" },
-  { num: "6", title: "Generate & File", desc: "ITR ready in minutes" },
-];
+const homeFaqs = generalFaqs.slice(0, 6);
 
 export default function HomePage() {
-  const { isAuthenticated } = useAuth();
-
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 relative">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+    <>
+      <JsonLd data={[organizationSchema(), faqSchema(homeFaqs)]} />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-50">
+        <div className="bg-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black,transparent_70%)]" aria-hidden="true" />
+        <Container className="relative grid items-center gap-14 py-16 lg:grid-cols-2 lg:py-24">
+          <div>
+            <Reveal>
+              <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-navy shadow-sm">
+                <span className="h-2 w-2 rounded-full bg-emerald" aria-hidden="true" />
+                Income Tax · GST · Accounting · Compliance
               </span>
-              AY 2025-26 Filing Open
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground">
-              File Your ITR in{" "}
-              <span className="text-primary">10 Minutes</span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-muted max-w-2xl mx-auto">
-              AI-powered income tax filing for India. Upload Form 16, get smart tax-saving suggestions,
-              compare regimes, and generate your ITR form — all in one place.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={isAuthenticated ? "/dashboard" : "/auth/register"}>
-                <Button size="lg" className="w-full sm:w-auto text-base px-8">
-                  Start Filing Free
-                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </Button>
-              </Link>
-              <Link href={isAuthenticated ? "/advisor" : "/auth/login"}>
-                <Button variant="outline" size="lg" className="w-full sm:w-auto text-base px-8">
-                  Talk to AI Advisor
-                </Button>
-              </Link>
-            </div>
-            <p className="mt-4 text-sm text-muted">No credit card required. Free for salaried individuals.</p>
+            </Reveal>
+            <Reveal delay={80}>
+              <h1 className="mt-6 text-4xl font-extrabold leading-[1.1] tracking-tight text-navy-deep sm:text-5xl lg:text-6xl">
+                Simplifying Taxes.
+                <br />
+                <span className="bg-gradient-to-r from-navy via-primary-light to-emerald bg-clip-text text-transparent">
+                  Strengthening Businesses.
+                </span>
+              </h1>
+            </Reveal>
+            <Reveal delay={160}>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
+                Expert tax, accounting and compliance solutions for individuals, startups and growing businesses — all under
+                one roof.
+              </p>
+            </Reveal>
+            <Reveal delay={240}>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <CtaLink href={siteConfig.portal.getStartedHref} size="lg" arrow>
+                  Get Started
+                </CtaLink>
+                <CtaLink href="/contact" size="lg" variant="outline">
+                  Talk to an Expert
+                </CtaLink>
+              </div>
+            </Reveal>
+            <Reveal delay={320}>
+              <ul className="mt-10 grid grid-cols-2 gap-3 text-sm font-medium text-slate-700 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+                {siteConfig.trustIndicators.map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald/10">
+                      <Check className="h-3 w-3 text-emerald" aria-hidden="true" strokeWidth={3} />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
           </div>
-        </div>
+          <Reveal delay={200} className="lg:pl-6">
+            <HeroVisual />
+          </Reveal>
+        </Container>
       </section>
 
-      {/* How It Works */}
-      <section className="bg-surface py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">File in 6 Simple Steps</h2>
-            <p className="mt-3 text-muted">From login to filing — done in under 10 minutes</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {STEPS.map((step) => (
-              <div key={step.num} className="text-center">
-                <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">
-                  {step.num}
-                </div>
-                <h3 className="font-semibold text-sm">{step.title}</h3>
-                <p className="text-xs text-muted mt-1">{step.desc}</p>
-              </div>
+      <StatsBand />
+
+      {/* Services */}
+      <Section id="services">
+        <Container>
+          <Reveal>
+            <SectionHeading
+              eyebrow="Our services"
+              title="Everything You Need to Stay Financially Compliant"
+              subtitle="From tax filing to business compliance, our experts take care of the complexity so you can focus on what matters."
+            />
+          </Reveal>
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((service, i) => (
+              <Reveal key={service.slug} delay={(i % 3) * 80} className="h-full">
+                <ServiceCard service={service} />
+              </Reveal>
             ))}
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* Features */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">Powerful Features</h2>
-            <p className="mt-3 text-muted">Everything you need to file your taxes confidently</p>
+      {/* Who we serve */}
+      <Section tone="muted" id="who-we-serve">
+        <Container>
+          <Reveal>
+            <SectionHeading eyebrow="Who we serve" title="Built for every stage of your financial journey" />
+          </Reveal>
+          <div className="mt-14">
+            <AudienceCards items={audiences} />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {FEATURES.map((feature, i) => (
-              <div
-                key={i}
-                className="bg-surface rounded-xl p-6 border border-border hover:shadow-lg hover:border-primary/20 transition-all duration-300"
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="font-semibold text-lg mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted">{feature.description}</p>
+        </Container>
+      </Section>
+
+      {/* How it works */}
+      <Section id="how-it-works">
+        <Container>
+          <Reveal>
+            <SectionHeading eyebrow="How it works" title="Four steps to stress-free compliance" />
+          </Reveal>
+          <div className="mt-16">
+            <HowItWorks />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Why choose us */}
+      <Section tone="muted" id="why-us">
+        <Container>
+          <Reveal>
+            <SectionHeading eyebrow="Why choose us" title="Professional Expertise. Simple Experience." />
+          </Reveal>
+          <div className="mt-14">
+            <WhyChooseUs />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Featured services */}
+      <Section id="popular">
+        <Container>
+          <Reveal>
+            <SectionHeading
+              eyebrow="Popular"
+              title="Most Trusted Services"
+              subtitle="Transparent starting prices. Government fees and taxes are always shown separately."
+            />
+          </Reveal>
+          <div className="mt-14">
+            <FeaturedServices />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Pricing */}
+      <Section tone="muted" id="pricing">
+        <Container>
+          <Reveal>
+            <SectionHeading eyebrow="Pricing" title="Simple plans for individuals, businesses and startups" />
+          </Reveal>
+          <div className="mt-12">
+            <PricingTabs />
+          </div>
+          <Reveal className="mt-12">
+            <div className="flex flex-col items-center justify-between gap-6 rounded-3xl bg-gradient-to-r from-navy-deep to-navy p-8 text-white sm:flex-row sm:p-10">
+              <div>
+                <h3 className="text-2xl font-bold">Need something customized?</h3>
+                <p className="mt-2 text-slate-300">Talk to our experts and get a plan tailored to your requirements.</p>
               </div>
+              <CtaLink href="/contact?intent=custom-plan" variant="white" size="lg" arrow className="shrink-0">
+                Request Custom Plan
+              </CtaLink>
+            </div>
+          </Reveal>
+        </Container>
+      </Section>
+
+      {/* Testimonials */}
+      <Section id="testimonials">
+        <Container>
+          <Reveal>
+            <SectionHeading eyebrow="Testimonials" title="Trusted by Individuals & Businesses" />
+          </Reveal>
+          <div className="mt-14">
+            <TestimonialCarousel />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Logos */}
+      <Section tone="muted" className="py-12 sm:py-16 lg:py-16" id="clients">
+        <Container>
+          <Reveal>
+            <SectionHeading title="Trusted by Businesses Across Industries" />
+          </Reveal>
+          <div className="mt-10">
+            <LogoCloud />
+          </div>
+        </Container>
+      </Section>
+
+      {/* Resources */}
+      <Section id="insights">
+        <Container>
+          <Reveal>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading eyebrow="Resources" title="Stay Ahead With Expert Insights" align="left" />
+              <CtaLink href="/resources" variant="outline" arrow className="shrink-0">
+                View all resources
+              </CtaLink>
+            </div>
+          </Reveal>
+          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {resourcePosts.slice(0, 6).map((post, i) => (
+              <ResourceCard key={post.slug} post={post} index={i} />
             ))}
           </div>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* Tax Regime Comparison Preview */}
-      <section className="bg-surface py-16 sm:py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold">Old vs New Tax Regime</h2>
-            <p className="mt-3 text-muted">We help you choose the regime that saves you the most</p>
-          </div>
-          <div className="max-w-3xl mx-auto bg-background rounded-xl border border-border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-primary/5">
-                <tr>
-                  <th className="text-left px-6 py-4 font-semibold">Particulars</th>
-                  <th className="text-right px-6 py-4 font-semibold text-primary">Old Regime</th>
-                  <th className="text-right px-6 py-4 font-semibold text-secondary">New Regime</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                <tr>
-                  <td className="px-6 py-3">Gross Salary</td>
-                  <td className="px-6 py-3 text-right font-mono">12,00,000</td>
-                  <td className="px-6 py-3 text-right font-mono">12,00,000</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-3">Deductions</td>
-                  <td className="px-6 py-3 text-right font-mono text-secondary">-3,50,000</td>
-                  <td className="px-6 py-3 text-right font-mono text-secondary">-75,000</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-3">Taxable Income</td>
-                  <td className="px-6 py-3 text-right font-mono">8,50,000</td>
-                  <td className="px-6 py-3 text-right font-mono">11,25,000</td>
-                </tr>
-                <tr className="bg-primary/5 font-semibold">
-                  <td className="px-6 py-3">Tax Payable</td>
-                  <td className="px-6 py-3 text-right font-mono text-primary">82,160</td>
-                  <td className="px-6 py-3 text-right font-mono text-secondary">68,640</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="text-center mt-4 text-sm text-muted">
-            Example for CTC of Rs. 12 Lakhs with standard deductions
+      {/* FAQ */}
+      <Section tone="muted" id="faq">
+        <Container className="max-w-4xl">
+          <Reveal>
+            <SectionHeading eyebrow="FAQ" title="Frequently asked questions" />
+          </Reveal>
+          <Reveal className="mt-12">
+            <FaqAccordion items={homeFaqs} />
+          </Reveal>
+          <p className="mt-8 text-center text-sm text-slate-600">
+            Have more questions?{" "}
+            <CtaLink href="/faq" variant="ghost" size="sm" arrow>
+              Browse the full FAQ
+            </CtaLink>
           </p>
-        </div>
-      </section>
+        </Container>
+      </Section>
 
-      {/* CTA */}
-      <section className="py-16 sm:py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="bg-gradient-to-r from-primary to-blue-600 rounded-2xl p-8 sm:p-12 text-white">
-            <h2 className="text-3xl font-bold mb-4">Ready to file your taxes?</h2>
-            <p className="text-blue-100 mb-8 max-w-xl mx-auto">
-              Join thousands of taxpayers who save time and money filing with TaxFilr.
-              It&apos;s free for salaried individuals.
-            </p>
-            <Link href={isAuthenticated ? "/filing/upload" : "/auth/register"}>
-              <Button size="lg" className="bg-white text-primary hover:bg-blue-50 px-8 text-base">
-                File My ITR Now
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-    </div>
+      <LeadCta source="home" />
+    </>
   );
 }

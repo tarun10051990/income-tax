@@ -1,21 +1,21 @@
-import Link from "next/link";
-import Card from "@/components/ui/Card";
+import type { Metadata } from "next";
+import LegalPage from "@/components/marketing/LegalPage";
+import { legalUpdated, privacySections } from "@/content/legal";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How we collect, use, protect and retain your personal and financial information.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold capitalize">privacy</h1>
-        <p className="text-muted mt-1">This page is under construction.</p>
-      </div>
-      <Card variant="bordered">
-        <div className="p-6">
-          <p className="text-sm text-muted">Content coming soon. For assistance, please email support@taxfilr.in</p>
-          <Link href="/" className="text-primary text-sm hover:underline mt-4 inline-block">
-            &larr; Back to Home
-          </Link>
-        </div>
-      </Card>
-    </div>
+    <LegalPage
+      title="Privacy Policy"
+      intro="How we collect, use, protect and retain your personal and financial information."
+      updated={legalUpdated}
+      sections={privacySections}
+      pathname="/privacy"
+    />
   );
 }
