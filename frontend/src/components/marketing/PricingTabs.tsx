@@ -12,9 +12,23 @@ export default function PricingTabs({ initial = "individuals" }: { initial?: Pri
   const [active, setActive] = useState<PricingAudience>(initial);
   const tab = pricingTabs.find((item) => item.id === active) ?? pricingTabs[0];
 
+  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const index = pricingTabs.findIndex((item) => item.id === active);
+    let next = index;
+    if (event.key === "ArrowRight") next = (index + 1) % pricingTabs.length;
+    else if (event.key === "ArrowLeft") next = (index - 1 + pricingTabs.length) % pricingTabs.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = pricingTabs.length - 1;
+    else return;
+    event.preventDefault();
+    const id = pricingTabs[next].id;
+    setActive(id);
+    document.getElementById(`pricing-tab-${id}`)?.focus();
+  };
+
   return (
     <div>
-      <div role="tablist" aria-label="Pricing audience" className="mx-auto flex w-fit rounded-xl bg-slate-100 p-1">
+      <div role="tablist" aria-label="Pricing audience" onKeyDown={onKeyDown} className="mx-auto flex w-fit rounded-xl bg-slate-100 p-1">
         {pricingTabs.map((item) => (
           <button
             key={item.id}
@@ -23,6 +37,7 @@ export default function PricingTabs({ initial = "individuals" }: { initial?: Pri
             id={`pricing-tab-${item.id}`}
             aria-selected={active === item.id}
             aria-controls={`pricing-panel-${item.id}`}
+            tabIndex={active === item.id ? 0 : -1}
             onClick={() => setActive(item.id)}
             className={cn(
               "rounded-lg px-4 py-2 text-sm font-semibold transition-all sm:px-6",

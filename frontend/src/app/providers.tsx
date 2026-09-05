@@ -47,10 +47,12 @@ export default function AppProviders({ children }: { children: React.ReactNode }
         ) : (
           <>
             <SiteHeader />
-            <main id="main" className="flex-1 pb-20 md:pb-0">
+            <main id="main" className="flex-1">
               {children}
             </main>
-            <SiteFooter />
+            <div className="pb-20 md:pb-0">
+              <SiteFooter />
+            </div>
             <MobileStickyCta />
           </>
         )}
