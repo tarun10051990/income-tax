@@ -84,6 +84,7 @@ public class GstFilingService {
                     "Invoice " + invoice.getInvoiceNumber() + " has already been recorded for this return");
         }
         GstInvoice saved = gstInvoiceRepository.save(invoice);
+        markDataImported(filing.getFilingCase(), actor, "1 document recorded");
         auditService.record("GST_INVOICE_ADDED", "GstInvoice", saved.getId(), null,
                 Map.of("caseId", caseId, "invoiceNumber", saved.getInvoiceNumber()));
         return saved;
@@ -128,15 +129,19 @@ public class GstFilingService {
         }
 
         List<GstInvoice> saved = gstInvoiceRepository.saveAll(toSave);
-        FilingCase filingCase = filing.getFilingCase();
-        if (!saved.isEmpty() && workflowService.transitions(TaxType.GST, filingCase.getStatus()).stream()
-                .anyMatch(transition -> transition.to() == FilingStatus.DATA_IMPORTED)) {
-            workflowService.transition(filingCase, FilingStatus.DATA_IMPORTED, actor,
-                    saved.size() + " documents imported");
+        if (!saved.isEmpty()) {
+            markDataImported(filing.getFilingCase(), actor, saved.size() + " documents imported");
         }
         auditService.record("GST_INVOICES_IMPORTED", "GstFiling", filing.getId(), null,
                 Map.of("imported", saved.size(), "duplicates", duplicates, "rejected", rejected.size()));
         return new ImportResult(saved.size(), duplicates, rejected);
+    }
+
+    private void markDataImported(FilingCase filingCase, User actor, String note) {
+        if (workflowService.transitions(TaxType.GST, filingCase.getStatus()).stream()
+                .anyMatch(transition -> transition.to() == FilingStatus.DATA_IMPORTED)) {
+            workflowService.transition(filingCase, FilingStatus.DATA_IMPORTED, actor, note);
+        }
     }
 
     public Page<GstInvoice> invoices(String caseId, GstInvoice.DocumentType documentType, User actor,

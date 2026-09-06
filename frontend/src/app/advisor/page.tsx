@@ -114,7 +114,7 @@ function generateAIResponse(question: string, hasForm16: boolean, taxResult: { t
 
 export default function AdvisorPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { form16Data, taxResult } = useFiling();
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -134,8 +134,8 @@ export default function AdvisorPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) router.push("/auth/login");
-  }, [isAuthenticated, router]);
+    if (isReady && !isAuthenticated) router.push("/auth/login");
+  }, [isAuthenticated, isReady, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -11,7 +11,7 @@ import { formatCurrency } from "@/lib/utils";
 
 export default function GeneratePage() {
   const router = useRouter();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isReady, user } = useAuth();
   const { form16Data, taxResult, setCurrentStep, onboardingData } = useFiling();
   const [itrType, setItrType] = useState<string>(() => {
     if (onboardingData?.employmentType === "business") return "ITR-3";
@@ -28,10 +28,11 @@ export default function GeneratePage() {
   const [generated, setGenerated] = useState(false);
 
   useEffect(() => {
+    if (!isReady) return;
     if (!isAuthenticated) { router.push("/auth/login"); return; }
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("generate");
-  }, [isAuthenticated, form16Data, router, setCurrentStep]);
+  }, [isAuthenticated, isReady, form16Data, router, setCurrentStep]);
 
   const handleGenerate = async () => {
     setIsGenerating(true);

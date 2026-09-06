@@ -12,15 +12,16 @@ import { investmentOptions } from "@/lib/tax-engine";
 
 export default function SuggestionsPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { form16Data, taxSuggestions, computeTaxResult, setCurrentStep } = useFiling();
 
   useEffect(() => {
+    if (!isReady) return;
     if (!isAuthenticated) { router.push("/auth/login"); return; }
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("suggestions");
     computeTaxResult();
-  }, [isAuthenticated, form16Data, router, setCurrentStep, computeTaxResult]);
+  }, [isAuthenticated, isReady, form16Data, router, setCurrentStep, computeTaxResult]);
 
   const totalPotentialSaving = taxSuggestions.reduce((a, s) => a + s.potentialSaving, 0);
 

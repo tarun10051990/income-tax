@@ -20,6 +20,8 @@ interface AuthResponse {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  /** False during SSR/hydration, before the persisted session has been read. */
+  isReady: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   loginWithOTP: (phone: string, otp: string) => Promise<void>;
@@ -32,6 +34,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const userStore = new SessionStore<User>("taxfilr.customer.user");
+const noopSubscribe = () => () => {};
 
 function toUser(response: AuthResponse): User {
   return {
@@ -47,6 +50,7 @@ function toUser(response: AuthResponse): User {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const user = useSyncExternalStore(userStore.subscribe, userStore.getSnapshot, userStore.getServerSnapshot);
+  const isReady = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const [isLoading, setIsLoading] = useState(false);
 
   const persist = useCallback((response: AuthResponse) => {
@@ -110,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isAuthenticated: user !== null,
+        isReady,
         isLoading,
         login,
         loginWithOTP,

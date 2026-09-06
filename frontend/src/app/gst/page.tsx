@@ -14,15 +14,15 @@ import { CaseSummary } from "@/lib/platform-types";
 
 export default function GstOverviewPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const profiles = useApiData(() => customerApi.gstProfiles());
   const filings = useApiData(() => customerApi.cases({ taxType: "GST" }));
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isReady && !isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isReady, router]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">

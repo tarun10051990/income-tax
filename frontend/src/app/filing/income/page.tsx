@@ -10,16 +10,17 @@ import Button from "@/components/ui/Button";
 
 export default function AdditionalIncomePage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { form16Data, additionalIncome, setAdditionalIncome, setCurrentStep,
     metroCity, setMetroCity, rentPaid, setRentPaid,
     extraDeductions, setExtraDeductions } = useFiling();
 
   useEffect(() => {
+    if (!isReady) return;
     if (!isAuthenticated) { router.push("/auth/login"); return; }
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("additional_income");
-  }, [isAuthenticated, form16Data, router, setCurrentStep]);
+  }, [isAuthenticated, isReady, form16Data, router, setCurrentStep]);
 
   if (!form16Data) return null;
 
