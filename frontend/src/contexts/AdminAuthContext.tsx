@@ -28,6 +28,7 @@ export interface StaffSession {
 interface AdminAuthContextType {
   session: StaffSession | null;
   isAuthenticated: boolean;
+  isReady: boolean;
   isLoading: boolean;
   /** Resolves to an enrolment payload when the account still has to set up an authenticator. */
   signIn: (email: string, password: string, totpCode?: string) => Promise<{ enrolmentSecret: string | null }>;
@@ -39,6 +40,7 @@ interface AdminAuthContextType {
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
 const sessionStore = new SessionStore<StaffSession>("taxfilr.admin.session");
+const noopSubscribe = () => () => {};
 
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const session = useSyncExternalStore(
@@ -46,6 +48,7 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     sessionStore.getSnapshot,
     sessionStore.getServerSnapshot,
   );
+  const isReady = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const [isLoading, setIsLoading] = useState(false);
   /** Short lived token issued for enrolment only; it cannot reach the admin endpoints. */
   const [enrolmentToken, setEnrolmentToken] = useState<string | null>(null);
@@ -110,13 +113,14 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     () => ({
       session,
       isAuthenticated: session !== null,
+      isReady,
       isLoading,
       signIn,
       completeEnrolment,
       signOut,
       can,
     }),
-    [session, isLoading, signIn, completeEnrolment, signOut, can],
+    [session, isReady, isLoading, signIn, completeEnrolment, signOut, can],
   );
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;

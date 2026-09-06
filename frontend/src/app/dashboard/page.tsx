@@ -13,14 +13,14 @@ import Link from "next/link";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isReady } = useAuth();
   const { onboardingData, setOnboardingData, setCurrentStep } = useFiling();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (isReady && !isAuthenticated) {
       router.push("/auth/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isReady, router]);
 
   if (!isAuthenticated) return null;
 

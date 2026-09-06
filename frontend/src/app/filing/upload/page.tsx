@@ -46,7 +46,7 @@ const SAMPLE_FORM16: Form16Data = {
 
 export default function UploadPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { setForm16Data, setCurrentStep } = useFiling();
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -56,9 +56,9 @@ export default function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) router.push("/auth/login");
+    if (isReady && !isAuthenticated) router.push("/auth/login");
     setCurrentStep("upload");
-  }, [isAuthenticated, router, setCurrentStep]);
+  }, [isAuthenticated, isReady, router, setCurrentStep]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

@@ -96,6 +96,7 @@ export const footerColumns = [
   {
     heading: "Resources",
     links: [
+      { label: "How-to Videos", href: "/resources/videos" },
       { label: "Tax Guides", href: "/resources?category=income-tax-guides" },
       { label: "FAQs", href: "/faq" },
       { label: "Tax Calendar", href: "/resources/compliance-calendar-fy-2026-27" },

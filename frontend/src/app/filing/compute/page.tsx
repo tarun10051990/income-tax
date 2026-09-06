@@ -11,15 +11,16 @@ import { formatCurrency } from "@/lib/utils";
 
 export default function ComputePage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { form16Data, taxResult, computeTaxResult, setCurrentStep } = useFiling();
 
   useEffect(() => {
+    if (!isReady) return;
     if (!isAuthenticated) { router.push("/auth/login"); return; }
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("compute");
     computeTaxResult();
-  }, [isAuthenticated, form16Data, router, setCurrentStep, computeTaxResult]);
+  }, [isAuthenticated, isReady, form16Data, router, setCurrentStep, computeTaxResult]);
 
   if (!taxResult) return null;
 

@@ -24,14 +24,14 @@ const NAVIGATION: { href: string; label: string; section: string }[] = [
 function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { session, isAuthenticated, signOut } = useAdminAuth();
+  const { session, isAuthenticated, isReady, signOut } = useAdminAuth();
   const isLoginRoute = pathname === "/admin/login";
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoginRoute) {
+    if (isReady && !isAuthenticated && !isLoginRoute) {
       router.replace("/admin/login");
     }
-  }, [isAuthenticated, isLoginRoute, router]);
+  }, [isAuthenticated, isLoginRoute, isReady, router]);
 
   if (isLoginRoute) {
     return <>{children}</>;

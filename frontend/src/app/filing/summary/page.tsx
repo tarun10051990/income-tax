@@ -12,14 +12,15 @@ import Link from "next/link";
 
 export default function SummaryPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isReady } = useAuth();
   const { form16Data, taxResult, taxSuggestions, onboardingData, setCurrentStep } = useFiling();
 
   useEffect(() => {
+    if (!isReady) return;
     if (!isAuthenticated) { router.push("/auth/login"); return; }
     if (!form16Data || !taxResult) { router.push("/filing/upload"); return; }
     setCurrentStep("summary");
-  }, [isAuthenticated, form16Data, taxResult, router, setCurrentStep]);
+  }, [isAuthenticated, isReady, form16Data, taxResult, router, setCurrentStep]);
 
   if (!form16Data || !taxResult) return null;
 
