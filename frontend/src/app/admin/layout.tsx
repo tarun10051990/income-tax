@@ -15,6 +15,12 @@ const NAVIGATION: { href: string; label: string; section: string }[] = [
   { href: "/admin/customers", label: "Taxpayers", section: "Records" },
   { href: "/admin/payments", label: "Fees", section: "Records" },
   { href: "/admin/reports", label: "Reports", section: "Records" },
+  { href: "/admin/marketplace", label: "Overview", section: "Marketplace" },
+  { href: "/admin/marketplace/consultants", label: "Consultants", section: "Marketplace" },
+  { href: "/admin/marketplace/bookings", label: "Consultations", section: "Marketplace" },
+  { href: "/admin/marketplace/payouts", label: "Payouts", section: "Marketplace" },
+  { href: "/admin/marketplace/reviews", label: "Reviews", section: "Marketplace" },
+  { href: "/admin/marketplace/pricing", label: "Pricing and categories", section: "Marketplace" },
   { href: "/admin/notifications", label: "Templates", section: "Administration" },
   { href: "/admin/users", label: "Staff", section: "Administration" },
   { href: "/admin/config", label: "Rules and deadlines", section: "Administration" },
@@ -55,7 +61,9 @@ function AdminShell({ children }: { children: React.ReactNode }) {
           <div key={section} className="mb-4">
             <p className="px-2 text-xs uppercase tracking-wide text-muted mb-1">{section}</p>
             {NAVIGATION.filter((item) => item.section === section).map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const active = item.href === "/admin/marketplace"
+                ? pathname === item.href
+                : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}

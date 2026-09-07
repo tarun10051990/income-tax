@@ -1,11 +1,28 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
+  const pathname = usePathname();
+  const consultantPortal = pathname === "/consultant" || pathname.startsWith("/consultant/");
+
+  if (consultantPortal) {
+    return (
+      <nav className="bg-surface border-b border-border sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-xl font-bold text-primary">TaxFilr</span>
+            <span className="text-sm text-muted">Consultant portal</span>
+          </Link>
+          <Link href="/consultants" className="text-sm text-muted hover:text-foreground">Public marketplace</Link>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="bg-surface border-b border-border sticky top-0 z-40">
@@ -31,6 +48,9 @@ export default function Navbar() {
                   </Link>
                   <Link href="/filing/upload" className="text-sm text-muted hover:text-foreground transition-colors">
                     File Return
+                  </Link>
+                  <Link href="/consultations" className="text-sm text-muted hover:text-foreground transition-colors">
+                    Consultations
                   </Link>
                   <Link href="/gst" className="text-sm text-muted hover:text-foreground transition-colors">
                     GST

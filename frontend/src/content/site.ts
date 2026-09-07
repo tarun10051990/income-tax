@@ -66,6 +66,7 @@ export const mainNav = [
   { label: "Services", href: "/services" },
   { label: "For Individuals", href: "/individuals" },
   { label: "For Businesses", href: "/businesses" },
+  { label: "Find a CA", href: "/consultants" },
   { label: "Pricing", href: "/pricing" },
   { label: "Resources", href: "/resources" },
   { label: "About Us", href: "/about" },
@@ -91,6 +92,8 @@ export const footerColumns = [
       { label: "TDS", href: "/services/tds" },
       { label: "ROC Compliance", href: "/services/roc-compliance" },
       { label: "Company Registration", href: "/services/company-registration" },
+      { label: "Find a CA / Lawyer", href: "/consultants" },
+      { label: "Join as a consultant", href: "/consultant/register" },
     ],
   },
   {

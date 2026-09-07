@@ -20,6 +20,8 @@ const PORTAL_PREFIXES = [
   "/profile",
   "/auth",
   "/admin",
+  "/consultant",
+  "/consultations",
   "/calculator",
   "/advisor",
   "/help",

@@ -6,6 +6,8 @@ import com.incometax.dto.AuthRequest;
 import com.incometax.dto.AuthResponse;
 import com.incometax.dto.MfaEnrolmentRequest;
 import com.incometax.dto.RegisterRequest;
+import com.incometax.marketplace.dto.MarketplaceRequests.ConsultantRegisterRequest;
+import com.incometax.marketplace.service.ConsultantProfileService;
 import com.incometax.security.CurrentUser;
 import com.incometax.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final ConsultantProfileService consultantProfileService;
     private final CurrentUser currentUser;
 
     @PostMapping("/register")
@@ -36,6 +39,18 @@ public class AuthController {
     @Operation(summary = "Taxpayer login")
     public ApiResponse<AuthResponse> login(@Valid @RequestBody AuthRequest request) {
         return ApiResponse.ok(userService.login(request));
+    }
+
+    @PostMapping("/consultant/register")
+    @Operation(summary = "Register a professional (CA, lawyer, consultant); profile starts in PENDING_VERIFICATION")
+    public ApiResponse<AuthResponse> consultantRegister(@Valid @RequestBody ConsultantRegisterRequest request) {
+        return ApiResponse.ok(consultantProfileService.register(request));
+    }
+
+    @PostMapping("/consultant/login")
+    @Operation(summary = "Consultant portal login")
+    public ApiResponse<AuthResponse> consultantLogin(@Valid @RequestBody AuthRequest request) {
+        return ApiResponse.ok(userService.consultantLogin(request));
     }
 
     @PostMapping("/admin/login")

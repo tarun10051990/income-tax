@@ -61,13 +61,19 @@ public class User {
         return role == Role.USER;
     }
 
+    public boolean isConsultant() {
+        return role == Role.CONSULTANT;
+    }
+
     public boolean isStaff() {
-        return !isCustomer();
+        return !isCustomer() && !isConsultant();
     }
 
     public enum Role {
         /** Taxpayer; sees only their own data. */
         USER,
+        /** Marketplace professional (CA, lawyer, consultant); sees only their own bookings. */
+        CONSULTANT,
         ADMIN,
         SUPER_ADMIN,
         TAX_PROFESSIONAL,
