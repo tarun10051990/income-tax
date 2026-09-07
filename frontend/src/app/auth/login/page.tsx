@@ -1,16 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
 type LoginMethod = "email" | "phone";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
+  const destination = next !== null && next.startsWith("/") ? next : "/dashboard";
   const { login, loginWithOTP, loginWithGoogle, isLoading } = useAuth();
   const [method, setMethod] = useState<LoginMethod>("email");
   const [email, setEmail] = useState("");
@@ -25,7 +28,7 @@ export default function LoginPage() {
     setError("");
     try {
       await login(email, password);
-      router.push("/dashboard");
+      router.push(destination);
     } catch {
       setError("Invalid email or password");
     }
@@ -45,7 +48,7 @@ export default function LoginPage() {
     setError("");
     try {
       await loginWithOTP(phone, otp);
-      router.push("/dashboard");
+      router.push(destination);
     } catch {
       setError("Invalid OTP");
     }
@@ -54,7 +57,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-      router.push("/dashboard");
+      router.push(destination);
     } catch {
       setError("Google login failed");
     }
@@ -193,5 +196,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

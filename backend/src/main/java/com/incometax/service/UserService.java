@@ -66,7 +66,26 @@ public class UserService {
         if (user.isStaff()) {
             throw ApiException.forbidden("Staff accounts must sign in through the administration portal");
         }
+        if (user.isConsultant()) {
+            throw ApiException.forbidden("Professional accounts must sign in through the consultant portal");
+        }
         return response(touchLogin(user), tokenTtl);
+    }
+
+    /** Consultant portal login; only marketplace professionals may use it. */
+    @Transactional
+    public AuthResponse consultantLogin(AuthRequest request) {
+        User user = authenticate(request.getEmail(), request.getPassword());
+        if (!user.isConsultant()) {
+            throw ApiException.forbidden("This portal is restricted to registered professionals");
+        }
+        auditService.record("CONSULTANT_LOGIN", "User", user.getId(), null, null);
+        return response(touchLogin(user), tokenTtl);
+    }
+
+    /** Issues a session for a freshly created account (used by consultant registration). */
+    public AuthResponse sessionFor(User user) {
+        return response(user, tokenTtl);
     }
 
     /** Administration portal login; every staff account is MFA protected. */

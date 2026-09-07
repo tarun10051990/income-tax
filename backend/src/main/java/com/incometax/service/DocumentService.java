@@ -4,6 +4,7 @@ import com.incometax.entity.DocumentRecord;
 import com.incometax.entity.FilingCase;
 import com.incometax.entity.User;
 import com.incometax.exception.ApiException;
+import com.incometax.marketplace.repository.DocumentShareRepository;
 import com.incometax.repository.DocumentRepository;
 import com.incometax.security.Permission;
 import com.incometax.security.RbacService;
@@ -38,6 +39,7 @@ public class DocumentService {
     private final FilingCaseService filingCaseService;
     private final RbacService rbacService;
     private final AuditService auditService;
+    private final DocumentShareRepository documentShareRepository;
 
     @Value("${documents.max-size-bytes:10485760}")
     private long maxSizeBytes;
@@ -111,6 +113,12 @@ public class DocumentService {
         DocumentRecord document = documentRepository.findById(documentId)
                 .orElseThrow(() -> ApiException.notFound("Document", documentId));
         boolean owner = document.getOwner().getId().equals(actor.getId());
+        // Consultants only ever see documents a client explicitly shared for a consultation.
+        boolean shared = !owner && actor.isConsultant()
+                && documentShareRepository.existsByDocumentIdAndSharedWithIdAndRevokedAtIsNull(documentId, actor.getId());
+        if (shared) {
+            return document;
+        }
         if (!owner && !rbacService.has(actor, Permission.DOCUMENT_READ_ALL)) {
             throw ApiException.forbidden("You may not access this document");
         }

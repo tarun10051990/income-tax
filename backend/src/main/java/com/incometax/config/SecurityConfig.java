@@ -50,6 +50,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/admin/login",
+                                "/api/auth/consultant/login", "/api/auth/consultant/register",
                                 "/api/public/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
                                 "/actuator/health")
                         .permitAll();
@@ -59,6 +60,8 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/auth/admin/mfa/enrol").hasAnyRole(
                         concat(STAFF_ROLES, "MFA_PENDING"));
                 auth.requestMatchers("/api/admin/**").hasAnyRole(STAFF_ROLES);
+                auth.requestMatchers("/api/consultant/**").hasRole("CONSULTANT");
+                auth.requestMatchers("/api/bookings/**").hasAnyRole("USER", "CONSULTANT");
                 auth.anyRequest().authenticated();
             })
             .headers(headers -> headers

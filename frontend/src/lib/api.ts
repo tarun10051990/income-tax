@@ -3,6 +3,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/a
 /** Separate storage keys keep a taxpayer session and a staff session independent in one browser. */
 export const CUSTOMER_TOKEN_KEY = "taxfilr.customer.token";
 export const ADMIN_TOKEN_KEY = "taxfilr.admin.token";
+export const CONSULTANT_TOKEN_KEY = "taxfilr.consultant.token";
 
 export interface FieldError {
   field: string;
@@ -40,10 +41,17 @@ export interface PageResult<T> {
   totalPages: number;
 }
 
-export type Scope = "customer" | "admin";
+export type Scope = "customer" | "admin" | "consultant";
 
 function tokenKey(scope: Scope): string {
-  return scope === "admin" ? ADMIN_TOKEN_KEY : CUSTOMER_TOKEN_KEY;
+  switch (scope) {
+    case "admin":
+      return ADMIN_TOKEN_KEY;
+    case "consultant":
+      return CONSULTANT_TOKEN_KEY;
+    default:
+      return CUSTOMER_TOKEN_KEY;
+  }
 }
 
 export function readToken(scope: Scope): string | null {
