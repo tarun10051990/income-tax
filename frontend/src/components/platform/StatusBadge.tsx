@@ -38,6 +38,14 @@ const VARIANTS: Record<string, "default" | "success" | "warning" | "danger" | "i
   HIGH: "warning",
   MEDIUM: "info",
   LOW: "default",
+  OVERDUE: "danger",
+  PARTIALLY_PAID: "warning",
+  CLAIMED: "info",
+  PROCESSING: "info",
+  ISSUED: "success",
+  PARTIALLY_ISSUED: "warning",
+  ADJUSTED: "default",
+  NOT_FILED: "default",
 };
 
 /** Turns an API enum such as READY_FOR_FILING into "Ready for filing" with a matching colour. */

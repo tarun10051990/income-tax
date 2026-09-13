@@ -36,6 +36,7 @@ public class IncomeTaxFilingService {
     private final WorkflowService workflowService;
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
+    private final com.incometax.finance.service.FinanceLedgerService financeLedgerService;
 
     @Transactional
     public IncomeTaxFiling create(User customer, IncomeTaxRequests.CreateFiling request) {
@@ -137,6 +138,10 @@ public class IncomeTaxFilingService {
         filingRepository.save(filing);
 
         FilingCase filingCase = filing.getFilingCase();
+        IncomeTaxComputationService.RegimeComputation chosen =
+                "NEW".equalsIgnoreCase(comparison.getRecommendedRegime()) ? comparison.getNewRegime()
+                        : comparison.getOldRegime();
+        financeLedgerService.syncFromFiling(filingCase, chosen.getTotalTax(), chosen.getRefundDue());
         FilingStatus target = workflowService.transitions(TaxType.INCOME_TAX, filingCase.getStatus()).stream()
                 .map(WorkflowService.Transition::to)
                 .filter(status -> status == FilingStatus.UNDER_REVIEW)

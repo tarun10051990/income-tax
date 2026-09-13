@@ -55,6 +55,9 @@ export default function Navbar() {
                   <Link href="/gst" className="text-sm text-muted hover:text-foreground transition-colors">
                     GST
                   </Link>
+                  <Link href="/finance" className="text-sm text-muted hover:text-foreground transition-colors">
+                    My Finances
+                  </Link>
                   <Link href="/payments" className="text-sm text-muted hover:text-foreground transition-colors">
                     Payments
                   </Link>
