@@ -15,6 +15,11 @@ const NAVIGATION: { href: string; label: string; section: string }[] = [
   { href: "/admin/customers", label: "Taxpayers", section: "Records" },
   { href: "/admin/payments", label: "Fees", section: "Records" },
   { href: "/admin/reports", label: "Reports", section: "Records" },
+  { href: "/admin/finance", label: "Analytics", section: "Finance" },
+  { href: "/admin/finance/verification", label: "Verification queue", section: "Finance" },
+  { href: "/admin/finance/liabilities", label: "Liabilities", section: "Finance" },
+  { href: "/admin/finance/refunds", label: "Refunds", section: "Finance" },
+  { href: "/admin/finance/financial-years", label: "Financial years", section: "Finance" },
   { href: "/admin/marketplace", label: "Overview", section: "Marketplace" },
   { href: "/admin/marketplace/consultants", label: "Consultants", section: "Marketplace" },
   { href: "/admin/marketplace/bookings", label: "Consultations", section: "Marketplace" },
@@ -61,7 +66,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
           <div key={section} className="mb-4">
             <p className="px-2 text-xs uppercase tracking-wide text-muted mb-1">{section}</p>
             {NAVIGATION.filter((item) => item.section === section).map((item) => {
-              const active = item.href === "/admin/marketplace"
+              const active = item.href === "/admin/marketplace" || item.href === "/admin/finance"
                 ? pathname === item.href
                 : pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (

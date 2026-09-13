@@ -18,6 +18,8 @@ public interface FilingCaseRepository extends JpaRepository<FilingCase, String>,
 
     List<FilingCase> findByCustomerIdAndDeletedFalse(String customerId);
 
+    List<FilingCase> findByDeletedFalse();
+
     long countByTaxTypeAndDeletedFalse(TaxType taxType);
 
     long countByTaxTypeAndStatusAndDeletedFalse(TaxType taxType, FilingStatus status);

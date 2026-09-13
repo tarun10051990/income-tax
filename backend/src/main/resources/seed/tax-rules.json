@@ -189,6 +189,29 @@
     }
   },
   {
+    "ruleKey": "income_tax.tax_saving",
+    "taxType": "INCOME_TAX",
+    "category": "THRESHOLDS",
+    "description": "Parameters for the client Tax Saving estimate: the marginal rate assumed when no filed computation exists for the year, cess, and the default Chapter VI-A section per investment type",
+    "effectiveFrom": "2024-04-01",
+    "configuration": {
+      "assumedMarginalRate": 0.3,
+      "cessRate": 0.04,
+      "estimateRegime": "OLD",
+      "defaultSections": {
+        "PPF": "80C",
+        "ELSS": "80C",
+        "INSURANCE": "80C",
+        "FIXED_DEPOSIT": "80C",
+        "NPS": "80CCD1B",
+        "MUTUAL_FUND": null,
+        "STOCKS": null,
+        "BONDS": null,
+        "OTHER": null
+      }
+    }
+  },
+  {
     "ruleKey": "income_tax.deadlines",
     "taxType": "INCOME_TAX",
     "category": "DEADLINES",

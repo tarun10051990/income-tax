@@ -41,6 +41,7 @@ public class GstFilingService {
     private final WorkflowService workflowService;
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
+    private final com.incometax.finance.service.FinanceLedgerService financeLedgerService;
 
     @Transactional
     public GstFiling create(User customer, GstRequests.CreateFiling request) {
@@ -177,11 +178,13 @@ public class GstFilingService {
         if (!errors.isEmpty()) {
             throw ApiException.validation("Return contains validation errors", errors);
         }
-        filing.setComputationJson(serialize(computationService.compute(filing, LocalDate.now())));
+        GstComputationService.Computation computation = computationService.compute(filing, LocalDate.now());
+        filing.setComputationJson(serialize(computation));
         filing.setUpdatedAt(LocalDateTime.now());
         gstFilingRepository.save(filing);
 
         FilingCase filingCase = filing.getFilingCase();
+        financeLedgerService.syncFromFiling(filingCase, computation.getNetLiability(), null);
         FilingStatus target = workflowService.transitions(TaxType.GST, filingCase.getStatus()).stream()
                 .map(WorkflowService.Transition::to)
                 .filter(status -> status == FilingStatus.UNDER_REVIEW)

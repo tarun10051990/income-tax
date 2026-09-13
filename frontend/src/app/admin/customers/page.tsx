@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
@@ -10,6 +11,7 @@ import { adminApi } from "@/lib/endpoints";
 import { UserSummary } from "@/lib/platform-types";
 
 export default function AdminCustomersPage() {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const customers = useApiData(() => adminApi.customers({ query: search, size: 50 }), [search]);
 
@@ -24,7 +26,7 @@ export default function AdminCustomersPage() {
 
       <Card variant="bordered">
         <CardTitle>Search</CardTitle>
-        <CardDescription>By name, email or PAN.</CardDescription>
+        <CardDescription>By name, email or PAN. Click a taxpayer to open their 360° view.</CardDescription>
         <div className="max-w-sm mt-3">
           <Input placeholder="Search" value={search} onChange={(event) => setSearch(event.target.value)} />
         </div>
@@ -33,6 +35,7 @@ export default function AdminCustomersPage() {
           <DataTable<UserSummary>
             rows={customers.data?.content ?? []}
             rowKey={(row) => row.id}
+            onRowClick={(row) => router.push(`/admin/finance/clients/${row.id}`)}
             emptyMessage={customers.isLoading ? "Loading…" : "No taxpayers matched."}
             columns={[
               { header: "Name", cell: (row) => row.name },
