@@ -1,6 +1,8 @@
 import { defaultContent, mergeContent, type SiteContent } from "@/lib/site-content";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
+// Server-side fetch: CMS_API_URL lets containers reach the API over the internal network.
+const API_BASE_URL =
+  process.env.CMS_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api";
 /** How long a published edit may take to appear on the public site. */
 const REVALIDATE_SECONDS = Number(process.env.CMS_REVALIDATE_SECONDS ?? 60);
 

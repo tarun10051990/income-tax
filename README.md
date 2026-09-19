@@ -43,7 +43,7 @@ audit trail of every state change.
 |-------|-----------|
 | Frontend | Next.js 16, React, TypeScript, Tailwind CSS |
 | Backend | Java 17, Spring Boot 3.2, Spring Security |
-| Database | PostgreSQL (H2 for dev) |
+| Database | MySQL 8 (`SPRING_PROFILES_ACTIVE=mysql`, schema in `backend/src/main/resources/db/mysql/schema.sql`); H2 in-memory for dev |
 | Auth | JWT + BCrypt, TOTP for staff |
 | Docs | Springdoc OpenAPI |
 | Exports | Apache POI (Excel), OpenPDF |
@@ -102,6 +102,20 @@ mvn spring-boot:run
 | `SEED_DEMO_USERS` | `false` | Seed demo customer and staff accounts |
 | `SEED_USER_PASSWORD` | empty | Password for the seeded accounts; required when seeding |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8080/api` | API base URL used by the frontend |
+| `SPRING_PROFILES_ACTIVE` | unset (H2) | Set to `mysql` to use MySQL; then set `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` |
+| `CMS_API_URL` | `NEXT_PUBLIC_API_URL` | API URL the Next.js server uses for CMS content (internal network in containers) |
+
+### MySQL
+
+```bash
+mysql -u root -p < backend/src/main/resources/db/mysql/schema.sql   # creates database taxfilr + all tables
+cd backend
+SPRING_PROFILES_ACTIVE=mysql DATABASE_URL='jdbc:mysql://localhost:3306/taxfilr?serverTimezone=UTC' \
+  DATABASE_USERNAME=taxfilr DATABASE_PASSWORD=... mvn spring-boot:run
+```
+
+Or `docker compose up -d --build` (MySQL + API + site; needs `JWT_SECRET` in `.env`).
+Cloud deployment: see [docs/DEPLOY_AWS.md](docs/DEPLOY_AWS.md).
 
 No credentials ship in the repository. For a local walkthrough, seed accounts with a password you
 choose:
