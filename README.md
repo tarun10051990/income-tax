@@ -128,6 +128,11 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--app.seed-demo-users=true --ap
 The first staff sign in at `/admin/login` returns a TOTP secret that must be enrolled in an
 authenticator app before the account can reach any admin endpoint.
 
+Seeded staff accounts (all use `SEED_USER_PASSWORD`): `owner@taxfiler.in` (SUPER_ADMIN),
+`admin@taxfiler.in` (ADMIN), `it.pro@taxfiler.in`, `gst.pro@taxfiler.in`, `reviewer@taxfiler.in`,
+`operator@taxfiler.in`, `support@taxfiler.in`. Change the password after the first sign in via
+**Change password** in the admin sidebar (`POST /api/auth/change-password`).
+
 ## Filing flow
 
 1. Taxpayer signs in, completes their profile, and starts an income tax or GST return
