@@ -5,7 +5,7 @@ import Reveal from "@/components/marketing/Reveal";
 import { Container, CtaLink, PageHero, Section, SectionHeading } from "@/components/marketing/primitives";
 import { FeaturedServices, LeadCta } from "@/components/marketing/sections";
 import type { PricingAudience } from "@/content/pricing";
-import { pricingTabs } from "@/content/pricing";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Pricing: Transparent Plans for ITR, GST, Accounting & Startups",
@@ -35,6 +35,7 @@ const pricingFaqs = [
 
 export default async function PricingPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab } = await searchParams;
+  const { pricing: pricingTabs } = await getSiteContent();
   const initial = pricingTabs.some((item) => item.id === tab) ? (tab as PricingAudience) : "individuals";
 
   return (

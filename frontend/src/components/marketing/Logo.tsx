@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import { siteConfig } from "@/content/site";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { cn } from "@/lib/utils";
 
 export default function Logo({ dark = false, className }: { dark?: boolean; className?: string }) {
+  const { site: siteConfig } = useSiteContent();
   return (
     <Link href="/" className={cn("flex items-center gap-2.5", className)} aria-label={`${siteConfig.name} home`}>
       <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-navy to-primary-light shadow-sm">

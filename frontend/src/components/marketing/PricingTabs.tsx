@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { pricingTabs, type PricingAudience } from "@/content/pricing";
+import type { PricingAudience } from "@/content/pricing";
 import { formatPrice } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { cn } from "@/lib/utils";
 
 export default function PricingTabs({ initial = "individuals" }: { initial?: PricingAudience }) {
+  const { site: siteConfig, pricing: pricingTabs } = useSiteContent();
   const [active, setActive] = useState<PricingAudience>(initial);
   const tab = pricingTabs.find((item) => item.id === active) ?? pricingTabs[0];
 

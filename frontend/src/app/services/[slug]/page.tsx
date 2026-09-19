@@ -9,8 +9,9 @@ import Reveal from "@/components/marketing/Reveal";
 import ServiceCard from "@/components/marketing/ServiceCard";
 import { serviceIcons } from "@/components/marketing/icons";
 import { Container, CtaLink, Section, SectionHeading } from "@/components/marketing/primitives";
-import { formatPrice, getService, services } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import { formatPrice, services } from "@/content/services";
+import { getSiteContent } from "@/lib/cms-server";
+import { findService } from "@/lib/site-content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,7 +21,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const service = getService(slug);
+  const service = findService(await getSiteContent(), slug);
   if (!service) return {};
   return {
     title: service.seoTitle,
@@ -32,19 +33,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ServicePage({ params }: Props) {
   const { slug } = await params;
-  const service = getService(slug);
+  const content = await getSiteContent();
+  const siteConfig = content.site;
+  const service = findService(content, slug);
   if (!service) notFound();
 
   const Icon = serviceIcons[service.icon];
-  const related = services.filter((item) => item.slug !== service.slug && item.audiences.some((a) => service.audiences.includes(a))).slice(0, 3);
+  const related = content.services.filter((item) => item.slug !== service.slug && item.audiences.some((a) => service.audiences.includes(a))).slice(0, 3);
 
   return (
     <>
       <JsonLd
         data={[
-          serviceSchema(service),
+          serviceSchema(siteConfig, service),
           faqSchema(service.faqs),
-          breadcrumbSchema([
+          breadcrumbSchema(siteConfig, [
             { name: "Home", href: "/" },
             { name: "Services", href: "/services" },
             { name: service.name, href: `/services/${service.slug}` },

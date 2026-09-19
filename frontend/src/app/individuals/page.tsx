@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AudiencePage from "@/components/marketing/AudiencePage";
-import { generalFaqs } from "@/content/marketing";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Tax Services for Individuals: ITR Filing, Capital Gains & Planning",
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/individuals" },
 };
 
-export default function IndividualsPage() {
+export default async function IndividualsPage() {
+  const { faqs: generalFaqs } = await getSiteContent();
   return (
     <AudiencePage
       id="individuals"
@@ -31,7 +32,7 @@ export default function IndividualsPage() {
           description: "Received a notice or waiting on a refund? We respond on your behalf and follow up with the department.",
         },
       ]}
-      faqs={[generalFaqs[0], generalFaqs[1], generalFaqs[6], generalFaqs[7], generalFaqs[8]]}
+      faqs={[0, 1, 6, 7, 8].map((i) => generalFaqs[i]).filter(Boolean)}
     />
   );
 }

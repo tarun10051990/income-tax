@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/marketing/LegalPage";
-import { legalUpdated, privacySections } from "@/content/legal";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/privacy" },
 };
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { legal } = await getSiteContent();
+  const page = legal.privacy;
   return (
     <LegalPage
       title="Privacy Policy"
       intro="How we collect, use, protect and retain your personal and financial information."
-      updated={legalUpdated}
-      sections={privacySections}
+      updated={page.updated}
+      sections={page.sections}
       pathname="/privacy"
     />
   );

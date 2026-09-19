@@ -1,7 +1,7 @@
 import type { FaqItem } from "./FaqAccordion";
 import type { Service } from "@/content/services";
 import type { ResourcePost } from "@/content/resources";
-import { siteConfig } from "@/content/site";
+import type { SiteConfig } from "@/lib/site-content";
 
 type Schema = Record<string, unknown>;
 
@@ -20,7 +20,7 @@ export default function JsonLd({ data }: { data: Schema | Schema[] }) {
   );
 }
 
-export function organizationSchema(): Schema {
+export function organizationSchema(siteConfig: SiteConfig): Schema {
   const { contact } = siteConfig;
   return {
     "@context": "https://schema.org",
@@ -60,7 +60,7 @@ export function faqSchema(items: FaqItem[]): Schema {
   };
 }
 
-export function serviceSchema(service: Service): Schema {
+export function serviceSchema(siteConfig: SiteConfig, service: Service): Schema {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -80,7 +80,7 @@ export function serviceSchema(service: Service): Schema {
   };
 }
 
-export function articleSchema(post: ResourcePost): Schema {
+export function articleSchema(siteConfig: SiteConfig, post: ResourcePost): Schema {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -93,7 +93,7 @@ export function articleSchema(post: ResourcePost): Schema {
   };
 }
 
-export function breadcrumbSchema(items: Array<{ name: string; href: string }>): Schema {
+export function breadcrumbSchema(siteConfig: SiteConfig, items: Array<{ name: string; href: string }>): Schema {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

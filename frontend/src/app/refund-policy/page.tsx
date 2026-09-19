@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/marketing/LegalPage";
-import { legalUpdated, refundSections } from "@/content/legal";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/refund-policy" },
 };
 
-export default function RefundPolicyPage() {
+export default async function RefundPolicyPage() {
+  const { legal } = await getSiteContent();
+  const page = legal.refund;
   return (
     <LegalPage
       title="Refund Policy"
       intro="When professional fees are refundable, what is excluded and how to request a refund."
-      updated={legalUpdated}
-      sections={refundSections}
+      updated={page.updated}
+      sections={page.sections}
       pathname="/refund-policy"
     />
   );

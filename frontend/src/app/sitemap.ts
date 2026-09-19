@@ -1,7 +1,5 @@
 import type { MetadataRoute } from "next";
-import { resourcePosts } from "@/content/resources";
-import { services } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
 const staticRoutes = [
   "",
@@ -21,7 +19,8 @@ const staticRoutes = [
   "/refund-policy",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const { site: siteConfig, services, resources: resourcePosts } = await getSiteContent();
   const now = new Date();
   return [
     ...staticRoutes.map((route) => ({

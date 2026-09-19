@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container } from "./primitives";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
 export interface LegalSection {
   heading: string;
@@ -15,7 +15,7 @@ const legalLinks = [
   { label: "Refund Policy", href: "/refund-policy" },
 ];
 
-export default function LegalPage({
+export default async function LegalPage({
   title,
   intro,
   updated,
@@ -28,6 +28,7 @@ export default function LegalPage({
   sections: LegalSection[];
   pathname: string;
 }) {
+  const { site: siteConfig } = await getSiteContent();
   return (
     <>
       <div className="border-b border-slate-200 bg-slate-50">

@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Check, Users } from "lucide-react";
-import { clientLogos, howItWorks, whyChooseUs, type Audience } from "@/content/marketing";
-import { getCategoryLabel, type ResourcePost } from "@/content/resources";
-import { featuredServices, formatPrice, type Service } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import type { Audience } from "@/content/marketing";
+import type { ResourcePost } from "@/content/resources";
+import { formatPrice, type Service } from "@/content/services";
+import { getSiteContent } from "@/lib/cms-server";
+import { categoryLabel, featuredServicesOf } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 import Counter from "./Counter";
 import LeadForm from "./LeadForm";
@@ -11,7 +12,8 @@ import Reveal from "./Reveal";
 import { featureIcons, serviceIcons } from "./icons";
 import { Container, CtaLink, Section, SectionHeading } from "./primitives";
 
-export function StatsBand() {
+export async function StatsBand() {
+  const { site: siteConfig } = await getSiteContent();
   return (
     <div className="border-y border-slate-200 bg-white">
       <Container>
@@ -63,7 +65,8 @@ export function AudienceCards({ items }: { items: Audience[] }) {
   );
 }
 
-export function HowItWorks({ dark = false }: { dark?: boolean }) {
+export async function HowItWorks({ dark = false }: { dark?: boolean }) {
+  const { howItWorks } = await getSiteContent();
   return (
     <div className="relative">
       <Reveal className="process-line absolute left-[12.5%] right-[12.5%] top-7 hidden h-0.5 bg-gradient-to-r from-emerald via-primary-light to-emerald lg:block">
@@ -89,7 +92,8 @@ export function HowItWorks({ dark = false }: { dark?: boolean }) {
   );
 }
 
-export function WhyChooseUs() {
+export async function WhyChooseUs() {
+  const { whyChooseUs } = await getSiteContent();
   return (
     <div className="grid items-center gap-12 lg:grid-cols-5">
       <Reveal className="lg:col-span-2">
@@ -144,10 +148,13 @@ export function WhyChooseUs() {
   );
 }
 
-export function FeaturedServices({ items = featuredServices }: { items?: Service[] }) {
+export async function FeaturedServices({ items }: { items?: Service[] }) {
+  const content = await getSiteContent();
+  const siteConfig = content.site;
+  const list = items ?? featuredServicesOf(content);
   return (
     <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-      {items.map((service, i) => {
+      {list.map((service, i) => {
         const Icon = serviceIcons[service.icon];
         return (
           <Reveal key={service.slug} delay={i * 80} className="h-full">
@@ -178,7 +185,8 @@ export function FeaturedServices({ items = featuredServices }: { items?: Service
   );
 }
 
-export function LogoCloud() {
+export async function LogoCloud() {
+  const { clientLogos } = await getSiteContent();
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
       {clientLogos.map((logo, i) => (
@@ -198,7 +206,8 @@ export function LogoCloud() {
   );
 }
 
-export function ResourceCard({ post, index = 0 }: { post: ResourcePost; index?: number }) {
+export async function ResourceCard({ post, index = 0 }: { post: ResourcePost; index?: number }) {
+  const content = await getSiteContent();
   return (
     <Reveal delay={index * 60} as="article" className="h-full">
       <Link
@@ -206,7 +215,7 @@ export function ResourceCard({ post, index = 0 }: { post: ResourcePost; index?: 
         className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:-translate-y-1 hover:shadow-lg"
       >
         <div className="flex items-center justify-between gap-3 text-xs">
-          <span className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald">{getCategoryLabel(post.category)}</span>
+          <span className="rounded-full bg-emerald/10 px-2.5 py-1 font-semibold text-emerald">{categoryLabel(content, post.category)}</span>
           <time dateTime={post.date} className="inline-flex items-center gap-1 text-slate-500">
             <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
             {new Date(post.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
@@ -257,7 +266,8 @@ export function LeadCta({ source, defaultService }: { source: string; defaultSer
   );
 }
 
-export function SectionCta({ title, subtitle, href = "/contact", label = "Talk to an Expert" }: { title: string; subtitle?: string; href?: string; label?: string }) {
+export async function SectionCta({ title, subtitle, href = "/contact", label = "Talk to an Expert" }: { title: string; subtitle?: string; href?: string; label?: string }) {
+  const { site: siteConfig } = await getSiteContent();
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm sm:p-12">
       <SectionHeading title={title} subtitle={subtitle} />

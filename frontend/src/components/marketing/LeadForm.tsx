@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { CircleCheckBig, LoaderCircle, ShieldCheck, TriangleAlert } from "lucide-react";
-import { services } from "@/content/services";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { LEAD_TYPES, validateLead, type LeadErrors, type LeadInput } from "@/lib/leads";
 import { cn } from "@/lib/utils";
 
@@ -26,6 +26,7 @@ export default function LeadForm({
   submitLabel?: string;
   className?: string;
 }) {
+  const { services } = useSiteContent();
   const [values, setValues] = useState<LeadInput>({ ...EMPTY, service: defaultService ?? "" });
   const [errors, setErrors] = useState<LeadErrors>({});
   const [status, setStatus] = useState<Status>({ state: "idle" });

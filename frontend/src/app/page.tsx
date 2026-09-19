@@ -18,23 +18,24 @@ import {
   StatsBand,
   WhyChooseUs,
 } from "@/components/marketing/sections";
-import { audiences, generalFaqs } from "@/content/marketing";
-import { resourcePosts } from "@/content/resources";
-import { services } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
-export const metadata: Metadata = {
-  title: `${siteConfig.name} | Income Tax, GST, Accounting & Compliance Experts in India`,
-  description: siteConfig.description,
-  alternates: { canonical: "/" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { site: siteConfig } = await getSiteContent();
+  return {
+    title: `${siteConfig.name} | Income Tax, GST, Accounting & Compliance Experts in India`,
+    description: siteConfig.description,
+    alternates: { canonical: "/" },
+  };
+}
 
-const homeFaqs = generalFaqs.slice(0, 6);
-
-export default function HomePage() {
+export default async function HomePage() {
+  const content = await getSiteContent();
+  const { site: siteConfig, services, audiences, resources: resourcePosts } = content;
+  const homeFaqs = content.faqs.slice(0, 6);
   return (
     <>
-      <JsonLd data={[organizationSchema(), faqSchema(homeFaqs)]} />
+      <JsonLd data={[organizationSchema(siteConfig), faqSchema(homeFaqs)]} />
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-slate-50">

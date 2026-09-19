@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
-import { testimonials } from "@/content/marketing";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { cn } from "@/lib/utils";
 
 export default function TestimonialCarousel() {
+  const { testimonials } = useSiteContent();
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
 
@@ -16,7 +17,7 @@ export default function TestimonialCarousel() {
     const card = track.children[clamped] as HTMLElement | undefined;
     card?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
     setIndex(clamped);
-  }, []);
+  }, [testimonials.length]);
 
   useEffect(() => {
     const track = trackRef.current;
