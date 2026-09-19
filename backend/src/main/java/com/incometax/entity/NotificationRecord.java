@@ -39,6 +39,7 @@ public class NotificationRecord {
     private Channel channel = Channel.IN_APP;
 
     @Builder.Default
+    @Column(name = "is_read")
     private boolean read = false;
 
     @Builder.Default

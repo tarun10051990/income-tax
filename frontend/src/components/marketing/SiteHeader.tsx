@@ -66,17 +66,19 @@ export default function SiteHeader() {
           scrolled ? "border-slate-200/80 bg-white/90 shadow-sm backdrop-blur-md" : "border-transparent bg-white",
         )}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Logo />
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+          <div className="shrink-0">
+            <Logo />
+          </div>
 
-          <ul className="hidden items-center gap-1 lg:flex">
+          <ul className="hidden items-center gap-0.5 whitespace-nowrap xl:flex 2xl:gap-1">
             {mainNav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   aria-current={isActive(item.href) ? "page" : undefined}
                   className={cn(
-                    "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "rounded-lg px-2.5 py-2 text-sm font-medium transition-colors 2xl:px-3",
                     isActive(item.href) ? "text-navy" : "text-slate-600 hover:bg-slate-100 hover:text-navy",
                   )}
                 >
@@ -86,10 +88,10 @@ export default function SiteHeader() {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
             <a
               href={siteConfig.contact.phoneHref}
-              className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-navy xl:inline-flex"
+              className="hidden items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:text-navy 2xl:inline-flex"
             >
               <Phone className="h-4 w-4" aria-hidden="true" />
               {siteConfig.contact.phone}
@@ -99,7 +101,7 @@ export default function SiteHeader() {
             </CtaLink>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-navy hover:bg-slate-100 lg:hidden"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-navy hover:bg-slate-100 xl:hidden"
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -113,7 +115,7 @@ export default function SiteHeader() {
         <div
           id="mobile-menu"
           className={cn(
-            "lg:hidden",
+            "xl:hidden",
             open ? "block border-t border-slate-200 bg-white" : "hidden",
           )}
         >
