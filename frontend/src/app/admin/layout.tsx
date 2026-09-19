@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AdminAuthProvider, useAdminAuth } from "@/contexts/AdminAuthContext";
 import Button from "@/components/ui/Button";
+import ChangePasswordModal from "@/components/admin/ChangePasswordModal";
 
 const NAVIGATION: { href: string; label: string; section: string }[] = [
   { href: "/admin", label: "Overview", section: "Work" },
@@ -38,6 +39,7 @@ function AdminShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { session, isAuthenticated, isReady, signOut } = useAdminAuth();
   const isLoginRoute = pathname === "/admin/login";
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (isReady && !isAuthenticated && !isLoginRoute) {
@@ -84,8 +86,12 @@ function AdminShell({ children }: { children: React.ReactNode }) {
             })}
           </div>
         ))}
-        <Button variant="ghost" size="sm" className="mt-auto" onClick={signOut}>Sign out</Button>
+        <div className="mt-auto flex flex-col gap-1">
+          <Button variant="ghost" size="sm" onClick={() => setChangingPassword(true)}>Change password</Button>
+          <Button variant="ghost" size="sm" onClick={signOut}>Sign out</Button>
+        </div>
       </aside>
+      <ChangePasswordModal isOpen={changingPassword} onClose={() => setChangingPassword(false)} scope="admin" />
       <div className="flex-1 min-w-0">{children}</div>
     </div>
   );

@@ -185,4 +185,43 @@ class AdminPortalIntegrationTest {
                                 + "\"configuration\":\"{\\\"GSTR_1\\\":{\\\"dueDayOfMonth\\\":13}}\"}"))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void staffCanChangeTheirOwnPasswordWithTheCurrentOne() throws Exception {
+        userRepository.save(User.builder()
+                .name("Platform Owner")
+                .email("pw.owner@taxfiler.in")
+                .password(passwordEncoder.encode(PASSWORD))
+                .role(User.Role.SUPER_ADMIN)
+                .onboardingComplete(true)
+                .mfaSecret(TotpUtil.generateSecret())
+                .build());
+        String token = "Bearer " + enrolAndSignIn("pw.owner@taxfiler.in");
+
+        mockMvc.perform(post("/api/auth/change-password")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"wrong-password\",\"newPassword\":\"Brand-New-Pass-1\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_PASSWORD"));
+
+        mockMvc.perform(post("/api/auth/change-password")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"" + PASSWORD + "\",\"newPassword\":\"Brand-New-Pass-1\"}"))
+                .andExpect(status().isOk());
+
+        String secret = userRepository.findByEmail("pw.owner@taxfiler.in").orElseThrow().getMfaSecret();
+        mockMvc.perform(post("/api/auth/admin/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"pw.owner@taxfiler.in\",\"password\":\"" + PASSWORD + "\","
+                                + "\"totpCode\":\"" + TotpUtil.code(secret, Instant.now()) + "\"}"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/api/auth/admin/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"pw.owner@taxfiler.in\",\"password\":\"Brand-New-Pass-1\","
+                                + "\"totpCode\":\"" + TotpUtil.code(secret, Instant.now()) + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.mfaEnabled").value(true));
+    }
 }

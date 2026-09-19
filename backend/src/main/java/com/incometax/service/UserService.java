@@ -135,6 +135,19 @@ public class UserService {
         return response(touchLogin(user), adminTokenTtl);
     }
 
+    public void changePassword(User user, String currentPassword, String newPassword) {
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            auditService.record("PASSWORD_CHANGE_FAILED", "User", user.getId(), null, null);
+            throw ApiException.badRequest("INVALID_PASSWORD", "Current password is incorrect");
+        }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw ApiException.badRequest("SAME_PASSWORD", "New password must differ from the current password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        auditService.record("PASSWORD_CHANGED", "User", user.getId(), null, null);
+    }
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }

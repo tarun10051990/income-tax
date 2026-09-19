@@ -4,6 +4,7 @@ import com.incometax.common.ApiResponse;
 import com.incometax.dto.AdminAuthRequest;
 import com.incometax.dto.AuthRequest;
 import com.incometax.dto.AuthResponse;
+import com.incometax.dto.ChangePasswordRequest;
 import com.incometax.dto.MfaEnrolmentRequest;
 import com.incometax.dto.RegisterRequest;
 import com.incometax.marketplace.dto.MarketplaceRequests.ConsultantRegisterRequest;
@@ -63,5 +64,12 @@ public class AuthController {
     @Operation(summary = "Confirm an authenticator app and enable MFA on the signed in staff account")
     public ApiResponse<AuthResponse> enrolMfa(@Valid @RequestBody MfaEnrolmentRequest request) {
         return ApiResponse.ok(userService.completeMfaEnrolment(currentUser.require(), request.getTotpCode()));
+    }
+
+    @PostMapping("/change-password")
+    @Operation(summary = "Change the signed in user's password (requires the current password)")
+    public ApiResponse<Void> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        userService.changePassword(currentUser.require(), request.getCurrentPassword(), request.getNewPassword());
+        return ApiResponse.ok(null);
     }
 }
