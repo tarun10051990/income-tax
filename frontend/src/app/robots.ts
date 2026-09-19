@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
-export default function robots(): MetadataRoute.Robots {
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { site: siteConfig } = await getSiteContent();
   return {
     rules: [
       {

@@ -4,8 +4,7 @@ import JsonLd, { faqSchema } from "@/components/marketing/JsonLd";
 import Reveal from "@/components/marketing/Reveal";
 import { Container, CtaLink, PageHero, Section } from "@/components/marketing/primitives";
 import { LeadCta } from "@/components/marketing/sections";
-import { generalFaqs } from "@/content/marketing";
-import { services } from "@/content/services";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Frequently Asked Questions",
@@ -13,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/faq" },
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const { faqs: generalFaqs, services } = await getSiteContent();
   const serviceGroups = services.filter((service) => service.faqs.length > 0);
   return (
     <>

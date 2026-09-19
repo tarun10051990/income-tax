@@ -3,7 +3,7 @@ import HowToVideos from "@/components/marketing/HowToVideos";
 import ResourceExplorer from "@/components/marketing/ResourceExplorer";
 import { Container, CtaLink, PageHero, Section, SectionHeading } from "@/components/marketing/primitives";
 import { LeadCta } from "@/components/marketing/sections";
-import { resourceCategories, resourcePosts } from "@/content/resources";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Resources: Tax Updates, GST Guides & Compliance Insights",
@@ -14,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function ResourcesPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const { category } = await searchParams;
+  const { resourceCategories, resources: resourcePosts } = await getSiteContent();
   const initialCategory = resourceCategories.some((item) => item.id === category) ? category : undefined;
 
   return (

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/marketing/LegalPage";
-import { legalUpdated, disclaimerSections } from "@/content/legal";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Disclaimer",
@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/disclaimer" },
 };
 
-export default function DisclaimerPage() {
+export default async function DisclaimerPage() {
+  const { legal } = await getSiteContent();
+  const page = legal.disclaimer;
   return (
     <LegalPage
       title="Disclaimer"
       intro="Website content is general information only; we are an independent firm with no government affiliation."
-      updated={legalUpdated}
-      sections={disclaimerSections}
+      updated={page.updated}
+      sections={page.sections}
       pathname="/disclaimer"
     />
   );

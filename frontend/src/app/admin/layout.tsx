@@ -26,6 +26,7 @@ const NAVIGATION: { href: string; label: string; section: string }[] = [
   { href: "/admin/marketplace/payouts", label: "Payouts", section: "Marketplace" },
   { href: "/admin/marketplace/reviews", label: "Reviews", section: "Marketplace" },
   { href: "/admin/marketplace/pricing", label: "Pricing and categories", section: "Marketplace" },
+  { href: "/admin/cms", label: "Website content", section: "Administration" },
   { href: "/admin/notifications", label: "Templates", section: "Administration" },
   { href: "/admin/users", label: "Staff", section: "Administration" },
   { href: "/admin/config", label: "Rules and deadlines", section: "Administration" },

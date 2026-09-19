@@ -3,8 +3,8 @@ import JsonLd, { breadcrumbSchema } from "@/components/marketing/JsonLd";
 import HowToVideos from "@/components/marketing/HowToVideos";
 import { Container, CtaLink, PageHero, Section } from "@/components/marketing/primitives";
 import { LeadCta } from "@/components/marketing/sections";
-import { howToVideos, videoPoster, videoSrc } from "@/content/videos";
-import { siteConfig } from "@/content/site";
+import { videoPoster, videoSrc } from "@/content/videos";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "How-to Videos: File Your ITR and GST Returns Step by Step",
@@ -13,12 +13,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/resources/videos" },
 };
 
-export default function HowToVideosPage() {
+export default async function HowToVideosPage() {
+  const { site: siteConfig, videos: howToVideos } = await getSiteContent();
   return (
     <>
       <JsonLd
         data={[
-          breadcrumbSchema([
+          breadcrumbSchema(siteConfig, [
             { name: "Home", href: "/" },
             { name: "Resources", href: "/resources" },
             { name: "How-to videos", href: "/resources/videos" },

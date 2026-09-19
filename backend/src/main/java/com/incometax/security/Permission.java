@@ -37,5 +37,7 @@ public enum Permission {
     REVIEW_MODERATE,
     PAYOUT_MANAGE,
     FINANCE_READ_ALL,
-    FINANCE_MANAGE
+    FINANCE_MANAGE,
+    CMS_READ,
+    CMS_MANAGE
 }

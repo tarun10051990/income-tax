@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Clock } from "lucide-react";
-import { howToVideos, videoPoster, videoSrc, type HowToVideo } from "@/content/videos";
+import { videoPoster, videoSrc, type HowToVideo } from "@/content/videos";
+import { getSiteContent } from "@/lib/cms-server";
 import { cn } from "@/lib/utils";
 
 export function HowToVideoCard({ video, showSteps = true }: { video: HowToVideo; showSteps?: boolean }) {
@@ -55,7 +56,8 @@ export function HowToVideoCard({ video, showSteps = true }: { video: HowToVideo;
   );
 }
 
-export default function HowToVideos({ showSteps = true, className }: { showSteps?: boolean; className?: string }) {
+export default async function HowToVideos({ showSteps = true, className }: { showSteps?: boolean; className?: string }) {
+  const { videos: howToVideos } = await getSiteContent();
   return (
     <div className={cn("grid gap-8 lg:grid-cols-2", className)}>
       {howToVideos.map((video) => (

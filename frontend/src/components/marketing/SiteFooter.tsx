@@ -1,11 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { footerColumns, siteConfig } from "@/content/site";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import Logo from "./Logo";
 import { socialIcons } from "./icons";
 import { Container } from "./primitives";
 
 export default function SiteFooter() {
+  const { site: siteConfig, footer: footerColumns } = useSiteContent();
   const { contact } = siteConfig;
   return (
     <footer className="border-t border-slate-800 bg-navy-deep text-slate-300">

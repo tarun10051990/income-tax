@@ -3,7 +3,7 @@ import Reveal from "@/components/marketing/Reveal";
 import { Container, CtaLink, PageHero, Section } from "@/components/marketing/primitives";
 import { HowItWorks, LeadCta } from "@/components/marketing/sections";
 import ServiceFilter from "@/components/marketing/ServiceFilter";
-import { services } from "@/content/services";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Services: Income Tax, GST, Accounting, TDS, ROC & Registration",
@@ -12,7 +12,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services" },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const { services } = await getSiteContent();
   return (
     <>
       <PageHero

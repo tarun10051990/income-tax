@@ -1,7 +1,6 @@
 import { Check } from "lucide-react";
 import type { PricingAudience } from "@/content/pricing";
-import { services } from "@/content/services";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 import FaqAccordion, { type FaqItem } from "./FaqAccordion";
 import JsonLd, { breadcrumbSchema, faqSchema } from "./JsonLd";
 import PricingTabs from "./PricingTabs";
@@ -20,11 +19,13 @@ export interface AudiencePageProps {
   pathname: string;
 }
 
-export default function AudiencePage({ id, eyebrow, title, subtitle, pains, faqs, pathname }: AudiencePageProps) {
+export default async function AudiencePage({ id, eyebrow, title, subtitle, pains, faqs, pathname }: AudiencePageProps) {
+  const content = await getSiteContent();
+  const { site: siteConfig, services } = content;
   const relevant = services.filter((service) => service.audiences.includes(id));
   return (
     <>
-      <JsonLd data={[faqSchema(faqs), breadcrumbSchema([{ name: "Home", href: "/" }, { name: eyebrow, href: pathname }])]} />
+      <JsonLd data={[faqSchema(faqs), breadcrumbSchema(siteConfig, [{ name: "Home", href: "/" }, { name: eyebrow, href: pathname }])]} />
       <PageHero eyebrow={eyebrow} title={title} subtitle={subtitle}>
         <CtaLink href={siteConfig.portal.getStartedHref} variant="secondary" size="lg" arrow>
           Get Started

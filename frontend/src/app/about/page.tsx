@@ -4,21 +4,24 @@ import JsonLd, { organizationSchema } from "@/components/marketing/JsonLd";
 import Reveal from "@/components/marketing/Reveal";
 import { Container, CtaLink, PageHero, Section, SectionHeading } from "@/components/marketing/primitives";
 import { LeadCta, LogoCloud, StatsBand } from "@/components/marketing/sections";
-import { companyValues, teamMembers } from "@/content/marketing";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
-export const metadata: Metadata = {
-  title: "About Us: Chartered Accountants, Company Secretaries & Tax Advisors",
-  description: `${siteConfig.name} is a team of chartered accountants, company secretaries and tax professionals helping individuals, startups and businesses across India stay compliant.`,
-  alternates: { canonical: "/about" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { site: siteConfig } = await getSiteContent();
+  return {
+    title: "About Us: Chartered Accountants, Company Secretaries & Tax Advisors",
+    description: `${siteConfig.name} is a team of chartered accountants, company secretaries and tax professionals helping individuals, startups and businesses across India stay compliant.`,
+    alternates: { canonical: "/about" },
+  };
+}
 
 const valueIcons = [Target, ShieldCheck, HeartHandshake];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { site: siteConfig, team: teamMembers, values: companyValues } = await getSiteContent();
   return (
     <>
-      <JsonLd data={organizationSchema()} />
+      <JsonLd data={organizationSchema(siteConfig)} />
       <PageHero
         eyebrow="About us"
         title="Professionals who treat your compliance like their own"

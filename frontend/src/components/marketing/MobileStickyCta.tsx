@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Phone } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa6";
-import { siteConfig } from "@/content/site";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 
 export default function MobileStickyCta() {
+  const { site: siteConfig } = useSiteContent();
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 p-3 backdrop-blur md:hidden" role="region" aria-label="Quick contact">
       <div className="flex items-center gap-2">

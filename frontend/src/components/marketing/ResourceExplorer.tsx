@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { resourceCategories, type ResourcePost } from "@/content/resources";
+import type { ResourcePost } from "@/content/resources";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { cn } from "@/lib/utils";
 import { ResourceCard } from "./sections";
 
 export default function ResourceExplorer({ posts, initialCategory }: { posts: ResourcePost[]; initialCategory?: string }) {
+  const { resourceCategories } = useSiteContent();
   const [category, setCategory] = useState<string>(initialCategory ?? "all");
   const [query, setQuery] = useState("");
 

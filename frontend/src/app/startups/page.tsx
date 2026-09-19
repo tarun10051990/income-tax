@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AudiencePage from "@/components/marketing/AudiencePage";
-import { generalFaqs } from "@/content/marketing";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Startup Services: Incorporation, DPIIT, Accounting & Fundraising Compliance",
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/startups" },
 };
 
-export default function StartupsPage() {
+export default async function StartupsPage() {
+  const { faqs: generalFaqs } = await getSiteContent();
   return (
     <AudiencePage
       id="startups"
@@ -31,7 +32,7 @@ export default function StartupsPage() {
           description: "Valuation reports, PAS-3, SH-7 and shareholder agreement support so your round closes on schedule.",
         },
       ]}
-      faqs={[generalFaqs[5], generalFaqs[2], generalFaqs[4], generalFaqs[7], generalFaqs[9]]}
+      faqs={[5, 2, 4, 7, 9].map((i) => generalFaqs[i]).filter(Boolean)}
     />
   );
 }

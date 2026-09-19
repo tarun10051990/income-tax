@@ -4,13 +4,16 @@ import JsonLd, { organizationSchema } from "@/components/marketing/JsonLd";
 import LeadForm from "@/components/marketing/LeadForm";
 import Reveal from "@/components/marketing/Reveal";
 import { Container, CtaLink, PageHero, Section } from "@/components/marketing/primitives";
-import { siteConfig } from "@/content/site";
+import { getSiteContent } from "@/lib/cms-server";
 
-export const metadata: Metadata = {
-  title: "Contact Us: Talk to a Tax Expert",
-  description: `Call, WhatsApp or book a free consultation with ${siteConfig.name}. Offices in ${siteConfig.contact.address.city}; serving clients across India.`,
-  alternates: { canonical: "/contact" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { site: siteConfig } = await getSiteContent();
+  return {
+    title: "Contact Us: Talk to a Tax Expert",
+    description: `Call, WhatsApp or book a free consultation with ${siteConfig.name}. Offices in ${siteConfig.contact.address.city}; serving clients across India.`,
+    alternates: { canonical: "/contact" },
+  };
+}
 
 const INTENT_SERVICE: Record<string, string> = {
   "custom-plan": "Custom Plan",
@@ -19,11 +22,12 @@ const INTENT_SERVICE: Record<string, string> = {
 export default async function ContactPage({ searchParams }: { searchParams: Promise<{ intent?: string; service?: string }> }) {
   const { intent, service } = await searchParams;
   const defaultService = service ?? (intent ? INTENT_SERVICE[intent] : undefined);
+  const { site: siteConfig } = await getSiteContent();
   const { contact } = siteConfig;
 
   return (
     <>
-      <JsonLd data={organizationSchema()} />
+      <JsonLd data={organizationSchema(siteConfig)} />
       <PageHero
         eyebrow="Contact"
         title="Let’s talk about your taxes and compliance"

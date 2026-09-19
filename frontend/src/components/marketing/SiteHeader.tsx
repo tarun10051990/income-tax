@@ -4,12 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Phone, X } from "lucide-react";
-import { mainNav, siteConfig } from "@/content/site";
+import { useSiteContent } from "@/contexts/SiteContentContext";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { CtaLink } from "./primitives";
 
 export default function SiteHeader() {
+  const { site: siteConfig, nav: mainNav } = useSiteContent();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

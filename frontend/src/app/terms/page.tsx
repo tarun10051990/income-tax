@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LegalPage from "@/components/marketing/LegalPage";
-import { legalUpdated, termsSections } from "@/content/legal";
+import { getSiteContent } from "@/lib/cms-server";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
@@ -8,13 +8,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
 };
 
-export default function TermsPage() {
+export default async function TermsPage() {
+  const { legal } = await getSiteContent();
+  const page = legal.terms;
   return (
     <LegalPage
       title="Terms & Conditions"
       intro="The terms that govern our professional services, fees, responsibilities and liability."
-      updated={legalUpdated}
-      sections={termsSections}
+      updated={page.updated}
+      sections={page.sections}
       pathname="/terms"
     />
   );

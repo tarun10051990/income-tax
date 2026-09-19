@@ -5,7 +5,9 @@ import { ArrowLeft, CalendarDays, Clock } from "lucide-react";
 import JsonLd, { articleSchema, breadcrumbSchema } from "@/components/marketing/JsonLd";
 import { Container, CtaLink, Section } from "@/components/marketing/primitives";
 import { LeadCta, ResourceCard } from "@/components/marketing/sections";
-import { getCategoryLabel, getResourcePost, resourcePosts } from "@/content/resources";
+import { resourcePosts } from "@/content/resources";
+import { getSiteContent } from "@/lib/cms-server";
+import { categoryLabel, findResourcePost } from "@/lib/site-content";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -15,7 +17,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = getResourcePost(slug);
+  const post = findResourcePost(await getSiteContent(), slug);
   if (!post) return {};
   return {
     title: post.title,
@@ -27,19 +29,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ResourceArticlePage({ params }: Props) {
   const { slug } = await params;
-  const post = getResourcePost(slug);
+  const content = await getSiteContent();
+  const post = findResourcePost(content, slug);
   if (!post) notFound();
 
-  const related = resourcePosts.filter((item) => item.slug !== post.slug && item.category === post.category).slice(0, 3);
-  const fallback = resourcePosts.filter((item) => item.slug !== post.slug).slice(0, 3);
+  const posts = content.resources;
+  const related = posts.filter((item) => item.slug !== post.slug && item.category === post.category).slice(0, 3);
+  const fallback = posts.filter((item) => item.slug !== post.slug).slice(0, 3);
   const more = related.length > 0 ? related : fallback;
 
   return (
     <>
       <JsonLd
         data={[
-          articleSchema(post),
-          breadcrumbSchema([
+          articleSchema(content.site, post),
+          breadcrumbSchema(content.site, [
             { name: "Home", href: "/" },
             { name: "Resources", href: "/resources" },
             { name: post.title, href: `/resources/${post.slug}` },
@@ -54,7 +58,7 @@ export default async function ResourceArticlePage({ params }: Props) {
               All resources
             </Link>
             <p className="mt-6 inline-flex rounded-full bg-emerald/10 px-3 py-1 text-xs font-semibold text-emerald">
-              {getCategoryLabel(post.category)}
+              {categoryLabel(content, post.category)}
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight text-navy-deep sm:text-4xl lg:text-5xl">{post.title}</h1>
             <p className="mt-5 text-lg text-slate-600">{post.excerpt}</p>
