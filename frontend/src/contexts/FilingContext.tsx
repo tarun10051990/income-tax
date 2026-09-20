@@ -22,12 +22,39 @@ interface FilingContextType {
   setMetroCity: (v: boolean) => void;
   rentPaid: number;
   setRentPaid: (v: number) => void;
+  taxPaid: TaxPaid;
+  setTaxPaid: (v: TaxPaid) => void;
+  /** Starts a return with no Form 16 (business / professional filer). */
+  startWithoutForm16: (name: string) => void;
   resetFiling: () => void;
 }
 
 const FilingContext = createContext<FilingContextType | undefined>(undefined);
 
+export interface TaxPaid {
+  advanceTax: number;
+  otherTds: number;
+  /** Gross turnover / receipts, kept for the ITR form; tax uses the profit fields. */
+  businessTurnover: number;
+  professionalReceipts: number;
+}
+
+const defaultTaxPaid: TaxPaid = { advanceTax: 0, otherTds: 0, businessTurnover: 0, professionalReceipts: 0 };
+
+/** Empty Form 16 used when the taxpayer has no salary income. */
+export function blankForm16(name: string): Form16Data {
+  return {
+    employer: { name: "", tan: "", pan: "", address: "" },
+    employee: { name, pan: "", designation: "Self-employed / business" },
+    salary: { basicSalary: 0, hra: 0, specialAllowance: 0, bonus: 0, leaveEncashment: 0, otherAllowances: 0 },
+    deductions: { pfContribution: 0, professionalTax: 0, standardDeduction: 0, otherDeductions: 0 },
+    tax: { tdsDeducted: 0, taxDeposited: 0, taxableIncome: 0 },
+  };
+}
+
 const defaultAdditionalIncome: TaxInput["additionalIncome"] = {
+  businessIncome: 0,
+  professionalIncome: 0,
   savingsInterest: 0,
   fdInterest: 0,
   rdInterest: 0,
@@ -47,6 +74,7 @@ export function FilingProvider({ children }: { children: ReactNode }) {
   const [taxSuggestions, setTaxSuggestions] = useState<TaxSuggestion[]>([]);
   const [metroCity, setMetroCity] = useState(true);
   const [rentPaid, setRentPaid] = useState(0);
+  const [taxPaid, setTaxPaid] = useState<TaxPaid>(defaultTaxPaid);
 
   const computeTaxResult = useCallback(() => {
     if (!form16Data) return;
@@ -68,6 +96,8 @@ export function FilingProvider({ children }: { children: ReactNode }) {
       },
       additionalIncome,
       tdsDeducted: form16Data.tax.tdsDeducted,
+      advanceTax: taxPaid.advanceTax,
+      otherTds: taxPaid.otherTds,
       metroCity,
       rentPaid,
     };
@@ -77,7 +107,12 @@ export function FilingProvider({ children }: { children: ReactNode }) {
 
     const suggestions = generateTaxSuggestions(input);
     setTaxSuggestions(suggestions);
-  }, [form16Data, onboardingData, additionalIncome, extraDeductions, metroCity, rentPaid]);
+  }, [form16Data, onboardingData, additionalIncome, extraDeductions, metroCity, rentPaid, taxPaid]);
+
+  const startWithoutForm16 = useCallback((name: string) => {
+    setForm16Data(blankForm16(name));
+    setCurrentStep("additional_income");
+  }, []);
 
   const resetFiling = useCallback(() => {
     setCurrentStep("onboarding");
@@ -89,6 +124,7 @@ export function FilingProvider({ children }: { children: ReactNode }) {
     setTaxSuggestions([]);
     setMetroCity(true);
     setRentPaid(0);
+    setTaxPaid(defaultTaxPaid);
   }, []);
 
   return (
@@ -111,6 +147,9 @@ export function FilingProvider({ children }: { children: ReactNode }) {
         setMetroCity,
         rentPaid,
         setRentPaid,
+        taxPaid,
+        setTaxPaid,
+        startWithoutForm16,
         resetFiling,
       }}
     >

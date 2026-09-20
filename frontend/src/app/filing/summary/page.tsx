@@ -90,7 +90,7 @@ export default function SummaryPage() {
             <SummaryRow label="Income Tax" value={formatCurrency(regime === "new" ? taxResult.taxNewRegime : taxResult.taxOldRegime)} />
             <SummaryRow label="Cess (4%)" value={formatCurrency(regime === "new" ? taxResult.cessNew : taxResult.cessOld)} />
             <SummaryRow label="Total Tax" value={formatCurrency(totalTax)} bold />
-            <SummaryRow label="TDS Paid" value={`-${formatCurrency(form16Data.tax.tdsDeducted)}`} green />
+            <SummaryRow label="Tax already paid (TDS / advance tax)" value={`-${formatCurrency(taxResult.taxPaid)}`} green />
             <div className="pt-2 border-t border-border">
               <SummaryRow
                 label={refund >= 0 ? "Refund" : "Tax Due"}

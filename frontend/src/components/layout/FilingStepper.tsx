@@ -2,16 +2,17 @@
 
 import { cn } from "@/lib/utils";
 import { FilingStep } from "@/lib/types";
+import { usePortalText } from "@/components/filing/GuidedField";
 
-const STEPS: { key: FilingStep; label: string; icon: string }[] = [
-  { key: "upload", label: "Upload Form 16", icon: "1" },
-  { key: "review", label: "Review Data", icon: "2" },
-  { key: "additional_income", label: "Other Income", icon: "3" },
-  { key: "deductions", label: "Deductions", icon: "4" },
-  { key: "compute", label: "Tax Computation", icon: "5" },
-  { key: "suggestions", label: "Tax Saving Tips", icon: "6" },
-  { key: "generate", label: "Generate ITR", icon: "7" },
-  { key: "summary", label: "Summary", icon: "8" },
+const STEPS: { key: FilingStep; icon: string }[] = [
+  { key: "upload", icon: "1" },
+  { key: "review", icon: "2" },
+  { key: "additional_income", icon: "3" },
+  { key: "deductions", icon: "4" },
+  { key: "compute", icon: "5" },
+  { key: "suggestions", icon: "6" },
+  { key: "generate", icon: "7" },
+  { key: "summary", icon: "8" },
 ];
 
 interface FileStepperProps {
@@ -21,6 +22,7 @@ interface FileStepperProps {
 
 export default function FilingStepper({ currentStep, onStepClick }: FileStepperProps) {
   const currentIndex = STEPS.findIndex((s) => s.key === currentStep);
+  const t = usePortalText();
 
   return (
     <div className="bg-surface rounded-xl p-4 border border-border">
@@ -60,7 +62,7 @@ export default function FilingStepper({ currentStep, onStepClick }: FileStepperP
                   step.icon
                 )}
               </div>
-              <span className="text-sm font-medium">{step.label}</span>
+              <span className="text-sm font-medium">{t(`itr.steps.${step.key}`)}</span>
             </button>
           );
         })}

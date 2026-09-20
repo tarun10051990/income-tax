@@ -30,6 +30,7 @@ import { resourceCategories, resourcePosts, type ResourceCategory, type Resource
 import { services, type Service } from "@/content/services";
 import { footerColumns, mainNav, siteConfig } from "@/content/site";
 import { howToVideos, type HowToVideo } from "@/content/videos";
+import { fieldGuides, portalText, type FieldGuide } from "@/content/filing-guide";
 
 /** Turns `as const` literal types into their editable, wide equivalents. */
 export type Widen<T> = T extends string
@@ -55,6 +56,7 @@ export type TeamMember = Widen<(typeof teamMembers)[number]>;
 export type CompanyValue = Widen<(typeof companyValues)[number]>;
 export type LegalPageContent = { slug: LegalSlug; title: string; updated: string; sections: LegalSection[] };
 export type LegalSlug = "privacy" | "terms" | "disclaimer" | "refund";
+export type PortalTextEntry = { key: string; text: string };
 
 export interface SiteContent {
   site: SiteConfig;
@@ -74,6 +76,8 @@ export interface SiteContent {
   resources: ResourcePost[];
   videos: HowToVideo[];
   legal: Record<LegalSlug, LegalPageContent>;
+  fieldGuides: FieldGuide[];
+  portalText: PortalTextEntry[];
 }
 
 /** CMS collection names, in the order the admin screen lists them. */
@@ -95,7 +99,12 @@ export const CMS_COLLECTIONS: Array<{ key: keyof SiteContent; label: string; des
   { key: "resources", label: "Resources / blog", description: "Articles and guides." },
   { key: "videos", label: "How-to videos", description: "Walkthrough videos on Resources and Help." },
   { key: "legal", label: "Legal pages", description: "Privacy, terms, disclaimer, refund policy." },
+  { key: "fieldGuides", label: "Field guides (ITR & GST)", description: "Plain-language label, hint, where-to-find, example and Hindi text for every box in the ITR and GST forms. Edit one entry to change one field." },
+  { key: "portalText", label: "Portal text (ITR & GST)", description: "Headings, sentences and button labels of the filing and GST screens, one entry per phrase." },
 ];
+
+/** Collections whose published entries override defaults one `key` at a time instead of replacing the whole list. */
+const KEYED_COLLECTIONS = new Set<keyof SiteContent>(["fieldGuides", "portalText"]);
 
 /** Maps a `SiteContent` key to the backend collection name (snake_case). */
 export function collectionName(key: keyof SiteContent): string {
@@ -125,12 +134,14 @@ export const defaultContent: SiteContent = {
     disclaimer: { slug: "disclaimer", title: "Disclaimer", updated: legalUpdated, sections: disclaimerSections },
     refund: { slug: "refund", title: "Refund & Cancellation Policy", updated: legalUpdated, sections: refundSections },
   },
+  fieldGuides,
+  portalText,
 };
 
 /** Stable slug for an entry so the CMS import is idempotent and edits map back onto the same document. */
 export function entrySlug(key: keyof SiteContent, item: unknown, index: number): string {
   const record = (item ?? {}) as Record<string, unknown>;
-  const candidate = [record.slug, record.id, record.href, record.name, record.title, record.label, record.question, record.heading]
+  const candidate = [record.slug, record.id, record.key, record.href, record.name, record.title, record.label, record.question, record.heading]
     .find((v): v is string => typeof v === "string" && v.length > 0);
   const base = candidate ? candidate : `${key}-${index + 1}`;
   const slug = base
@@ -145,7 +156,7 @@ export function entrySlug(key: keyof SiteContent, item: unknown, index: number):
 /** Human-readable title for an entry, shown in the admin list. */
 export function entryTitle(item: unknown): string | undefined {
   const record = (item ?? {}) as Record<string, unknown>;
-  return [record.title, record.name, record.label, record.question, record.heading, record.tagline]
+  return [record.title, record.name, record.label, record.question, record.heading, record.tagline, record.key]
     .find((v): v is string => typeof v === "string" && v.length > 0)
     ?.slice(0, 200);
 }
@@ -180,6 +191,13 @@ export function mergeContent(published: Record<string, unknown[]> | null | undef
       for (const row of rows as LegalPageContent[]) {
         if (row.slug in merged.legal) merged.legal[row.slug] = { ...defaultContent.legal[row.slug], ...row };
       }
+    } else if (KEYED_COLLECTIONS.has(key)) {
+      const byKey = new Map<string, Record<string, unknown>>();
+      for (const item of defaultContent[key] as Array<Record<string, unknown> & { key: string }>) byKey.set(item.key, item);
+      for (const row of rows as Array<Record<string, unknown> & { key?: string }>) {
+        if (typeof row.key === "string" && row.key.length > 0) byKey.set(row.key, { ...(byKey.get(row.key) ?? {}), ...row });
+      }
+      (merged as unknown as Record<string, unknown>)[key] = [...byKey.values()];
     } else {
       (merged as unknown as Record<string, unknown>)[key] = rows;
     }
@@ -203,4 +221,12 @@ export function findResourcePost(content: SiteContent, slug: string): ResourcePo
 
 export function categoryLabel(content: SiteContent, id: string): string {
   return content.resourceCategories.find((category) => category.id === id)?.label ?? id;
+}
+
+export function fieldGuideOf(content: SiteContent, key: string): FieldGuide {
+  return content.fieldGuides.find((guide) => guide.key === key) ?? { key, label: key, hint: "" };
+}
+
+export function portalTextOf(content: SiteContent, key: string): string {
+  return content.portalText.find((entry) => entry.key === key)?.text ?? key;
 }

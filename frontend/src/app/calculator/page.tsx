@@ -48,6 +48,8 @@ export default function TaxCalculatorPage() {
         otherDeductions: 0,
       },
       additionalIncome: {
+        businessIncome: 0,
+        professionalIncome: 0,
         savingsInterest: 0,
         fdInterest: 0,
         rdInterest: 0,

@@ -16,6 +16,8 @@ export default function GeneratePage() {
   const [itrType, setItrType] = useState<string>(() => {
     if (onboardingData?.employmentType === "business") return "ITR-3";
     if (onboardingData?.employmentType === "freelancer") return "ITR-4";
+    // Business / professional profit declared without books → presumptive ITR-4 (Sugam).
+    if ((taxResult?.businessIncome ?? 0) > 0) return "ITR-4";
     return "ITR-1";
   });
   const [bankDetails, setBankDetails] = useState({
@@ -56,10 +58,10 @@ export default function GeneratePage() {
         <CardDescription>Based on your income sources, we recommend the appropriate form</CardDescription>
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { type: "ITR-1", name: "Sahaj", desc: "Salary + 1 house + other sources", for: "Salaried (up to Rs. 50L)" },
-            { type: "ITR-2", name: "", desc: "Salary + capital gains + multiple houses", for: "Salaried with CG" },
-            { type: "ITR-3", name: "", desc: "Business/professional income", for: "Business owners" },
-            { type: "ITR-4", name: "Sugam", desc: "Presumptive business income", for: "Freelancers/Small biz" },
+            { type: "ITR-1", name: "Sahaj", desc: "Salary, one house, bank interest", for: "Salaried people (income up to ₹50 lakh)" },
+            { type: "ITR-2", name: "", desc: "Salary plus shares/property profit or more than one house", for: "Salaried with investments" },
+            { type: "ITR-3", name: "", desc: "Business or profession with proper account books", for: "Bigger businesses (sales over ₹2–3 crore)" },
+            { type: "ITR-4", name: "Sugam", desc: "Small business/shop or freelancer declaring a simple % profit", for: "Most shopkeepers, traders, freelancers" },
           ].map((form) => (
             <button
               key={form.type}
@@ -165,8 +167,8 @@ export default function GeneratePage() {
             </span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-muted">TDS Paid</span>
-            <span className="font-mono font-medium text-secondary">-{formatCurrency(form16Data.tax.tdsDeducted)}</span>
+            <span className="text-muted">Tax already paid (TDS / advance tax)</span>
+            <span className="font-mono font-medium text-secondary">-{formatCurrency(taxResult.taxPaid)}</span>
           </div>
           <div className="flex justify-between text-base font-bold pt-2 border-t border-border">
             <span>{(taxResult.recommendedRegime === "new" ? taxResult.refundNew : taxResult.refundOld) >= 0 ? "Refund" : "Tax Due"}</span>

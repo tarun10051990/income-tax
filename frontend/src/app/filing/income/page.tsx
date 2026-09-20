@@ -5,15 +5,16 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFiling } from "@/contexts/FilingContext";
 import Card, { CardTitle, CardDescription } from "@/components/ui/Card";
-import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
 
 export default function AdditionalIncomePage() {
   const router = useRouter();
   const { isAuthenticated, isReady } = useAuth();
   const { form16Data, additionalIncome, setAdditionalIncome, setCurrentStep,
     metroCity, setMetroCity, rentPaid, setRentPaid,
-    extraDeductions, setExtraDeductions } = useFiling();
+    extraDeductions, setExtraDeductions, taxPaid, setTaxPaid } = useFiling();
+  const t = usePortalText();
 
   useEffect(() => {
     if (!isReady) return;
@@ -24,6 +25,8 @@ export default function AdditionalIncomePage() {
 
   if (!form16Data) return null;
 
+  const hasSalary = form16Data.salary.basicSalary > 0;
+
   const updateIncome = (field: keyof typeof additionalIncome, value: string) => {
     setAdditionalIncome({ ...additionalIncome, [field]: Number(value) || 0 });
   };
@@ -32,202 +35,127 @@ export default function AdditionalIncomePage() {
     setExtraDeductions({ ...extraDeductions, [field]: Number(value) || 0 });
   };
 
+  const updateTaxPaid = (field: keyof typeof taxPaid, value: string) => {
+    setTaxPaid({ ...taxPaid, [field]: Number(value) || 0 });
+  };
+
+  const amount = (value: number) => (value ? String(value) : "");
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Additional Income & Deductions</h1>
-        <p className="text-muted mt-1">Add any other sources of income and claim additional deductions</p>
+        <h1 className="text-2xl font-bold">{t("itr.income.title")}</h1>
+        <p className="text-muted mt-1">{t("itr.income.subtitle")}</p>
       </div>
 
-      {/* Interest Income */}
       <Card variant="bordered">
-        <CardTitle>Interest Income</CardTitle>
-        <CardDescription>Income from bank accounts and deposits</CardDescription>
+        <CardTitle>{t("itr.income.business.title")}</CardTitle>
+        <CardDescription>{t("itr.income.business.body")}</CardDescription>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <GuidedField guide="itr.business.turnover" type="number" min={0} placeholder="0" rupee
+            value={amount(taxPaid.businessTurnover)} onChange={(e) => updateTaxPaid("businessTurnover", e.target.value)} />
+          <GuidedField guide="itr.business.profit" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.businessIncome)} onChange={(e) => updateIncome("businessIncome", e.target.value)} />
+          <GuidedField guide="itr.profession.receipts" type="number" min={0} placeholder="0" rupee
+            value={amount(taxPaid.professionalReceipts)} onChange={(e) => updateTaxPaid("professionalReceipts", e.target.value)} />
+          <GuidedField guide="itr.profession.profit" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.professionalIncome)} onChange={(e) => updateIncome("professionalIncome", e.target.value)} />
+        </div>
+      </Card>
+
+      <Card variant="bordered">
+        <CardTitle>{t("itr.income.interest.title")}</CardTitle>
+        <CardDescription>{t("itr.income.interest.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Input
-            label="Savings Account Interest"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.savingsInterest || ""}
-            onChange={(e) => updateIncome("savingsInterest", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
-          <Input
-            label="Fixed Deposit Interest"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.fdInterest || ""}
-            onChange={(e) => updateIncome("fdInterest", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
-          <Input
-            label="RD Interest"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.rdInterest || ""}
-            onChange={(e) => updateIncome("rdInterest", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
+          <GuidedField guide="itr.interest.savings" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.savingsInterest)} onChange={(e) => updateIncome("savingsInterest", e.target.value)} />
+          <GuidedField guide="itr.interest.fd" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.fdInterest)} onChange={(e) => updateIncome("fdInterest", e.target.value)} />
+          <GuidedField guide="itr.interest.rd" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.rdInterest)} onChange={(e) => updateIncome("rdInterest", e.target.value)} />
         </div>
       </Card>
 
-      {/* Capital Gains */}
       <Card variant="bordered">
-        <CardTitle>Capital Gains</CardTitle>
-        <CardDescription>Gains from stocks, mutual funds, property</CardDescription>
+        <CardTitle>{t("itr.income.gains.title")}</CardTitle>
+        <CardDescription>{t("itr.income.gains.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Short-Term Capital Gains (STCG)"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.capitalGainsSTCG || ""}
-            onChange={(e) => updateIncome("capitalGainsSTCG", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Stocks/MF held < 1 year"
-          />
-          <Input
-            label="Long-Term Capital Gains (LTCG)"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.capitalGainsLTCG || ""}
-            onChange={(e) => updateIncome("capitalGainsLTCG", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Stocks/MF held > 1 year"
-          />
+          <GuidedField guide="itr.gains.short" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.capitalGainsSTCG)} onChange={(e) => updateIncome("capitalGainsSTCG", e.target.value)} />
+          <GuidedField guide="itr.gains.long" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.capitalGainsLTCG)} onChange={(e) => updateIncome("capitalGainsLTCG", e.target.value)} />
         </div>
       </Card>
 
-      {/* Other Income */}
       <Card variant="bordered">
-        <CardTitle>Other Income</CardTitle>
+        <CardTitle>{t("itr.income.other.title")}</CardTitle>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Rental Income (Annual)"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.rentalIncome || ""}
-            onChange={(e) => updateIncome("rentalIncome", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
-          <Input
-            label="Other Income"
-            type="number"
-            placeholder="0"
-            value={additionalIncome.otherIncome || ""}
-            onChange={(e) => updateIncome("otherIncome", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Freelance, gifts, etc."
-          />
+          <GuidedField guide="itr.other.rent" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.rentalIncome)} onChange={(e) => updateIncome("rentalIncome", e.target.value)} />
+          <GuidedField guide="itr.other.misc" type="number" min={0} placeholder="0" rupee
+            value={amount(additionalIncome.otherIncome)} onChange={(e) => updateIncome("otherIncome", e.target.value)} />
         </div>
       </Card>
 
-      {/* HRA Details */}
-      <Card variant="bordered">
-        <CardTitle>HRA Details (for Old Regime)</CardTitle>
-        <CardDescription>Required to calculate HRA exemption</CardDescription>
-        <div className="mt-4 space-y-4">
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium">City Type:</label>
-            <div className="flex gap-4">
+      {hasSalary && (
+        <Card variant="bordered">
+          <CardTitle>{t("itr.income.hra.title")}</CardTitle>
+          <div className="mt-4 space-y-4">
+            <div className="flex flex-wrap gap-4">
               <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={metroCity}
-                  onChange={() => setMetroCity(true)}
-                  className="text-primary"
-                />
-                <span className="text-sm">Metro (Delhi, Mumbai, Chennai, Kolkata)</span>
+                <input type="radio" checked={metroCity} onChange={() => setMetroCity(true)} className="text-primary" />
+                <span className="text-sm">{t("itr.income.hra.metro")}</span>
               </label>
               <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={!metroCity}
-                  onChange={() => setMetroCity(false)}
-                  className="text-primary"
-                />
-                <span className="text-sm">Non-Metro</span>
+                <input type="radio" checked={!metroCity} onChange={() => setMetroCity(false)} className="text-primary" />
+                <span className="text-sm">{t("itr.income.hra.nonMetro")}</span>
               </label>
             </div>
+            <GuidedField guide="itr.hra.rentPaid" type="number" min={0} placeholder="0" rupee
+              value={amount(rentPaid)} onChange={(e) => setRentPaid(Number(e.target.value) || 0)} />
           </div>
-          <Input
-            label="Annual Rent Paid"
-            type="number"
-            placeholder="0"
-            value={rentPaid || ""}
-            onChange={(e) => setRentPaid(Number(e.target.value) || 0)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
-        </div>
-      </Card>
+        </Card>
+      )}
 
-      {/* Additional Deductions */}
       <Card variant="bordered">
-        <CardTitle>Additional Deductions (Old Regime)</CardTitle>
-        <CardDescription>Claim deductions to reduce your taxable income</CardDescription>
+        <CardTitle>{t("itr.income.taxPaid.title")}</CardTitle>
+        <CardDescription>{t("itr.income.taxPaid.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Section 80C (ELSS, PPF, LIC, etc.)"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.section80C || ""}
-            onChange={(e) => updateDeduction("section80C", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Max Rs. 1,50,000 (incl. PF)"
-          />
-          <Input
-            label="Section 80CCD(1B) — NPS"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.section80CCD1B || ""}
-            onChange={(e) => updateDeduction("section80CCD1B", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Max Rs. 50,000 (additional)"
-          />
-          <Input
-            label="Section 80D — Health Insurance"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.section80D || ""}
-            onChange={(e) => updateDeduction("section80D", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Self: 25K, Parents: 50K (Senior)"
-          />
-          <Input
-            label="Section 80TTA — Savings Interest"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.section80TTA || ""}
-            onChange={(e) => updateDeduction("section80TTA", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Max Rs. 10,000"
-          />
-          <Input
-            label="Section 24 — Home Loan Interest"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.section24 || ""}
-            onChange={(e) => updateDeduction("section24", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-            helperText="Max Rs. 2,00,000"
-          />
-          <Input
-            label="Other Deductions"
-            type="number"
-            placeholder="0"
-            value={extraDeductions.otherDeductions || ""}
-            onChange={(e) => updateDeduction("otherDeductions", e.target.value)}
-            leftIcon={<span className="text-xs">Rs.</span>}
-          />
+          <GuidedField guide="itr.tax.advanceTax" type="number" min={0} placeholder="0" rupee
+            value={amount(taxPaid.advanceTax)} onChange={(e) => updateTaxPaid("advanceTax", e.target.value)} />
+          <GuidedField guide="itr.tax.tdsOther" type="number" min={0} placeholder="0" rupee
+            value={amount(taxPaid.otherTds)} onChange={(e) => updateTaxPaid("otherTds", e.target.value)} />
         </div>
       </Card>
 
-      {/* Navigation */}
+      <Card variant="bordered">
+        <CardTitle>{t("itr.income.deductions.title")}</CardTitle>
+        <CardDescription>{t("itr.income.deductions.body")}</CardDescription>
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <GuidedField guide="itr.ded.80c" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.section80C || 0)} onChange={(e) => updateDeduction("section80C", e.target.value)} />
+          <GuidedField guide="itr.ded.nps" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.section80CCD1B || 0)} onChange={(e) => updateDeduction("section80CCD1B", e.target.value)} />
+          <GuidedField guide="itr.ded.80d" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.section80D || 0)} onChange={(e) => updateDeduction("section80D", e.target.value)} />
+          <GuidedField guide="itr.ded.80tta" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.section80TTA || 0)} onChange={(e) => updateDeduction("section80TTA", e.target.value)} />
+          <GuidedField guide="itr.ded.homeLoanInterest" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.section24 || 0)} onChange={(e) => updateDeduction("section24", e.target.value)} />
+          <GuidedField guide="itr.ded.other" type="number" min={0} placeholder="0" rupee
+            value={amount(extraDeductions.otherDeductions || 0)} onChange={(e) => updateDeduction("otherDeductions", e.target.value)} />
+        </div>
+      </Card>
+
       <div className="flex justify-between">
-        <Button variant="outline" onClick={() => { setCurrentStep("review"); router.push("/filing/review"); }}>
-          Back
+        <Button variant="outline" onClick={() => {
+          if (hasSalary) { setCurrentStep("review"); router.push("/filing/review"); }
+          else { setCurrentStep("upload"); router.push("/filing/upload"); }
+        }}>
+          {t("itr.income.back")}
         </Button>
         <Button onClick={() => { setCurrentStep("compute"); router.push("/filing/compute"); }}>
-          Compute Tax
+          {t("itr.income.next")}
           <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>
