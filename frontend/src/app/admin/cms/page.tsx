@@ -62,16 +62,16 @@ export default function CmsOverviewPage() {
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Website content</h1>
           <p className="text-sm text-muted">
-            Manage the public site (services, pricing, FAQs, testimonials, resources, legal pages, branding and contact details).
-            Only <strong>published</strong> entries are shown to visitors; collections with no published entries fall back to the
-            content bundled with the site. Changes go live within about a minute.
+            Every word on the public site and in the ITR/GST screens (services, pricing, FAQs, field help, button labels,
+            legal pages, branding and contact details) is stored in the database and edited here. Only{" "}
+            <strong>published</strong> entries are shown to visitors. Changes go live within about a minute.
           </p>
         </div>
         <div className="flex flex-col items-end gap-1">
           <Button onClick={importDefaults} loading={busy} variant={totalManaged === 0 ? "primary" : "outline"}>
             Import bundled defaults
           </Button>
-          <span className="text-xs text-muted">Copies the built-in content into the CMS; existing entries are never overwritten.</span>
+          <span className="text-xs text-muted">Adds any built-in entries missing from the database; existing entries are never overwritten.</span>
         </div>
       </div>
 

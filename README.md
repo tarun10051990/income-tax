@@ -104,17 +104,28 @@ mvn spring-boot:run
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8080/api` | API base URL used by the frontend |
 | `SPRING_PROFILES_ACTIVE` | unset (H2) | Set to `mysql` to use MySQL; then set `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` |
 | `CMS_API_URL` | `NEXT_PUBLIC_API_URL` | API URL the Next.js server uses for CMS content (internal network in containers) |
+| `SEED_CMS_CONTENT` | `true` | On start-up insert the bundled website content (`db/cms_seed.json`) into `cms_entries` for any missing (collection, slug) |
 
 ### MySQL
 
 ```bash
 mysql -u root -p < backend/src/main/resources/db/mysql/schema.sql   # creates database taxfilr + all tables
+mysql -u root -p taxfilr < backend/src/main/resources/db/mysql/cms_seed.sql   # optional: all website content rows (the API seeds them itself on first boot)
 cd backend
 SPRING_PROFILES_ACTIVE=mysql DATABASE_URL='jdbc:mysql://localhost:3306/taxfilr?serverTimezone=UTC' \
   DATABASE_USERNAME=taxfilr DATABASE_PASSWORD=... mvn spring-boot:run
 ```
 
 Or `docker compose up -d --build` (MySQL + API + site; needs `JWT_SECRET` in `.env`).
+
+### Website content lives in the database
+
+Every word of the public site and the ITR/GST screens is a row in `cms_entries` (`collection`, `slug`,
+JSON `data`). Super admins edit it under **Administration → Website content**; the frontend reads
+published rows from `/api/public/cms` and only falls back to the bundled text when the API is down or
+a key is missing. `backend/src/main/resources/db/mysql/cms_seed.sql` holds an `INSERT` for all default
+rows (idempotent, `INSERT IGNORE`); regenerate it after changing `frontend/src/content/*` with
+`cd frontend && node scripts/export-cms-seed.cjs --json`.
 Cloud deployment: see [docs/DEPLOY_AWS.md](docs/DEPLOY_AWS.md).
 
 No credentials ship in the repository. For a local walkthrough, seed accounts with a password you
