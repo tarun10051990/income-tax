@@ -46,6 +46,8 @@ Create the schema and an application user (from a bastion / Cloud9 / `aws ssm st
 ```bash
 mysql -h taxfilr-mysql.xxxx.ap-south-1.rds.amazonaws.com -u taxfilr_admin -p \
   < backend/src/main/resources/db/mysql/schema.sql
+mysql -h taxfilr-mysql.xxxx.ap-south-1.rds.amazonaws.com -u taxfilr_admin -p taxfilr \
+  < backend/src/main/resources/db/mysql/cms_seed.sql      # website content rows (optional: the API also seeds them on first boot)
 
 mysql -h taxfilr-mysql.xxxx.ap-south-1.rds.amazonaws.com -u taxfilr_admin -p -e "
   CREATE USER 'taxfilr'@'%' IDENTIFIED BY '<APP-PASSWORD>';
@@ -218,7 +220,7 @@ Optionally front the frontend with CloudFront for caching of `/_next/static/*` a
 curl https://api.taxfilr.in/api/public/cms           # {"success":true,...}
 open https://taxfilr.in                              # marketing site
 open https://taxfilr.in/admin/login                  # staff portal
-open https://taxfilr.in/admin/cms                    # website content (after login) — click "Import bundled defaults"
+open https://taxfilr.in/admin/cms                    # website content (after login); rows are seeded on first boot
 ```
 
 ## Upgrades
