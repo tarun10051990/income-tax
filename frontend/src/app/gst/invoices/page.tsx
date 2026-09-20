@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
 import DataTable from "@/components/platform/DataTable";
 import CaseSelector from "@/components/platform/CaseSelector";
 import { humanise } from "@/components/platform/StatusBadge";
@@ -58,6 +58,8 @@ function InvoiceBook() {
   const [feedback, setFeedback] = useState<{ tone: "ok" | "error"; message: string } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const fileInput = useRef<HTMLInputElement | null>(null);
+  const t = usePortalText();
+  const selectClass = "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm";
 
   const totals = useMemo(() => {
     const rows = invoices.data?.content ?? [];
@@ -120,8 +122,8 @@ function InvoiceBook() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Invoice book</h1>
-          <p className="text-sm text-muted">Sales and purchase documents that feed the return.</p>
+          <h1 className="text-2xl font-semibold text-foreground">{t("gst.invoices.title")}</h1>
+          <p className="text-sm text-muted">{t("gst.invoices.subtitle")}</p>
         </div>
         <CaseSelector
           cases={filings.data?.content ?? []}
@@ -142,11 +144,8 @@ function InvoiceBook() {
           <Card variant="bordered">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <CardTitle>Import from a spreadsheet</CardTitle>
-                <CardDescription>
-                  CSV with the columns document type, invoice number, invoice date, taxable value, CGST, SGST, IGST,
-                  counterparty GSTIN and place of supply. Column order does not matter and duplicates are skipped.
-                </CardDescription>
+                <CardTitle>{t("gst.invoices.import.title")}</CardTitle>
+                <CardDescription>{t("gst.invoices.import.body")}</CardDescription>
               </div>
               <div>
                 <input
@@ -168,95 +167,53 @@ function InvoiceBook() {
           </Card>
 
           <Card variant="bordered">
-            <CardTitle>Add an invoice</CardTitle>
-            <div className="grid gap-4 md:grid-cols-4 mt-4">
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Document</label>
-                <select
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
-                  value={form.documentType}
-                  onChange={(event) => setForm({ ...form, documentType: event.target.value })}
-                >
+            <CardTitle>{t("gst.invoices.add.title")}</CardTitle>
+            <CardDescription>{t("gst.invoices.add.body")}</CardDescription>
+            <div className="grid gap-4 md:grid-cols-3 mt-4">
+              <GuidedField guide="gst.invoice.documentType">
+                <select className={selectClass} value={form.documentType}
+                  onChange={(event) => setForm({ ...form, documentType: event.target.value })}>
                   {DOCUMENT_TYPES.map((type) => <option key={type} value={type}>{humanise(type)}</option>)}
                 </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1.5">Supply</label>
-                <select
-                  className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
-                  value={form.supplyType}
-                  onChange={(event) => setForm({ ...form, supplyType: event.target.value })}
-                >
+              </GuidedField>
+              <GuidedField guide="gst.invoice.supplyType">
+                <select className={selectClass} value={form.supplyType}
+                  onChange={(event) => setForm({ ...form, supplyType: event.target.value })}>
                   {SUPPLY_TYPES.map((type) => <option key={type} value={type}>{humanise(type)}</option>)}
                 </select>
-              </div>
-              <Input
-                label="Invoice number"
-                value={form.invoiceNumber}
-                onChange={(event) => setForm({ ...form, invoiceNumber: event.target.value })}
-              />
-              <Input
-                label="Invoice date"
-                type="date"
-                value={form.invoiceDate}
-                onChange={(event) => setForm({ ...form, invoiceDate: event.target.value })}
-              />
-              <Input
-                label="Counterparty GSTIN"
-                value={form.counterpartyGstin}
-                onChange={(event) => setForm({ ...form, counterpartyGstin: event.target.value.toUpperCase() })}
-              />
-              <Input
-                label="Counterparty name"
-                value={form.counterpartyName}
-                onChange={(event) => setForm({ ...form, counterpartyName: event.target.value })}
-              />
-              <Input
-                label="Place of supply"
-                value={form.placeOfSupply}
-                onChange={(event) => setForm({ ...form, placeOfSupply: event.target.value })}
-              />
-              <Input
-                label="HSN / SAC"
-                value={form.hsnSacCode}
-                onChange={(event) => setForm({ ...form, hsnSacCode: event.target.value })}
-              />
-              <Input
-                label="Taxable value"
-                type="number"
-                value={form.taxableValue}
-                onChange={(event) => setForm({ ...form, taxableValue: event.target.value })}
-              />
-              <Input
-                label="CGST"
-                type="number"
-                value={form.cgst}
-                onChange={(event) => setForm({ ...form, cgst: event.target.value })}
-              />
-              <Input
-                label="SGST"
-                type="number"
-                value={form.sgst}
-                onChange={(event) => setForm({ ...form, sgst: event.target.value })}
-              />
-              <Input
-                label="IGST"
-                type="number"
-                value={form.igst}
-                onChange={(event) => setForm({ ...form, igst: event.target.value })}
-              />
+              </GuidedField>
+              <GuidedField guide="gst.invoice.number" value={form.invoiceNumber}
+                onChange={(event) => setForm({ ...form, invoiceNumber: event.target.value })} />
+              <GuidedField guide="gst.invoice.date" type="date" value={form.invoiceDate}
+                onChange={(event) => setForm({ ...form, invoiceDate: event.target.value })} />
+              <GuidedField guide="gst.invoice.counterpartyGstin" value={form.counterpartyGstin} maxLength={15}
+                onChange={(event) => setForm({ ...form, counterpartyGstin: event.target.value.toUpperCase() })} />
+              <GuidedField guide="gst.invoice.counterpartyName" value={form.counterpartyName}
+                onChange={(event) => setForm({ ...form, counterpartyName: event.target.value })} />
+              <GuidedField guide="gst.invoice.placeOfSupply" value={form.placeOfSupply}
+                onChange={(event) => setForm({ ...form, placeOfSupply: event.target.value })} />
+              <GuidedField guide="gst.invoice.hsn" value={form.hsnSacCode}
+                onChange={(event) => setForm({ ...form, hsnSacCode: event.target.value })} />
+              <GuidedField guide="gst.invoice.taxableValue" type="number" min={0} rupee value={form.taxableValue}
+                onChange={(event) => setForm({ ...form, taxableValue: event.target.value })} />
+              <GuidedField guide="gst.invoice.cgst" type="number" min={0} rupee value={form.cgst}
+                onChange={(event) => setForm({ ...form, cgst: event.target.value })} />
+              <GuidedField guide="gst.invoice.sgst" type="number" min={0} rupee value={form.sgst}
+                onChange={(event) => setForm({ ...form, sgst: event.target.value })} />
+              <GuidedField guide="gst.invoice.igst" type="number" min={0} rupee value={form.igst}
+                onChange={(event) => setForm({ ...form, igst: event.target.value })} />
             </div>
             {feedback !== null && (
               <p className={`text-sm mt-3 ${feedback.tone === "ok" ? "text-secondary" : "text-danger"}`}>
                 {feedback.message}
               </p>
             )}
-            <Button className="mt-4" loading={isSaving} onClick={addInvoice}>Add invoice</Button>
+            <Button className="mt-4" loading={isSaving} onClick={addInvoice}>{t("gst.invoices.add.button")}</Button>
           </Card>
 
           <Card variant="bordered">
             <div className="flex items-center justify-between">
-              <CardTitle>Recorded invoices</CardTitle>
+              <CardTitle>{t("gst.invoices.list.title")}</CardTitle>
               <p className="text-sm text-muted">
                 {formatCurrency(totals.taxableValue)} taxable · {formatCurrency(totals.tax)} tax
               </p>

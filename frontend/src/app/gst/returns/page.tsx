@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
 import DataTable from "@/components/platform/DataTable";
 import StatusBadge, { humanise } from "@/components/platform/StatusBadge";
 import { errorMessage, useApiData } from "@/hooks/useApiData";
@@ -27,6 +27,7 @@ export default function GstReturnsPage() {
   const [period, setPeriod] = useState(new Date().toISOString().slice(0, 7));
   const [feedback, setFeedback] = useState<{ tone: "ok" | "error"; message: string } | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const t = usePortalText();
 
   const selectedProfile = gstProfileId.length > 0 ? gstProfileId : profiles.data?.[0]?.id ?? "";
 
@@ -55,20 +56,16 @@ export default function GstReturnsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">GST returns</h1>
-        <p className="text-sm text-muted">
-          Start a return for a period, then load invoices and reconcile before you submit it for review.
-        </p>
+        <h1 className="text-2xl font-semibold text-foreground">{t("gst.returns.title")}</h1>
+        <p className="text-sm text-muted">{t("gst.returns.subtitle")}</p>
       </div>
 
       <Card variant="bordered">
-        <CardTitle>Start a return</CardTitle>
-        <CardDescription>
-          The due date comes from the deadline configuration your tax team maintains, not from a hard coded date.
-        </CardDescription>
+        <CardTitle>{t("gst.returns.start.title")}</CardTitle>
+        <CardDescription>{t("gst.returns.start.body")}</CardDescription>
         <div className="grid gap-4 md:grid-cols-3 mt-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5">Registration</label>
+            <label className="block text-sm font-medium mb-1.5">{t("gst.returns.registration")}</label>
             <select
               className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
               value={selectedProfile}
@@ -81,8 +78,7 @@ export default function GstReturnsPage() {
               ))}
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1.5">Return</label>
+          <GuidedField guide="gst.return.type">
             <select
               className="w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm"
               value={returnType}
@@ -92,13 +88,9 @@ export default function GstReturnsPage() {
                 <option key={type} value={type}>{humanise(type)}</option>
               ))}
             </select>
-          </div>
-          <Input
-            label="Period"
-            type="month"
-            value={period}
-            onChange={(event) => setPeriod(event.target.value)}
-          />
+          </GuidedField>
+          <GuidedField guide="gst.return.period" type="month" value={period}
+            onChange={(event) => setPeriod(event.target.value)} />
         </div>
         {(profiles.data ?? []).length === 0 && !profiles.isLoading && (
           <p className="text-sm text-muted mt-3">
@@ -116,7 +108,7 @@ export default function GstReturnsPage() {
           disabled={selectedProfile.length === 0}
           onClick={create}
         >
-          Create return
+          {t("gst.returns.create")}
         </Button>
       </Card>
 

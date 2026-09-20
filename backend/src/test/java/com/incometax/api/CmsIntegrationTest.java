@@ -183,6 +183,36 @@ class CmsIntegrationTest {
 
     @Test
     @Order(4)
+    void filingGuidanceCollectionsAreManagedLikeAnyOther() throws Exception {
+        mockMvc.perform(post("/api/admin/cms/import").header("Authorization", bearer(adminToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"collections\":{\"field_guides\":[{\"slug\":\"itr.business.turnover\","
+                                + "\"data\":{\"key\":\"itr.business.turnover\",\"label\":\"Total sales\",\"hint\":\"Before expenses\"}}],"
+                                + "\"portal_text\":[{\"slug\":\"itr.upload.title\","
+                                + "\"data\":{\"key\":\"itr.upload.title\",\"text\":\"Let's file\"}}]}}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.created").value(2));
+
+        boolean sawFieldGuides = false;
+        boolean sawPortalText = false;
+        MvcResult summary = mockMvc.perform(get("/api/admin/cms").header("Authorization", bearer(adminToken)))
+                .andExpect(status().isOk()).andReturn();
+        for (JsonNode row : data(summary)) {
+            sawFieldGuides |= "field_guides".equals(row.get("collection").asText());
+            sawPortalText |= "portal_text".equals(row.get("collection").asText());
+        }
+        assertThat(sawFieldGuides).isTrue();
+        assertThat(sawPortalText).isTrue();
+
+        mockMvc.perform(get("/api/public/cms/portal_text"))
+                .andExpect(jsonPath("$.data[0].key").value("itr.upload.title"))
+                .andExpect(jsonPath("$.data[0].text").value("Let's file"));
+        mockMvc.perform(get("/api/public/cms/field_guides"))
+                .andExpect(jsonPath("$.data[0].label").value("Total sales"));
+    }
+
+    @Test
+    @Order(5)
     void customersAndAnonymousCannotManageContent() throws Exception {
         mockMvc.perform(get("/api/admin/cms").header("Authorization", bearer(customerToken)))
                 .andExpect(status().isForbidden());

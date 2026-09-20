@@ -30,6 +30,10 @@ export interface AdditionalIncome {
   capitalGainsLTCG: number;
   rentalIncome: number;
   otherIncome: number;
+  /** Net profit from business (Section 44AD style presumptive or books). */
+  businessIncome: number;
+  /** Net profit from a profession (Section 44ADA). */
+  professionalIncome: number;
 }
 
 export interface TaxInput {
@@ -38,12 +42,19 @@ export interface TaxInput {
   deductions: Deductions;
   additionalIncome: AdditionalIncome;
   tdsDeducted: number;
+  /** Advance / self-assessment tax paid by challan. */
+  advanceTax?: number;
+  /** TDS deducted by customers, banks etc. (outside Form 16). */
+  otherTds?: number;
   metroCity: boolean;       // for HRA calculation
   rentPaid: number;         // annual rent for HRA
 }
 
 export interface TaxResult {
   grossSalary: number;
+  businessIncome: number;
+  /** TDS + advance tax + other TDS already paid. */
+  taxPaid: number;
   totalIncome: number;
   taxableIncomeOld: number;
   taxableIncomeNew: number;
@@ -122,7 +133,10 @@ export function computeTax(input: TaxInput): TaxResult {
     additional.capitalGainsSTCG +
     additional.capitalGainsLTCG +
     additional.rentalIncome +
-    additional.otherIncome;
+    additional.otherIncome +
+    (additional.businessIncome || 0) +
+    (additional.professionalIncome || 0);
+  const businessIncome = (additional.businessIncome || 0) + (additional.professionalIncome || 0);
 
   const totalIncome = grossSalary + totalAdditional;
 
@@ -135,7 +149,8 @@ export function computeTax(input: TaxInput): TaxResult {
   );
 
   // OLD REGIME DEDUCTIONS
-  const oldStandardDeduction = Math.min(deductions.standardDeduction || 50000, 50000);
+  // Standard deduction is a salary benefit; a pure business filer gets none.
+  const oldStandardDeduction = grossSalary > 0 ? Math.min(deductions.standardDeduction || 50000, 50000) : 0;
   const old80C = Math.min(deductions.section80C + deductions.pfContribution, 150000);
   const old80CCD1B = Math.min(deductions.section80CCD1B, 50000);
   const old80D = Math.min(deductions.section80D, 100000);
@@ -155,7 +170,7 @@ export function computeTax(input: TaxInput): TaxResult {
     deductions.otherDeductions;
 
   // NEW REGIME DEDUCTIONS (only standard deduction of 75,000 for FY 2024-25)
-  const newStandardDeduction = 75000;
+  const newStandardDeduction = grossSalary > 0 ? 75000 : 0;
   const totalDeductionsNew = newStandardDeduction;
 
   // Taxable income
@@ -174,14 +189,17 @@ export function computeTax(input: TaxInput): TaxResult {
   const totalTaxNew = taxNewRegime + cessNew;
 
   // Refund
-  const refundOld = input.tdsDeducted - totalTaxOld;
-  const refundNew = input.tdsDeducted - totalTaxNew;
+  const taxPaid = input.tdsDeducted + (input.advanceTax || 0) + (input.otherTds || 0);
+  const refundOld = taxPaid - totalTaxOld;
+  const refundNew = taxPaid - totalTaxNew;
 
   const recommendedRegime = totalTaxOld <= totalTaxNew ? "old" : "new";
   const savings = Math.abs(totalTaxOld - totalTaxNew);
 
   return {
     grossSalary,
+    businessIncome,
+    taxPaid,
     totalIncome,
     taxableIncomeOld,
     taxableIncomeNew,

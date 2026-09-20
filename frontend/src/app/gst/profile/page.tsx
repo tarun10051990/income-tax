@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
 import Badge from "@/components/ui/Badge";
 import DataTable from "@/components/platform/DataTable";
 import { errorMessage, useApiData } from "@/hooks/useApiData";
@@ -26,6 +26,7 @@ export default function GstRegistrationsPage() {
   const profiles = useApiData(() => customerApi.gstProfiles());
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const t = usePortalText();
   const [feedback, setFeedback] = useState<{ tone: "ok" | "error"; message: string } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -68,54 +69,52 @@ export default function GstRegistrationsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">GST registrations</h1>
-        <p className="text-sm text-muted">
-          Each GSTIN you file for. The 15 character format is validated before it is saved.
-        </p>
+        <h1 className="text-2xl font-semibold text-foreground">{t("gst.profile.title")}</h1>
+        <p className="text-sm text-muted">{t("gst.profile.subtitle")}</p>
       </div>
 
       <Card variant="bordered">
         <CardTitle>{editingId === null ? "Add a registration" : "Edit registration"}</CardTitle>
         <CardDescription>GSTIN, legal name and state are used to derive the place of supply.</CardDescription>
         <div className="grid gap-4 md:grid-cols-2 mt-4">
-          <Input
-            label="GSTIN"
+          <GuidedField
+            guide="gst.profile.gstin"
             value={form.gstin}
-            placeholder="27ABCDE1234F1Z5"
+            placeholder="27ABCDE1234F1Z5" maxLength={15}
             onChange={(event) => setForm({ ...form, gstin: event.target.value.toUpperCase() })}
           />
-          <Input
-            label="Legal name"
+          <GuidedField
+            guide="gst.profile.legalName"
             value={form.legalName}
             onChange={(event) => setForm({ ...form, legalName: event.target.value })}
           />
-          <Input
-            label="Trade name"
+          <GuidedField
+            guide="gst.profile.tradeName"
             value={form.tradeName}
             onChange={(event) => setForm({ ...form, tradeName: event.target.value })}
           />
-          <Input
-            label="Business type"
+          <GuidedField
+            guide="gst.profile.businessType"
             value={form.businessType}
             onChange={(event) => setForm({ ...form, businessType: event.target.value })}
           />
-          <Input
-            label="State"
+          <GuidedField
+            guide="gst.profile.state"
             value={form.state}
             onChange={(event) => setForm({ ...form, state: event.target.value })}
           />
-          <Input
-            label="Registered address"
+          <GuidedField
+            guide="gst.profile.address"
             value={form.registeredAddress}
             onChange={(event) => setForm({ ...form, registeredAddress: event.target.value })}
           />
-          <Input
-            label="Authorised signatory"
+          <GuidedField
+            guide="gst.profile.signatory"
             value={form.authorizedSignatory}
             onChange={(event) => setForm({ ...form, authorizedSignatory: event.target.value })}
           />
-          <Input
-            label="Signatory designation"
+          <GuidedField
+            guide="gst.profile.designation"
             value={form.signatoryDesignation}
             onChange={(event) => setForm({ ...form, signatoryDesignation: event.target.value })}
           />

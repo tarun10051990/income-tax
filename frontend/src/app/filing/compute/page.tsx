@@ -75,14 +75,15 @@ export default function ComputePage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              <ComparisonRow label="Gross Salary" oldVal={taxResult.grossSalary} newVal={taxResult.grossSalary} />
+              {taxResult.grossSalary > 0 && <ComparisonRow label="Gross Salary" oldVal={taxResult.grossSalary} newVal={taxResult.grossSalary} />}
+              {taxResult.businessIncome > 0 && <ComparisonRow label="Business / professional profit" oldVal={taxResult.businessIncome} newVal={taxResult.businessIncome} />}
               <ComparisonRow label="Total Income" oldVal={taxResult.totalIncome} newVal={taxResult.totalIncome} />
               <ComparisonRow label="Total Deductions" oldVal={taxResult.deductionsOld} newVal={taxResult.deductionsNew} isDeduction />
               <ComparisonRow label="Taxable Income" oldVal={taxResult.taxableIncomeOld} newVal={taxResult.taxableIncomeNew} highlight />
               <ComparisonRow label="Income Tax" oldVal={taxResult.taxOldRegime} newVal={taxResult.taxNewRegime} />
               <ComparisonRow label="Health & Education Cess (4%)" oldVal={taxResult.cessOld} newVal={taxResult.cessNew} />
               <ComparisonRow label="Total Tax Payable" oldVal={taxResult.totalTaxOld} newVal={taxResult.totalTaxNew} highlight bold />
-              <ComparisonRow label="TDS Already Paid" oldVal={form16Data?.tax.tdsDeducted || 0} newVal={form16Data?.tax.tdsDeducted || 0} isDeduction />
+              <ComparisonRow label="Tax already paid (TDS / advance tax)" oldVal={taxResult.taxPaid} newVal={taxResult.taxPaid} isDeduction />
               <tr className={`font-bold text-base ${taxResult.refundOld > 0 || taxResult.refundNew > 0 ? "text-secondary" : "text-danger"}`}>
                 <td className="py-3 px-4">
                   {taxResult.refundOld > 0 || taxResult.refundNew > 0 ? "Refund" : "Tax Due"}

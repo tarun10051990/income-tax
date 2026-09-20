@@ -8,6 +8,7 @@ import Card, { CardTitle, CardDescription } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import { Form16Data } from "@/lib/types";
 import { parseForm16PDF } from "@/lib/form16-parser";
+import { usePortalText } from "@/components/filing/GuidedField";
 
 // Sample extracted data for demo
 const SAMPLE_FORM16: Form16Data = {
@@ -46,8 +47,9 @@ const SAMPLE_FORM16: Form16Data = {
 
 export default function UploadPage() {
   const router = useRouter();
-  const { isAuthenticated, isReady } = useAuth();
-  const { setForm16Data, setCurrentStep } = useFiling();
+  const { isAuthenticated, isReady, user } = useAuth();
+  const { setForm16Data, setCurrentStep, startWithoutForm16 } = useFiling();
+  const t = usePortalText();
   const [isDragging, setIsDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -130,12 +132,34 @@ export default function UploadPage() {
     router.push("/filing/review");
   };
 
+  const handleBusiness = () => {
+    startWithoutForm16(user?.name ?? "");
+    router.push("/filing/income");
+  };
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Upload Form 16</h1>
-        <p className="text-muted mt-1">Upload your Form 16 PDF and our AI will extract all details automatically</p>
+        <h1 className="text-2xl font-bold">{t("itr.upload.title")}</h1>
+        <p className="text-muted mt-1">{t("itr.upload.subtitle")}</p>
       </div>
+
+      {!isProcessing && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card variant="bordered" className="border-primary/40 bg-primary/5">
+            <CardTitle>{t("itr.upload.salaried.title")}</CardTitle>
+            <CardDescription>{t("itr.upload.salaried.body")}</CardDescription>
+            <p className="mt-3 text-xs text-muted">↓ Use the upload box below</p>
+          </Card>
+          <Card variant="bordered" className="border-secondary/40 bg-secondary/5">
+            <CardTitle>{t("itr.upload.business.title")}</CardTitle>
+            <CardDescription>{t("itr.upload.business.body")}</CardDescription>
+            <Button className="mt-3" variant="secondary" onClick={handleBusiness}>
+              {t("itr.upload.business.button")}
+            </Button>
+          </Card>
+        </div>
+      )}
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 flex items-start gap-3">
@@ -196,7 +220,7 @@ export default function UploadPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="font-medium">Drop your Form 16 here</p>
+                    <p className="font-medium">{t("itr.upload.drop")}</p>
                     <p className="text-sm text-muted mt-1">PDF, Image, or Scanned Document (max 10MB)</p>
                   </div>
                   <input
@@ -237,8 +261,8 @@ export default function UploadPage() {
           <Card variant="bordered" className="bg-blue-50/50 border-blue-200">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Try with Sample Data</CardTitle>
-                <CardDescription>Don&apos;t have Form 16 handy? Use our sample data to explore the platform.</CardDescription>
+                <CardTitle>{t("itr.upload.sample.title")}</CardTitle>
+                <CardDescription>{t("itr.upload.sample.body")}</CardDescription>
               </div>
               <Button variant="outline" onClick={handleUseSample}>
                 Use Sample Data
