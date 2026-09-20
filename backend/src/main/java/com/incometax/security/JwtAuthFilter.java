@@ -45,7 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 }
                 // A staff account that has not completed MFA enrolment may only reach the
                 // enrolment endpoint, so it is granted a placeholder authority instead of its role.
-                String authority = user.isStaff() && !user.isMfaEnabled()
+                String authority = userService.requiresMfa(user) && !user.isMfaEnabled()
                         ? "ROLE_MFA_PENDING"
                         : "ROLE_" + user.getRole().name();
                 var auth = new UsernamePasswordAuthenticationToken(

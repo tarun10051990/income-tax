@@ -51,6 +51,10 @@ app:
   # Creates the staff accounts required to operate a fresh installation.
   seed-demo-users: ${SEED_DEMO_USERS:false}
   seed-user-password: ${SEED_USER_PASSWORD:}
+  mfa:
+    # Comma separated staff roles that sign in without an authenticator code. Set to an empty
+    # value (MFA_EXEMPT_ROLES=) to require MFA for every staff account.
+    exempt-roles: ${MFA_EXEMPT_ROLES:SUPER_ADMIN}
 
 springdoc:
   swagger-ui:

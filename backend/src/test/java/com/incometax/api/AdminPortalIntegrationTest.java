@@ -111,6 +111,37 @@ class AdminPortalIntegrationTest {
                 .andExpect(jsonPath("$.data.mfaEnabled").value(true));
     }
 
+    /** SUPER_ADMIN is MFA exempt by default (app.mfa.exempt-roles), so email + password is enough. */
+    @Test
+    void superAdminSignsInWithoutAnAuthenticatorCodeWhenExempt() throws Exception {
+        userRepository.save(User.builder()
+                .name("Owner")
+                .email("exempt.owner@taxfiler.in")
+                .password(passwordEncoder.encode(PASSWORD))
+                .role(User.Role.SUPER_ADMIN)
+                .onboardingComplete(true)
+                .build());
+
+        mockMvc.perform(post("/api/auth/admin/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"exempt.owner@taxfiler.in\",\"password\":\"wrong-password\"}"))
+                .andExpect(status().isUnauthorized());
+
+        MvcResult signedIn = mockMvc.perform(post("/api/auth/admin/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"exempt.owner@taxfiler.in\",\"password\":\"" + PASSWORD + "\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.mfaEnrolmentRequired").doesNotExist())
+                .andExpect(jsonPath("$.data.mfaSecret").doesNotExist())
+                .andExpect(jsonPath("$.data.role").value("SUPER_ADMIN"))
+                .andReturn();
+
+        // The token carries the real role straight away, not the MFA_PENDING placeholder.
+        mockMvc.perform(get("/api/admin/dashboard")
+                        .header("Authorization", "Bearer " + data(signedIn).get("token").asText()))
+                .andExpect(status().isOk());
+    }
+
     @Test
     void staffCannotUseTheTaxpayerLogin() throws Exception {
         mockMvc.perform(post("/api/auth/login")
@@ -192,7 +223,7 @@ class AdminPortalIntegrationTest {
                 .name("Platform Owner")
                 .email("pw.owner@taxfiler.in")
                 .password(passwordEncoder.encode(PASSWORD))
-                .role(User.Role.SUPER_ADMIN)
+                .role(User.Role.ADMIN)
                 .onboardingComplete(true)
                 .mfaSecret(TotpUtil.generateSecret())
                 .build());
