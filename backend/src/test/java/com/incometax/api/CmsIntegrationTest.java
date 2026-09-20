@@ -32,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:cms;DB_CLOSE_DELAY=-1",
         "rate-limit.enabled=false",
-        "documents.storage-dir=./target/test-documents"
+        "documents.storage-dir=./target/test-documents",
+        "app.mfa.exempt-roles="
 })
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

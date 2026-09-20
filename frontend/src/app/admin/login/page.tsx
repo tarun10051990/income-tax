@@ -76,7 +76,7 @@ export default function AdminLoginPage() {
               inputMode="numeric"
               maxLength={6}
               placeholder="6 digits"
-              helperText="Leave blank the first time; you will be asked to set up an authenticator."
+              helperText="Leave blank the first time or if your role does not use an authenticator."
               value={totpCode}
               onChange={(event) => setTotpCode(event.target.value.replace(/\D/g, ""))}
             />

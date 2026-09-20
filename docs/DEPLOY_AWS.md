@@ -148,7 +148,8 @@ on the two secrets.
 
 First deployment only: set `SEED_DEMO_USERS=true` and add a `SEED_USER_PASSWORD` secret so the
 staff accounts (`owner@taxfiler.in`, `admin@taxfiler.in`, …) are created; then redeploy with
-seeding off. Staff sign in at `https://taxfilr.in/admin/login` and enrol MFA on first login.
+seeding off. Staff sign in at `https://taxfilr.in/admin/login` and enrol MFA on first login
+(except roles in `MFA_EXEMPT_ROLES`, default `SUPER_ADMIN`; set it empty to enforce MFA for all).
 
 ### Frontend task definition (`frontend-task.json`)
 

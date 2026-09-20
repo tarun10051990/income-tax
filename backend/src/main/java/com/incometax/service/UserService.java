@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +37,14 @@ public class UserService {
 
     @Value("${jwt.admin-expiration}")
     private long adminTokenTtl;
+
+    /** Staff roles that sign in with email and password only (no authenticator). */
+    @Value("${app.mfa.exempt-roles:}")
+    private Set<User.Role> mfaExemptRoles;
+
+    public boolean requiresMfa(User user) {
+        return user.isStaff() && !mfaExemptRoles.contains(user.getRole());
+    }
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -88,12 +97,17 @@ public class UserService {
         return response(user, tokenTtl);
     }
 
-    /** Administration portal login; every staff account is MFA protected. */
+    /** Administration portal login; staff accounts are MFA protected unless their role is exempt. */
     @Transactional
     public AuthResponse adminLogin(AdminAuthRequest request) {
         User user = authenticate(request.getEmail(), request.getPassword());
         if (!user.isStaff()) {
             throw ApiException.forbidden("This portal is restricted to staff accounts");
+        }
+        if (!requiresMfa(user)) {
+            auditService.record("ADMIN_LOGIN", "User", user.getId(), null,
+                    Map.of("role", user.getRole().name(), "mfa", "exempt"));
+            return response(touchLogin(user), adminTokenTtl);
         }
 
         if (user.getMfaSecret() == null) {

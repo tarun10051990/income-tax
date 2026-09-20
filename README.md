@@ -126,7 +126,9 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--app.seed-demo-users=true --ap
 ```
 
 The first staff sign in at `/admin/login` returns a TOTP secret that must be enrolled in an
-authenticator app before the account can reach any admin endpoint.
+authenticator app before the account can reach any admin endpoint. Roles listed in
+`MFA_EXEMPT_ROLES` (default `SUPER_ADMIN`) skip the authenticator and sign in with email and
+password only; set `MFA_EXEMPT_ROLES=` (empty) to require MFA for every staff account.
 
 Seeded staff accounts (all use `SEED_USER_PASSWORD`): `owner@taxfiler.in` (SUPER_ADMIN),
 `admin@taxfiler.in` (ADMIN), `it.pro@taxfiler.in`, `gst.pro@taxfiler.in`, `reviewer@taxfiler.in`,
