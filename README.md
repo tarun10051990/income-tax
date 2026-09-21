@@ -146,6 +146,28 @@ Seeded staff accounts (all use `SEED_USER_PASSWORD`): `owner@taxfiler.in` (SUPER
 `operator@taxfiler.in`, `support@taxfiler.in`. Change the password after the first sign in via
 **Change password** in the admin sidebar (`POST /api/auth/change-password`).
 
+### Test accounts via SQL (MySQL)
+
+If the seeder did not run (or you prefer SQL), `backend/src/main/resources/db/mysql/test_users.sql`
+inserts every staff account plus two customers (`rahul@example.com` salaried with a draft ITR,
+`priya@example.com` business owner with a GST registration and a draft GSTR-3B) and one consultant
+(`ca.meera@example.com`), all with password `Taxfilr@123`:
+
+```bash
+mysql -u root -p taxfilr < backend/src/main/resources/db/mysql/test_users.sql
+```
+
+Super admin: `owner@taxfiler.in` / `Taxfilr@123` at `/admin/login`, leave the authenticator code blank.
+Change the password immediately on anything other than a throw-away local database.
+
+If `owner@taxfiler.in` rejects the password, the account was created earlier with a different
+`SEED_USER_PASSWORD` (the seeder never overwrites an existing user). Either run the SQL above on a
+fresh database, or reset just that row:
+
+```sql
+UPDATE users SET password='$2a$10$42WYFY06tTmn/9Md14wtr.0AuoGL3Wwq0Ky2fUPozv.6UIJw5QeCC', mfa_enabled=0 WHERE email='owner@taxfiler.in';  -- Taxfilr@123
+```
+
 ## Filing flow
 
 1. Taxpayer signs in, completes their profile, and starts an income tax or GST return
