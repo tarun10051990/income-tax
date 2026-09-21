@@ -31,6 +31,7 @@ import { services, type Service } from "@/content/services";
 import { footerColumns, mainNav, siteConfig } from "@/content/site";
 import { howToVideos, type HowToVideo } from "@/content/videos";
 import { fieldGuides, portalText, type FieldGuide } from "@/content/filing-guide";
+import { appText as mobileText } from "@/content/mobile-text";
 
 /** Turns `as const` literal types into their editable, wide equivalents. */
 export type Widen<T> = T extends string
@@ -78,6 +79,7 @@ export interface SiteContent {
   legal: Record<LegalSlug, LegalPageContent>;
   fieldGuides: FieldGuide[];
   portalText: PortalTextEntry[];
+  mobileText: PortalTextEntry[];
 }
 
 /** CMS collection names, in the order the admin screen lists them. */
@@ -101,10 +103,11 @@ export const CMS_COLLECTIONS: Array<{ key: keyof SiteContent; label: string; des
   { key: "legal", label: "Legal pages", description: "Privacy, terms, disclaimer, refund policy." },
   { key: "fieldGuides", label: "Field guides (ITR & GST)", description: "Plain-language label, hint, where-to-find, example and Hindi text for every box in the ITR and GST forms. Edit one entry to change one field." },
   { key: "portalText", label: "Portal text (ITR & GST)", description: "Headings, sentences and button labels of the filing and GST screens, one entry per phrase." },
+  { key: "mobileText", label: "Mobile app text (iOS & Android)", description: "Every heading, button and message shown in the TaxFilr mobile app, one entry per phrase. The app also reads Field guides and Portal text." },
 ];
 
 /** Collections whose published entries override defaults one `key` at a time instead of replacing the whole list. */
-const KEYED_COLLECTIONS = new Set<keyof SiteContent>(["fieldGuides", "portalText"]);
+const KEYED_COLLECTIONS = new Set<keyof SiteContent>(["fieldGuides", "portalText", "mobileText"]);
 
 /** Maps a `SiteContent` key to the backend collection name (snake_case). */
 export function collectionName(key: keyof SiteContent): string {
@@ -136,6 +139,7 @@ export const defaultContent: SiteContent = {
   },
   fieldGuides,
   portalText,
+  mobileText,
 };
 
 /** Stable slug for an entry so the CMS import is idempotent and edits map back onto the same document. */
