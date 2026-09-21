@@ -2631,6 +2631,1000 @@
           "text": "Copy these details from your GST certificate once; every return will use them."
         }
       }
+    ],
+    "mobile_text": [
+      {
+        "slug": "app-welcome-title",
+        "title": "app.welcome.title",
+        "data": {
+          "key": "app.welcome.title",
+          "text": "Tax bharna ab easy hai 😎"
+        }
+      },
+      {
+        "slug": "app-welcome-body",
+        "title": "app.welcome.body",
+        "data": {
+          "key": "app.welcome.body",
+          "text": "ITR aur GST — bina CA ki bhasha ke. Simple sawaal, simple jawab, kaam done."
+        }
+      },
+      {
+        "slug": "app-welcome-login",
+        "title": "app.welcome.login",
+        "data": {
+          "key": "app.welcome.login",
+          "text": "Login karo"
+        }
+      },
+      {
+        "slug": "app-welcome-register",
+        "title": "app.welcome.register",
+        "data": {
+          "key": "app.welcome.register",
+          "text": "Naya account banao"
+        }
+      },
+      {
+        "slug": "app-login-title",
+        "title": "app.login.title",
+        "data": {
+          "key": "app.login.title",
+          "text": "Wapas swagat hai 👋"
+        }
+      },
+      {
+        "slug": "app-login-email",
+        "title": "app.login.email",
+        "data": {
+          "key": "app.login.email",
+          "text": "Email"
+        }
+      },
+      {
+        "slug": "app-login-email-hint",
+        "title": "app.login.email.hint",
+        "data": {
+          "key": "app.login.email.hint",
+          "text": "Jo email website pe use kiya tha, wahi yahan chalega."
+        }
+      },
+      {
+        "slug": "app-login-password",
+        "title": "app.login.password",
+        "data": {
+          "key": "app.login.password",
+          "text": "Password"
+        }
+      },
+      {
+        "slug": "app-login-button",
+        "title": "app.login.button",
+        "data": {
+          "key": "app.login.button",
+          "text": "Andar chalo"
+        }
+      },
+      {
+        "slug": "app-login-noaccount",
+        "title": "app.login.noAccount",
+        "data": {
+          "key": "app.login.noAccount",
+          "text": "Account nahi hai? Banao — 1 minute."
+        }
+      },
+      {
+        "slug": "app-register-title",
+        "title": "app.register.title",
+        "data": {
+          "key": "app.register.title",
+          "text": "Chalo shuru karein 🚀"
+        }
+      },
+      {
+        "slug": "app-register-name",
+        "title": "app.register.name",
+        "data": {
+          "key": "app.register.name",
+          "text": "Aapka naam"
+        }
+      },
+      {
+        "slug": "app-register-name-hint",
+        "title": "app.register.name.hint",
+        "data": {
+          "key": "app.register.name.hint",
+          "text": "Jaisa PAN card pe likha hai."
+        }
+      },
+      {
+        "slug": "app-register-phone",
+        "title": "app.register.phone",
+        "data": {
+          "key": "app.register.phone",
+          "text": "Mobile number"
+        }
+      },
+      {
+        "slug": "app-register-phone-hint",
+        "title": "app.register.phone.hint",
+        "data": {
+          "key": "app.register.phone.hint",
+          "text": "10 digit, bina +91."
+        }
+      },
+      {
+        "slug": "app-register-pan",
+        "title": "app.register.pan",
+        "data": {
+          "key": "app.register.pan",
+          "text": "PAN number (optional)"
+        }
+      },
+      {
+        "slug": "app-register-pan-hint",
+        "title": "app.register.pan.hint",
+        "data": {
+          "key": "app.register.pan.hint",
+          "text": "10 letters/numbers, e.g. ABCDE1234F. Baad mein bhi daal sakte ho."
+        }
+      },
+      {
+        "slug": "app-register-password-hint",
+        "title": "app.register.password.hint",
+        "data": {
+          "key": "app.register.password.hint",
+          "text": "Kam se kam 8 characters."
+        }
+      },
+      {
+        "slug": "app-register-button",
+        "title": "app.register.button",
+        "data": {
+          "key": "app.register.button",
+          "text": "Account banao"
+        }
+      },
+      {
+        "slug": "app-register-haveaccount",
+        "title": "app.register.haveAccount",
+        "data": {
+          "key": "app.register.haveAccount",
+          "text": "Pehle se account hai? Login karo."
+        }
+      },
+      {
+        "slug": "app-tab-home",
+        "title": "app.tab.home",
+        "data": {
+          "key": "app.tab.home",
+          "text": "Home"
+        }
+      },
+      {
+        "slug": "app-tab-itr",
+        "title": "app.tab.itr",
+        "data": {
+          "key": "app.tab.itr",
+          "text": "ITR"
+        }
+      },
+      {
+        "slug": "app-tab-gst",
+        "title": "app.tab.gst",
+        "data": {
+          "key": "app.tab.gst",
+          "text": "GST"
+        }
+      },
+      {
+        "slug": "app-tab-money",
+        "title": "app.tab.money",
+        "data": {
+          "key": "app.tab.money",
+          "text": "Paisa"
+        }
+      },
+      {
+        "slug": "app-tab-me",
+        "title": "app.tab.me",
+        "data": {
+          "key": "app.tab.me",
+          "text": "Me"
+        }
+      },
+      {
+        "slug": "app-home-greeting",
+        "title": "app.home.greeting",
+        "data": {
+          "key": "app.home.greeting",
+          "text": "Hey {name} 👋"
+        }
+      },
+      {
+        "slug": "app-home-subtitle",
+        "title": "app.home.subtitle",
+        "data": {
+          "key": "app.home.subtitle",
+          "text": "Aaj kya karna hai?"
+        }
+      },
+      {
+        "slug": "app-home-itr-title",
+        "title": "app.home.itr.title",
+        "data": {
+          "key": "app.home.itr.title",
+          "text": "Income Tax return bharo"
+        }
+      },
+      {
+        "slug": "app-home-itr-body",
+        "title": "app.home.itr.body",
+        "data": {
+          "key": "app.home.itr.body",
+          "text": "Salary ho ya dukaan — 5 simple steps mein."
+        }
+      },
+      {
+        "slug": "app-home-gst-title",
+        "title": "app.home.gst.title",
+        "data": {
+          "key": "app.home.gst.title",
+          "text": "GST return bharo"
+        }
+      },
+      {
+        "slug": "app-home-gst-body",
+        "title": "app.home.gst.body",
+        "data": {
+          "key": "app.home.gst.body",
+          "text": "Bills add karo, tax hum nikal denge."
+        }
+      },
+      {
+        "slug": "app-home-money-title",
+        "title": "app.home.money.title",
+        "data": {
+          "key": "app.home.money.title",
+          "text": "Mera paisa"
+        }
+      },
+      {
+        "slug": "app-home-money-body",
+        "title": "app.home.money.body",
+        "data": {
+          "key": "app.home.money.body",
+          "text": "Tax diya, refund aaya, investment — sab ek jagah."
+        }
+      },
+      {
+        "slug": "app-home-cases-title",
+        "title": "app.home.cases.title",
+        "data": {
+          "key": "app.home.cases.title",
+          "text": "Mere returns"
+        }
+      },
+      {
+        "slug": "app-home-cases-empty",
+        "title": "app.home.cases.empty",
+        "data": {
+          "key": "app.home.cases.empty",
+          "text": "Abhi koi return shuru nahi hua. Upar se shuru karo!"
+        }
+      },
+      {
+        "slug": "app-home-notifications",
+        "title": "app.home.notifications",
+        "data": {
+          "key": "app.home.notifications",
+          "text": "Updates"
+        }
+      },
+      {
+        "slug": "app-home-help",
+        "title": "app.home.help",
+        "data": {
+          "key": "app.home.help",
+          "text": "Samajh nahi aa raha? Expert se baat karo 💬"
+        }
+      },
+      {
+        "slug": "app-itr-start-title",
+        "title": "app.itr.start.title",
+        "data": {
+          "key": "app.itr.start.title",
+          "text": "Aap kya karte ho?"
+        }
+      },
+      {
+        "slug": "app-itr-start-body",
+        "title": "app.itr.start.body",
+        "data": {
+          "key": "app.itr.start.body",
+          "text": "Isse hum sahi form (ITR-1 / ITR-4) khud chun lenge. Aapko form number yaad rakhne ki zaroorat nahi."
+        }
+      },
+      {
+        "slug": "app-itr-type-salaried",
+        "title": "app.itr.type.salaried",
+        "data": {
+          "key": "app.itr.type.salaried",
+          "text": "Naukri karta hoon (salary milti hai)"
+        }
+      },
+      {
+        "slug": "app-itr-type-salaried-body",
+        "title": "app.itr.type.salaried.body",
+        "data": {
+          "key": "app.itr.type.salaried.body",
+          "text": "Company se Form 16 milta hai."
+        }
+      },
+      {
+        "slug": "app-itr-type-business",
+        "title": "app.itr.type.business",
+        "data": {
+          "key": "app.itr.type.business",
+          "text": "Dukaan / business hai"
+        }
+      },
+      {
+        "slug": "app-itr-type-business-body",
+        "title": "app.itr.type.business.body",
+        "data": {
+          "key": "app.itr.type.business.body",
+          "text": "Kirana, trading, manufacturing, online selling…"
+        }
+      },
+      {
+        "slug": "app-itr-type-professional",
+        "title": "app.itr.type.professional",
+        "data": {
+          "key": "app.itr.type.professional",
+          "text": "Freelancer / professional hoon"
+        }
+      },
+      {
+        "slug": "app-itr-type-professional-body",
+        "title": "app.itr.type.professional.body",
+        "data": {
+          "key": "app.itr.type.professional.body",
+          "text": "Doctor, designer, tutor, consultant, driver-partner…"
+        }
+      },
+      {
+        "slug": "app-itr-year",
+        "title": "app.itr.year",
+        "data": {
+          "key": "app.itr.year",
+          "text": "Kis saal ka return?"
+        }
+      },
+      {
+        "slug": "app-itr-year-hint",
+        "title": "app.itr.year.hint",
+        "data": {
+          "key": "app.itr.year.hint",
+          "text": "Financial year = 1 April se 31 March. Abhi pichhle saal ka bharte hain."
+        }
+      },
+      {
+        "slug": "app-itr-continue",
+        "title": "app.itr.continue",
+        "data": {
+          "key": "app.itr.continue",
+          "text": "Aage badho"
+        }
+      },
+      {
+        "slug": "app-itr-back",
+        "title": "app.itr.back",
+        "data": {
+          "key": "app.itr.back",
+          "text": "Peeche"
+        }
+      },
+      {
+        "slug": "app-itr-income-title",
+        "title": "app.itr.income.title",
+        "data": {
+          "key": "app.itr.income.title",
+          "text": "Kitna kamaya? 💰"
+        }
+      },
+      {
+        "slug": "app-itr-income-body",
+        "title": "app.itr.income.body",
+        "data": {
+          "key": "app.itr.income.body",
+          "text": "Jo lagoo nahi hota, use 0 chhod do. Andaaz se bhi likh sakte ho, baad mein badal sakte ho."
+        }
+      },
+      {
+        "slug": "app-itr-salary-total",
+        "title": "app.itr.salary.total",
+        "data": {
+          "key": "app.itr.salary.total",
+          "text": "Saal ki total salary"
+        }
+      },
+      {
+        "slug": "app-itr-salary-total-hint",
+        "title": "app.itr.salary.total.hint",
+        "data": {
+          "key": "app.itr.salary.total.hint",
+          "text": "Form 16 Part B → 'Gross salary'. Ya 12 mahine ki salary jod lo."
+        }
+      },
+      {
+        "slug": "app-itr-salary-tds",
+        "title": "app.itr.salary.tds",
+        "data": {
+          "key": "app.itr.salary.tds",
+          "text": "Company ne jo tax kaata (TDS)"
+        }
+      },
+      {
+        "slug": "app-itr-salary-tds-hint",
+        "title": "app.itr.salary.tds.hint",
+        "data": {
+          "key": "app.itr.salary.tds.hint",
+          "text": "Form 16 Part A → 'Total tax deducted'."
+        }
+      },
+      {
+        "slug": "app-itr-deductions-title",
+        "title": "app.itr.deductions.title",
+        "data": {
+          "key": "app.itr.deductions.title",
+          "text": "Tax bachane wale kharche 🛡️"
+        }
+      },
+      {
+        "slug": "app-itr-deductions-body",
+        "title": "app.itr.deductions.body",
+        "data": {
+          "key": "app.itr.deductions.body",
+          "text": "LIC, PF, PPF, school fees, health insurance — ye sab tax kam karte hain. Jo nahi hai, 0 rakho."
+        }
+      },
+      {
+        "slug": "app-itr-result-title",
+        "title": "app.itr.result.title",
+        "data": {
+          "key": "app.itr.result.title",
+          "text": "Aapka tax result 🎉"
+        }
+      },
+      {
+        "slug": "app-itr-result-body",
+        "title": "app.itr.result.body",
+        "data": {
+          "key": "app.itr.result.body",
+          "text": "Humne dono tarike (purana aur naya regime) check kiye aur sasta wala chuna."
+        }
+      },
+      {
+        "slug": "app-itr-result-oldregime",
+        "title": "app.itr.result.oldRegime",
+        "data": {
+          "key": "app.itr.result.oldRegime",
+          "text": "Purana tarika"
+        }
+      },
+      {
+        "slug": "app-itr-result-newregime",
+        "title": "app.itr.result.newRegime",
+        "data": {
+          "key": "app.itr.result.newRegime",
+          "text": "Naya tarika"
+        }
+      },
+      {
+        "slug": "app-itr-result-recommended",
+        "title": "app.itr.result.recommended",
+        "data": {
+          "key": "app.itr.result.recommended",
+          "text": "Best for you"
+        }
+      },
+      {
+        "slug": "app-itr-result-taxable",
+        "title": "app.itr.result.taxable",
+        "data": {
+          "key": "app.itr.result.taxable",
+          "text": "Tax lagne wali income"
+        }
+      },
+      {
+        "slug": "app-itr-result-tax",
+        "title": "app.itr.result.tax",
+        "data": {
+          "key": "app.itr.result.tax",
+          "text": "Total tax"
+        }
+      },
+      {
+        "slug": "app-itr-result-paid",
+        "title": "app.itr.result.paid",
+        "data": {
+          "key": "app.itr.result.paid",
+          "text": "Pehle se diya"
+        }
+      },
+      {
+        "slug": "app-itr-result-payable",
+        "title": "app.itr.result.payable",
+        "data": {
+          "key": "app.itr.result.payable",
+          "text": "Aur dena hai"
+        }
+      },
+      {
+        "slug": "app-itr-result-refund",
+        "title": "app.itr.result.refund",
+        "data": {
+          "key": "app.itr.result.refund",
+          "text": "Refund milega 🥳"
+        }
+      },
+      {
+        "slug": "app-itr-result-zero",
+        "title": "app.itr.result.zero",
+        "data": {
+          "key": "app.itr.result.zero",
+          "text": "Kuch nahi dena, kuch nahi milega ✌️"
+        }
+      },
+      {
+        "slug": "app-itr-submit",
+        "title": "app.itr.submit",
+        "data": {
+          "key": "app.itr.submit",
+          "text": "Review ke liye bhejo"
+        }
+      },
+      {
+        "slug": "app-itr-submitted-title",
+        "title": "app.itr.submitted.title",
+        "data": {
+          "key": "app.itr.submitted.title",
+          "text": "Bhej diya! ✅"
+        }
+      },
+      {
+        "slug": "app-itr-submitted-body",
+        "title": "app.itr.submitted.body",
+        "data": {
+          "key": "app.itr.submitted.body",
+          "text": "Hamari team check karegi aur aapko update bhejegi. Status 'Mere returns' mein dekho."
+        }
+      },
+      {
+        "slug": "app-itr-save",
+        "title": "app.itr.save",
+        "data": {
+          "key": "app.itr.save",
+          "text": "Save karo"
+        }
+      },
+      {
+        "slug": "app-itr-saved",
+        "title": "app.itr.saved",
+        "data": {
+          "key": "app.itr.saved",
+          "text": "Saved ✔"
+        }
+      },
+      {
+        "slug": "app-gst-title",
+        "title": "app.gst.title",
+        "data": {
+          "key": "app.gst.title",
+          "text": "GST — bills se return tak 🧾"
+        }
+      },
+      {
+        "slug": "app-gst-body",
+        "title": "app.gst.body",
+        "data": {
+          "key": "app.gst.body",
+          "text": "Pehle apni GST registration add karo, phir har mahine ke bills daalo. Tax hum nikal denge."
+        }
+      },
+      {
+        "slug": "app-gst-profile-add",
+        "title": "app.gst.profile.add",
+        "data": {
+          "key": "app.gst.profile.add",
+          "text": "GST registration add karo"
+        }
+      },
+      {
+        "slug": "app-gst-profile-saved",
+        "title": "app.gst.profile.saved",
+        "data": {
+          "key": "app.gst.profile.saved",
+          "text": "Registration save ho gayi ✔"
+        }
+      },
+      {
+        "slug": "app-gst-newreturn",
+        "title": "app.gst.newReturn",
+        "data": {
+          "key": "app.gst.newReturn",
+          "text": "Naya return shuru karo"
+        }
+      },
+      {
+        "slug": "app-gst-month",
+        "title": "app.gst.month",
+        "data": {
+          "key": "app.gst.month",
+          "text": "Kaunsa mahina?"
+        }
+      },
+      {
+        "slug": "app-gst-month-hint",
+        "title": "app.gst.month.hint",
+        "data": {
+          "key": "app.gst.month.hint",
+          "text": "Format: 2025-04 (saal-mahina)."
+        }
+      },
+      {
+        "slug": "app-gst-returntype-hint",
+        "title": "app.gst.returnType.hint",
+        "data": {
+          "key": "app.gst.returnType.hint",
+          "text": "GSTR-1 = aapne kya becha. GSTR-3B = tax ka hisaab aur payment. Zyada log dono bharte hain."
+        }
+      },
+      {
+        "slug": "app-gst-invoices-title",
+        "title": "app.gst.invoices.title",
+        "data": {
+          "key": "app.gst.invoices.title",
+          "text": "Bills 🧾"
+        }
+      },
+      {
+        "slug": "app-gst-invoices-body",
+        "title": "app.gst.invoices.body",
+        "data": {
+          "key": "app.gst.invoices.body",
+          "text": "Bechne ka bill = Sales. Kharidne ka bill = Purchase (isse tax kam hota hai)."
+        }
+      },
+      {
+        "slug": "app-gst-invoice-sales",
+        "title": "app.gst.invoice.sales",
+        "data": {
+          "key": "app.gst.invoice.sales",
+          "text": "Sales bill (maine becha)"
+        }
+      },
+      {
+        "slug": "app-gst-invoice-purchase",
+        "title": "app.gst.invoice.purchase",
+        "data": {
+          "key": "app.gst.invoice.purchase",
+          "text": "Purchase bill (maine kharida)"
+        }
+      },
+      {
+        "slug": "app-gst-invoice-add",
+        "title": "app.gst.invoice.add",
+        "data": {
+          "key": "app.gst.invoice.add",
+          "text": "Bill add karo"
+        }
+      },
+      {
+        "slug": "app-gst-invoice-added",
+        "title": "app.gst.invoice.added",
+        "data": {
+          "key": "app.gst.invoice.added",
+          "text": "Bill add ho gaya ✔"
+        }
+      },
+      {
+        "slug": "app-gst-summary-title",
+        "title": "app.gst.summary.title",
+        "data": {
+          "key": "app.gst.summary.title",
+          "text": "Tax ka hisaab 🧮"
+        }
+      },
+      {
+        "slug": "app-gst-summary-output",
+        "title": "app.gst.summary.output",
+        "data": {
+          "key": "app.gst.summary.output",
+          "text": "Sales pe tax (aapne liya)"
+        }
+      },
+      {
+        "slug": "app-gst-summary-itc",
+        "title": "app.gst.summary.itc",
+        "data": {
+          "key": "app.gst.summary.itc",
+          "text": "Purchase pe tax (credit milega)"
+        }
+      },
+      {
+        "slug": "app-gst-summary-payable",
+        "title": "app.gst.summary.payable",
+        "data": {
+          "key": "app.gst.summary.payable",
+          "text": "Sarkaar ko dena hai"
+        }
+      },
+      {
+        "slug": "app-gst-summary-latefee",
+        "title": "app.gst.summary.lateFee",
+        "data": {
+          "key": "app.gst.summary.lateFee",
+          "text": "Late fee + interest"
+        }
+      },
+      {
+        "slug": "app-gst-submit",
+        "title": "app.gst.submit",
+        "data": {
+          "key": "app.gst.submit",
+          "text": "Review ke liye bhejo"
+        }
+      },
+      {
+        "slug": "app-gst-empty",
+        "title": "app.gst.empty",
+        "data": {
+          "key": "app.gst.empty",
+          "text": "Abhi koi bill nahi. Pehla bill add karo 👇"
+        }
+      },
+      {
+        "slug": "app-money-title",
+        "title": "app.money.title",
+        "data": {
+          "key": "app.money.title",
+          "text": "Mera paisa 💸"
+        }
+      },
+      {
+        "slug": "app-money-body",
+        "title": "app.money.body",
+        "data": {
+          "key": "app.money.body",
+          "text": "Tax kitna dena tha, kitna diya, refund kab aaya — sab yahan."
+        }
+      },
+      {
+        "slug": "app-money-liability",
+        "title": "app.money.liability",
+        "data": {
+          "key": "app.money.liability",
+          "text": "Total tax banta hai"
+        }
+      },
+      {
+        "slug": "app-money-paid",
+        "title": "app.money.paid",
+        "data": {
+          "key": "app.money.paid",
+          "text": "Diya hua"
+        }
+      },
+      {
+        "slug": "app-money-outstanding",
+        "title": "app.money.outstanding",
+        "data": {
+          "key": "app.money.outstanding",
+          "text": "Baaki"
+        }
+      },
+      {
+        "slug": "app-money-refund",
+        "title": "app.money.refund",
+        "data": {
+          "key": "app.money.refund",
+          "text": "Refund"
+        }
+      },
+      {
+        "slug": "app-money-investments",
+        "title": "app.money.investments",
+        "data": {
+          "key": "app.money.investments",
+          "text": "Investments"
+        }
+      },
+      {
+        "slug": "app-money-payments",
+        "title": "app.money.payments",
+        "data": {
+          "key": "app.money.payments",
+          "text": "Tax payments"
+        }
+      },
+      {
+        "slug": "app-money-addpayment",
+        "title": "app.money.addPayment",
+        "data": {
+          "key": "app.money.addPayment",
+          "text": "Tax payment add karo"
+        }
+      },
+      {
+        "slug": "app-money-addinvestment",
+        "title": "app.money.addInvestment",
+        "data": {
+          "key": "app.money.addInvestment",
+          "text": "Investment add karo"
+        }
+      },
+      {
+        "slug": "app-money-empty",
+        "title": "app.money.empty",
+        "data": {
+          "key": "app.money.empty",
+          "text": "Abhi kuch nahi. Add karke shuru karo."
+        }
+      },
+      {
+        "slug": "app-me-title",
+        "title": "app.me.title",
+        "data": {
+          "key": "app.me.title",
+          "text": "Meri profile"
+        }
+      },
+      {
+        "slug": "app-me-pan",
+        "title": "app.me.pan",
+        "data": {
+          "key": "app.me.pan",
+          "text": "PAN"
+        }
+      },
+      {
+        "slug": "app-me-bank",
+        "title": "app.me.bank",
+        "data": {
+          "key": "app.me.bank",
+          "text": "Bank account (refund isme aayega)"
+        }
+      },
+      {
+        "slug": "app-me-ifsc",
+        "title": "app.me.ifsc",
+        "data": {
+          "key": "app.me.ifsc",
+          "text": "IFSC code"
+        }
+      },
+      {
+        "slug": "app-me-ifsc-hint",
+        "title": "app.me.ifsc.hint",
+        "data": {
+          "key": "app.me.ifsc.hint",
+          "text": "Cheque book ya bank app mein milega, e.g. SBIN0001234."
+        }
+      },
+      {
+        "slug": "app-me-save",
+        "title": "app.me.save",
+        "data": {
+          "key": "app.me.save",
+          "text": "Save karo"
+        }
+      },
+      {
+        "slug": "app-me-logout",
+        "title": "app.me.logout",
+        "data": {
+          "key": "app.me.logout",
+          "text": "Logout"
+        }
+      },
+      {
+        "slug": "app-me-language",
+        "title": "app.me.language",
+        "data": {
+          "key": "app.me.language",
+          "text": "Bhasha: Hinglish (admin CMS se badal sakte hain)"
+        }
+      },
+      {
+        "slug": "app-status-draft",
+        "title": "app.status.DRAFT",
+        "data": {
+          "key": "app.status.DRAFT",
+          "text": "Draft — abhi aap bhar rahe ho"
+        }
+      },
+      {
+        "slug": "app-status-submitted",
+        "title": "app.status.SUBMITTED",
+        "data": {
+          "key": "app.status.SUBMITTED",
+          "text": "Bheja gaya — team dekh rahi hai"
+        }
+      },
+      {
+        "slug": "app-status-under-review",
+        "title": "app.status.UNDER_REVIEW",
+        "data": {
+          "key": "app.status.UNDER_REVIEW",
+          "text": "Review ho raha hai 🔍"
+        }
+      },
+      {
+        "slug": "app-status-query-raised",
+        "title": "app.status.QUERY_RAISED",
+        "data": {
+          "key": "app.status.QUERY_RAISED",
+          "text": "Team ne sawaal poocha hai ❗"
+        }
+      },
+      {
+        "slug": "app-status-approved",
+        "title": "app.status.APPROVED",
+        "data": {
+          "key": "app.status.APPROVED",
+          "text": "Approved ✅"
+        }
+      },
+      {
+        "slug": "app-status-filed",
+        "title": "app.status.FILED",
+        "data": {
+          "key": "app.status.FILED",
+          "text": "File ho gaya 🎉"
+        }
+      },
+      {
+        "slug": "app-status-rejected",
+        "title": "app.status.REJECTED",
+        "data": {
+          "key": "app.status.REJECTED",
+          "text": "Wapas aaya — dobara dekho"
+        }
+      },
+      {
+        "slug": "app-status-completed",
+        "title": "app.status.COMPLETED",
+        "data": {
+          "key": "app.status.COMPLETED",
+          "text": "Done ✅"
+        }
+      },
+      {
+        "slug": "app-common-loading",
+        "title": "app.common.loading",
+        "data": {
+          "key": "app.common.loading",
+          "text": "Ruko zara…"
+        }
+      },
+      {
+        "slug": "app-common-retry",
+        "title": "app.common.retry",
+        "data": {
+          "key": "app.common.retry",
+          "text": "Dobara try karo"
+        }
+      },
+      {
+        "slug": "app-common-error",
+        "title": "app.common.error",
+        "data": {
+          "key": "app.common.error",
+          "text": "Kuch gadbad ho gayi 😅"
+        }
+      }
     ]
   },
   "publish": true

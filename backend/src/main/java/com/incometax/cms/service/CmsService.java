@@ -27,7 +27,7 @@ public class CmsService {
     public static final Set<String> COLLECTIONS = new LinkedHashSet<>(List.of(
             "site", "nav", "footer", "services", "pricing", "testimonials", "client_logos", "how_it_works",
             "why_choose_us", "audiences", "faqs", "team", "values", "resource_categories", "resources",
-            "videos", "legal", "field_guides", "portal_text"));
+            "videos", "legal", "field_guides", "portal_text", "mobile_text"));
 
     private static final Pattern COLLECTION_PATTERN = Pattern.compile("[a-z][a-z0-9_]{1,63}");
 
