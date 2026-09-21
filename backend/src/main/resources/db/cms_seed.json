@@ -1,0 +1,2637 @@
+{
+  "collections": {
+    "site": [
+      {
+        "slug": "site",
+        "title": "Site settings",
+        "data": {
+          "name": "TaxFilr",
+          "legalName": "TaxFilr Advisory Private Limited",
+          "tagline": "Simplifying Taxes. Strengthening Businesses.",
+          "description": "Expert income tax, GST, accounting and compliance solutions for individuals, startups and growing businesses — all under one roof.",
+          "url": "https://www.taxfilr.in",
+          "announcement": {
+            "text": "Your Trusted Partner for Tax, Compliance & Business Solutions",
+            "ctaLabel": "Book a Free Consultation",
+            "ctaHref": "/contact#book"
+          },
+          "contact": {
+            "phone": "+91 98765 43210",
+            "phoneHref": "tel:+919876543210",
+            "whatsapp": "+91 98765 43210",
+            "whatsappHref": "https://wa.me/919876543210?text=Hi%2C%20I%27d%20like%20to%20talk%20to%20a%20tax%20expert.",
+            "email": "hello@taxfilr.in",
+            "supportEmail": "support@taxfilr.in",
+            "address": {
+              "line1": "4th Floor, Lakeview Business Park",
+              "line2": "Outer Ring Road, Bellandur",
+              "city": "Bengaluru",
+              "state": "Karnataka",
+              "pincode": "560103",
+              "country": "India"
+            },
+            "hours": [
+              {
+                "days": "Monday – Friday",
+                "time": "9:30 AM – 7:00 PM"
+              },
+              {
+                "days": "Saturday",
+                "time": "10:00 AM – 4:00 PM"
+              },
+              {
+                "days": "Sunday",
+                "time": "Closed"
+              }
+            ],
+            "mapEmbedUrl": "https://www.google.com/maps?q=Bellandur%2C%20Bengaluru%2C%20Karnataka&output=embed"
+          },
+          "social": [
+            {
+              "label": "LinkedIn",
+              "href": "https://www.linkedin.com/",
+              "icon": "linkedin"
+            },
+            {
+              "label": "Instagram",
+              "href": "https://www.instagram.com/",
+              "icon": "instagram"
+            },
+            {
+              "label": "Facebook",
+              "href": "https://www.facebook.com/",
+              "icon": "facebook"
+            },
+            {
+              "label": "YouTube",
+              "href": "https://www.youtube.com/",
+              "icon": "youtube"
+            }
+          ],
+          "stats": [
+            {
+              "value": 10000,
+              "suffix": "+",
+              "label": "Clients Served"
+            },
+            {
+              "value": 25000,
+              "suffix": "+",
+              "label": "Returns & Filings"
+            },
+            {
+              "value": 99,
+              "suffix": "%",
+              "label": "On-Time Compliance"
+            },
+            {
+              "value": 15,
+              "suffix": "+ Years",
+              "label": "Professional Experience"
+            }
+          ],
+          "trustIndicators": [
+            "Expert Professionals",
+            "Transparent Pricing",
+            "Secure Documentation",
+            "End-to-End Support"
+          ],
+          "portal": {
+            "getStartedHref": "/auth/register",
+            "loginHref": "/auth/login"
+          }
+        }
+      }
+    ],
+    "nav": [
+      {
+        "slug": "nav-1",
+        "title": "Home",
+        "data": {
+          "label": "Home",
+          "href": "/"
+        }
+      },
+      {
+        "slug": "services",
+        "title": "Services",
+        "data": {
+          "label": "Services",
+          "href": "/services"
+        }
+      },
+      {
+        "slug": "individuals",
+        "title": "For Individuals",
+        "data": {
+          "label": "For Individuals",
+          "href": "/individuals"
+        }
+      },
+      {
+        "slug": "businesses",
+        "title": "For Businesses",
+        "data": {
+          "label": "For Businesses",
+          "href": "/businesses"
+        }
+      },
+      {
+        "slug": "consultants",
+        "title": "Find a CA",
+        "data": {
+          "label": "Find a CA",
+          "href": "/consultants"
+        }
+      },
+      {
+        "slug": "pricing",
+        "title": "Pricing",
+        "data": {
+          "label": "Pricing",
+          "href": "/pricing"
+        }
+      },
+      {
+        "slug": "resources",
+        "title": "Resources",
+        "data": {
+          "label": "Resources",
+          "href": "/resources"
+        }
+      },
+      {
+        "slug": "about",
+        "title": "About Us",
+        "data": {
+          "label": "About Us",
+          "href": "/about"
+        }
+      },
+      {
+        "slug": "contact",
+        "title": "Contact",
+        "data": {
+          "label": "Contact",
+          "href": "/contact"
+        }
+      }
+    ],
+    "footer": [
+      {
+        "slug": "company",
+        "title": "Company",
+        "data": {
+          "heading": "Company",
+          "links": [
+            {
+              "label": "About Us",
+              "href": "/about"
+            },
+            {
+              "label": "Our Team",
+              "href": "/about#team"
+            },
+            {
+              "label": "Careers",
+              "href": "/about#careers"
+            },
+            {
+              "label": "Contact",
+              "href": "/contact"
+            }
+          ]
+        }
+      },
+      {
+        "slug": "services",
+        "title": "Services",
+        "data": {
+          "heading": "Services",
+          "links": [
+            {
+              "label": "Income Tax",
+              "href": "/services/income-tax"
+            },
+            {
+              "label": "GST",
+              "href": "/services/gst"
+            },
+            {
+              "label": "Accounting",
+              "href": "/services/accounting"
+            },
+            {
+              "label": "TDS",
+              "href": "/services/tds"
+            },
+            {
+              "label": "ROC Compliance",
+              "href": "/services/roc-compliance"
+            },
+            {
+              "label": "Company Registration",
+              "href": "/services/company-registration"
+            },
+            {
+              "label": "Find a CA / Lawyer",
+              "href": "/consultants"
+            },
+            {
+              "label": "Join as a consultant",
+              "href": "/consultant/register"
+            }
+          ]
+        }
+      },
+      {
+        "slug": "resources",
+        "title": "Resources",
+        "data": {
+          "heading": "Resources",
+          "links": [
+            {
+              "label": "How-to Videos",
+              "href": "/resources/videos"
+            },
+            {
+              "label": "Tax Guides",
+              "href": "/resources?category=income-tax-guides"
+            },
+            {
+              "label": "FAQs",
+              "href": "/faq"
+            },
+            {
+              "label": "Tax Calendar",
+              "href": "/resources/compliance-calendar-fy-2026-27"
+            },
+            {
+              "label": "Blogs",
+              "href": "/resources"
+            },
+            {
+              "label": "News & Updates",
+              "href": "/resources?category=tax-updates"
+            }
+          ]
+        }
+      },
+      {
+        "slug": "legal",
+        "title": "Legal",
+        "data": {
+          "heading": "Legal",
+          "links": [
+            {
+              "label": "Privacy Policy",
+              "href": "/privacy"
+            },
+            {
+              "label": "Terms & Conditions",
+              "href": "/terms"
+            },
+            {
+              "label": "Disclaimer",
+              "href": "/disclaimer"
+            },
+            {
+              "label": "Refund Policy",
+              "href": "/refund-policy"
+            }
+          ]
+        }
+      }
+    ],
+    "services": [
+      {
+        "slug": "income-tax",
+        "title": "Income Tax",
+        "data": {
+          "slug": "income-tax",
+          "name": "Income Tax",
+          "icon": "receipt",
+          "summary": "ITR filing, tax planning, capital gains and tax advisory.",
+          "headline": "Income tax filing and advisory, handled by professionals",
+          "intro": "Whether you are a salaried employee with a single Form 16 or an investor with capital gains across multiple brokers, our tax professionals prepare, review and file your return accurately and on time.",
+          "startingPrice": 999,
+          "featured": true,
+          "audiences": [
+            "individuals",
+            "startups",
+            "businesses"
+          ],
+          "inclusions": [
+            "Selection of the correct ITR form (ITR-1 to ITR-4)",
+            "Form 16 / 26AS / AIS reconciliation",
+            "Old vs. new regime comparison",
+            "Capital gains computation for equity, mutual funds and property",
+            "Deduction optimisation under Chapter VI-A",
+            "E-verification support and refund tracking"
+          ],
+          "documents": [
+            "PAN and Aadhaar",
+            "Form 16 / salary slips",
+            "Form 26AS and AIS",
+            "Bank interest certificates",
+            "Capital gains statements",
+            "Investment and insurance proofs"
+          ],
+          "process": [
+            "Share your documents securely through the portal",
+            "A tax professional prepares the computation and shares a summary",
+            "You review and approve the return",
+            "We file the return and help you e-verify"
+          ],
+          "faqs": [
+            {
+              "question": "Which ITR form applies to me?",
+              "answer": "ITR-1 suits most salaried individuals with income up to ₹50 lakh. Capital gains, more than one house property or business income usually require ITR-2 or ITR-3. Our professionals confirm the correct form after reviewing your details."
+            },
+            {
+              "question": "Can you help with a belated or revised return?",
+              "answer": "Yes. We handle belated, revised and updated returns, and explain any late fee or interest implications before filing."
+            }
+          ],
+          "seoTitle": "Income Tax Return Filing & Tax Advisory Services",
+          "seoDescription": "Professional ITR filing, capital gains computation, regime comparison and year-round tax advisory for individuals and businesses in India."
+        }
+      },
+      {
+        "slug": "gst",
+        "title": "GST",
+        "data": {
+          "slug": "gst",
+          "name": "GST",
+          "icon": "percent",
+          "summary": "GST registration, return filing, reconciliation and compliance.",
+          "headline": "GST registration, returns and reconciliation without the stress",
+          "intro": "From getting your GSTIN to filing GSTR-1 and GSTR-3B every month, our GST specialists keep your books, e-invoices and returns reconciled so you never lose input tax credit.",
+          "startingPrice": 1499,
+          "priceUnit": "/ month",
+          "featured": true,
+          "audiences": [
+            "startups",
+            "businesses"
+          ],
+          "inclusions": [
+            "New GST registration and amendments",
+            "Monthly / quarterly GSTR-1 and GSTR-3B preparation",
+            "GSTR-2B input tax credit reconciliation",
+            "Annual return (GSTR-9) and reconciliation statement",
+            "E-invoice and e-way bill guidance",
+            "Notice replies and department correspondence"
+          ],
+          "documents": [
+            "PAN, Aadhaar and business registration proof",
+            "Sales and purchase registers",
+            "Bank statements",
+            "Previous returns (if migrating)"
+          ],
+          "process": [
+            "Connect your invoices via upload or import",
+            "We reconcile purchases against GSTR-2B",
+            "Review the computed liability and credit",
+            "Returns are prepared and filed by your deadline"
+          ],
+          "faqs": [
+            {
+              "question": "Do I need GST registration?",
+              "answer": "Registration is mandatory once aggregate turnover crosses the prescribed threshold (₹40 lakh for goods and ₹20 lakh for services in most states), for inter-state supply of goods, and for e-commerce sellers. Voluntary registration can also make sense to claim input credit."
+            },
+            {
+              "question": "How often are GST returns filed?",
+              "answer": "Most regular taxpayers file GSTR-1 and GSTR-3B monthly. Small taxpayers under the QRMP scheme file quarterly with monthly tax payments. Composition dealers file CMP-08 quarterly and GSTR-4 annually."
+            }
+          ],
+          "seoTitle": "GST Registration, Return Filing & Reconciliation Services",
+          "seoDescription": "End-to-end GST services in India: registration, monthly GSTR-1/3B filing, GSTR-2B reconciliation, annual returns and notice handling."
+        }
+      },
+      {
+        "slug": "accounting",
+        "title": "Accounting",
+        "data": {
+          "slug": "accounting",
+          "name": "Accounting",
+          "icon": "book-open",
+          "summary": "Bookkeeping, financial statements, payroll and accounting support.",
+          "headline": "Clean books, timely financials and a team that understands your business",
+          "intro": "Outsource your bookkeeping to a dedicated accountant who records transactions, reconciles bank accounts, runs payroll and delivers monthly financial statements you can act on.",
+          "startingPrice": 2999,
+          "priceUnit": "/ month",
+          "featured": true,
+          "audiences": [
+            "startups",
+            "businesses"
+          ],
+          "inclusions": [
+            "Monthly bookkeeping and bank reconciliation",
+            "Accounts payable and receivable tracking",
+            "Payroll processing with PF, ESI and TDS",
+            "Monthly P&L, balance sheet and cash-flow reports",
+            "Year-end closing and audit support",
+            "Dedicated accountant with quarterly review calls"
+          ],
+          "documents": [
+            "Bank and credit card statements",
+            "Sales and purchase invoices",
+            "Expense receipts",
+            "Employee master and salary structure"
+          ],
+          "process": [
+            "Onboarding call to map your chart of accounts",
+            "Monthly document collection and recording",
+            "Reconciliation and review by a senior accountant",
+            "Financial statements delivered to your inbox"
+          ],
+          "faqs": [
+            {
+              "question": "Which accounting software do you use?",
+              "answer": "We work with Tally, Zoho Books and QuickBooks, and can continue in whichever tool your business already uses."
+            }
+          ],
+          "seoTitle": "Outsourced Accounting, Bookkeeping & Payroll Services",
+          "seoDescription": "Monthly bookkeeping, payroll, reconciliations and financial statements for startups and SMEs, delivered by a dedicated accountant."
+        }
+      },
+      {
+        "slug": "tds",
+        "title": "TDS",
+        "data": {
+          "slug": "tds",
+          "name": "TDS",
+          "icon": "landmark",
+          "summary": "TDS calculations, payments, returns and compliance.",
+          "headline": "Accurate TDS deduction, deposit and quarterly returns",
+          "intro": "We compute TDS on salaries, contractor payments, rent and professional fees, ensure timely deposit, and file quarterly statements so your deductees receive their Form 16/16A without follow-ups.",
+          "startingPrice": 1999,
+          "priceUnit": "/ quarter",
+          "audiences": [
+            "businesses",
+            "startups"
+          ],
+          "inclusions": [
+            "TAN application",
+            "Monthly TDS computation and challan generation",
+            "Quarterly 24Q / 26Q / 27Q returns",
+            "Form 16 and Form 16A generation",
+            "Correction statements and default resolution",
+            "Lower deduction certificate assistance"
+          ],
+          "documents": [
+            "TAN and PAN details",
+            "Vendor and employee master",
+            "Payment ledgers",
+            "Challan copies"
+          ],
+          "process": [
+            "Share payment details monthly",
+            "We compute liability and share challans",
+            "Quarterly returns are prepared and filed",
+            "Certificates are generated for deductees"
+          ],
+          "faqs": [
+            {
+              "question": "What are the TDS return due dates?",
+              "answer": "Quarterly TDS statements are generally due on 31 July, 31 October, 31 January and 31 May for the four quarters respectively. Monthly deposit is due by the 7th of the following month (30 April for March)."
+            }
+          ],
+          "seoTitle": "TDS Return Filing & Compliance Services",
+          "seoDescription": "TDS computation, challan payment, quarterly 24Q/26Q filing, Form 16/16A generation and default correction for Indian businesses."
+        }
+      },
+      {
+        "slug": "roc-compliance",
+        "title": "ROC Compliance",
+        "data": {
+          "slug": "roc-compliance",
+          "name": "ROC Compliance",
+          "icon": "shield-check",
+          "summary": "Annual filings, company compliance and statutory requirements.",
+          "headline": "Stay on the right side of the Companies Act",
+          "intro": "Directors carry personal liability for missed filings. Our company secretarial team maintains your statutory registers, prepares board and AGM documentation and files annual returns with the Registrar of Companies.",
+          "startingPrice": 7999,
+          "priceUnit": "/ year",
+          "audiences": [
+            "startups",
+            "businesses"
+          ],
+          "inclusions": [
+            "AOC-4 and MGT-7 / MGT-7A annual filings",
+            "DIR-3 KYC for directors",
+            "Board and general meeting minutes",
+            "Statutory registers maintenance",
+            "Changes in directors, capital and registered office",
+            "LLP Form 8 and Form 11 filings"
+          ],
+          "documents": [
+            "Certificate of incorporation, MOA and AOA",
+            "Audited financial statements",
+            "Director and shareholder details",
+            "Previous year filings"
+          ],
+          "process": [
+            "Compliance calendar prepared for your entity",
+            "Documents collected before each due date",
+            "Forms prepared and shared for digital signature",
+            "Filed with MCA and acknowledgements shared"
+          ],
+          "faqs": [
+            {
+              "question": "What happens if annual filings are delayed?",
+              "answer": "Additional fees of ₹100 per day per form apply without upper limit, and continued default can lead to director disqualification and strike-off. We track every due date so this does not happen."
+            }
+          ],
+          "seoTitle": "ROC & Company Secretarial Compliance Services",
+          "seoDescription": "Annual ROC filings, director KYC, statutory registers and event-based MCA compliance for private limited companies and LLPs."
+        }
+      },
+      {
+        "slug": "company-registration",
+        "title": "Business Registration",
+        "data": {
+          "slug": "company-registration",
+          "name": "Business Registration",
+          "icon": "building",
+          "summary": "Private Limited, LLP, Partnership and other business registrations.",
+          "headline": "Register your business the right way, from day one",
+          "intro": "We help founders choose the right structure, reserve a name, draft charter documents and complete incorporation with PAN, TAN, GST and bank account — usually within 10 working days.",
+          "startingPrice": 6999,
+          "featured": true,
+          "audiences": [
+            "startups",
+            "businesses"
+          ],
+          "inclusions": [
+            "Structure advisory: Pvt Ltd, LLP, OPC, Partnership, Proprietorship",
+            "Name reservation and DSC for directors",
+            "MOA / AOA or LLP agreement drafting",
+            "Incorporation with PAN and TAN",
+            "GST, MSME (Udyam) and Shops & Establishment registrations",
+            "Post-incorporation compliance checklist"
+          ],
+          "documents": [
+            "PAN and Aadhaar of promoters",
+            "Passport-size photographs",
+            "Address proof of promoters",
+            "Registered office proof and NOC"
+          ],
+          "process": [
+            "Consultation to finalise structure and capital",
+            "Name approval and digital signatures",
+            "Drafting and filing of incorporation forms",
+            "Certificate issued, followed by bank and tax registrations"
+          ],
+          "faqs": [
+            {
+              "question": "How long does company registration take?",
+              "answer": "With documents in order, a private limited company or LLP is typically incorporated in 7–12 working days, depending on MCA processing times and name availability."
+            }
+          ],
+          "seoTitle": "Company Registration: Private Limited, LLP & Partnership",
+          "seoDescription": "Incorporate a Private Limited company, LLP, OPC or partnership in India with name approval, DSC, drafting, PAN/TAN and GST registration."
+        }
+      },
+      {
+        "slug": "startup-services",
+        "title": "Startup Services",
+        "data": {
+          "slug": "startup-services",
+          "name": "Startup Services",
+          "icon": "rocket",
+          "summary": "Startup registration, compliance, taxation and business advisory.",
+          "headline": "A finance and compliance back office built for early-stage founders",
+          "intro": "Focus on product and customers while we manage incorporation, DPIIT recognition, ESOP structuring, investor-ready books and every filing that comes with raising money.",
+          "startingPrice": 4999,
+          "priceUnit": "/ month",
+          "audiences": [
+            "startups"
+          ],
+          "inclusions": [
+            "Startup India / DPIIT recognition",
+            "Section 80-IAC tax exemption application",
+            "ESOP policy and valuation coordination",
+            "Founder and investor agreement support",
+            "Monthly MIS and investor reporting",
+            "Fundraise compliance: PAS-3, SH-7, valuation reports"
+          ],
+          "documents": [
+            "Incorporation documents",
+            "Pitch deck and business plan",
+            "Cap table",
+            "Bank statements"
+          ],
+          "process": [
+            "Discovery call on stage and fundraising plans",
+            "Compliance roadmap for the next 12 months",
+            "Dedicated startup advisor assigned",
+            "Monthly reporting and on-demand support"
+          ],
+          "faqs": [
+            {
+              "question": "Do you help with DPIIT recognition?",
+              "answer": "Yes. We prepare the application, innovation write-up and supporting documents, and follow up until recognition is granted."
+            }
+          ],
+          "seoTitle": "Startup Compliance, Taxation & Advisory Services",
+          "seoDescription": "Startup India recognition, 80-IAC exemption, ESOPs, fundraising compliance and monthly investor reporting for early-stage companies."
+        }
+      },
+      {
+        "slug": "tax-planning",
+        "title": "Tax Planning",
+        "data": {
+          "slug": "tax-planning",
+          "name": "Tax Planning",
+          "icon": "pie-chart",
+          "summary": "Personal and business tax planning to improve tax efficiency.",
+          "headline": "Plan ahead, pay only what you owe",
+          "intro": "Tax planning works best before the financial year ends. We review your income, investments and business structure to identify legitimate ways to reduce your tax outgo and avoid surprises at filing time.",
+          "startingPrice": 2499,
+          "audiences": [
+            "individuals",
+            "businesses",
+            "startups"
+          ],
+          "inclusions": [
+            "Regime selection and salary structuring",
+            "Investment planning under 80C, 80D, NPS and HRA",
+            "Capital gains harvesting and exemption planning",
+            "Advance tax computation and reminders",
+            "Business entity and remuneration planning",
+            "Mid-year review call"
+          ],
+          "documents": [
+            "Latest ITR and Form 16",
+            "Investment portfolio summary",
+            "Salary structure or business P&L"
+          ],
+          "process": [
+            "Share your current-year income estimate",
+            "Advisor prepares a personalised plan",
+            "Review call to walk through recommendations",
+            "Quarterly check-ins on advance tax"
+          ],
+          "faqs": [
+            {
+              "question": "Is tax planning the same as tax evasion?",
+              "answer": "No. Tax planning uses deductions, exemptions and structures expressly provided by law. We never recommend concealment or misreporting."
+            }
+          ],
+          "seoTitle": "Personal & Business Tax Planning Services",
+          "seoDescription": "Personalised tax planning for salaried professionals, investors and business owners: regime selection, deductions, capital gains and advance tax."
+        }
+      },
+      {
+        "slug": "legal-advisory",
+        "title": "Legal & Advisory",
+        "data": {
+          "slug": "legal-advisory",
+          "name": "Legal & Advisory",
+          "icon": "scale",
+          "summary": "Business agreements, notices, advisory and related professional services.",
+          "headline": "Practical legal and financial advisory for growing businesses",
+          "intro": "From vendor agreements to income tax and GST notices, get clear, commercially minded advice from professionals who understand both the law and your numbers.",
+          "startingPrice": null,
+          "audiences": [
+            "businesses",
+            "startups",
+            "individuals"
+          ],
+          "inclusions": [
+            "Drafting and review of commercial agreements",
+            "Replies to income tax and GST notices",
+            "Representation before assessing officers",
+            "Trademark search and registration",
+            "Business valuation and due diligence support",
+            "Retainer-based advisory"
+          ],
+          "documents": [
+            "Notice or agreement copy",
+            "Relevant financial records"
+          ],
+          "process": [
+            "Share the notice or requirement",
+            "Advisor assesses and quotes a fixed fee",
+            "Drafting or reply prepared and reviewed with you",
+            "Filed or executed, with follow-up as needed"
+          ],
+          "faqs": [
+            {
+              "question": "I received an income tax notice. What should I do?",
+              "answer": "Do not ignore it. Share the notice with us; most notices have a response window of 15–30 days and many can be resolved with a well-documented reply."
+            }
+          ],
+          "seoTitle": "Legal, Notice Response & Business Advisory Services",
+          "seoDescription": "Commercial agreements, tax notice replies, representation, trademark registration and retainer advisory for businesses in India."
+        }
+      }
+    ],
+    "pricing": [
+      {
+        "slug": "individuals",
+        "title": "Individuals",
+        "data": {
+          "id": "individuals",
+          "label": "Individuals",
+          "plans": [
+            {
+              "name": "Salaried",
+              "price": 999,
+              "description": "For employees with a single Form 16 and standard deductions.",
+              "quota": "1 ITR filing",
+              "features": [
+                "ITR-1 preparation and filing",
+                "Form 16 and 26AS reconciliation",
+                "Old vs. new regime comparison",
+                "E-verification support",
+                "Email support"
+              ]
+            },
+            {
+              "name": "Salaried Plus",
+              "price": 1999,
+              "description": "Multiple employers, house property or interest income.",
+              "quota": "1 ITR filing",
+              "popular": true,
+              "features": [
+                "Everything in Salaried",
+                "Multiple Form 16s",
+                "House property and other income",
+                "HRA and deduction optimisation",
+                "Dedicated tax professional",
+                "Phone and chat support"
+              ]
+            },
+            {
+              "name": "Capital Gains",
+              "price": 3499,
+              "description": "Equity, mutual fund, crypto or property gains.",
+              "quota": "1 ITR filing",
+              "features": [
+                "Everything in Salaried Plus",
+                "ITR-2 preparation",
+                "Broker statement processing",
+                "Loss set-off and carry-forward",
+                "Foreign asset reporting"
+              ]
+            },
+            {
+              "name": "Professional / Freelancer",
+              "price": 4999,
+              "description": "Consultants, freelancers and presumptive business income.",
+              "quota": "1 ITR filing + advance tax",
+              "features": [
+                "ITR-3 / ITR-4 preparation",
+                "Presumptive taxation assessment",
+                "Quarterly advance tax computation",
+                "Books of accounts guidance",
+                "Year-round advisory"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slug": "businesses",
+        "title": "Businesses",
+        "data": {
+          "id": "businesses",
+          "label": "Businesses",
+          "plans": [
+            {
+              "name": "GST Essentials",
+              "price": 1499,
+              "unit": "/ month",
+              "description": "Monthly GST compliance for small traders and service providers.",
+              "quota": "12 × GSTR-1 + 12 × GSTR-3B",
+              "features": [
+                "GSTR-1 and GSTR-3B filing",
+                "GSTR-2B reconciliation",
+                "Up to 100 invoices per month",
+                "Due-date reminders"
+              ]
+            },
+            {
+              "name": "Compliance Suite",
+              "price": 4999,
+              "unit": "/ month",
+              "description": "GST, TDS and bookkeeping in one plan.",
+              "quota": "GST + TDS + monthly books",
+              "popular": true,
+              "features": [
+                "Everything in GST Essentials",
+                "Monthly bookkeeping (up to 300 transactions)",
+                "Quarterly TDS returns",
+                "Monthly P&L and balance sheet",
+                "Dedicated accountant"
+              ]
+            },
+            {
+              "name": "Growth",
+              "price": 9999,
+              "unit": "/ month",
+              "description": "For companies with payroll, audits and ROC obligations.",
+              "quota": "Full finance back office",
+              "features": [
+                "Everything in Compliance Suite",
+                "Payroll for up to 25 employees",
+                "ROC annual filings",
+                "Audit coordination",
+                "Quarterly CFO review call"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slug": "startups",
+        "title": "Startups",
+        "data": {
+          "id": "startups",
+          "label": "Startups",
+          "plans": [
+            {
+              "name": "Launch",
+              "price": 6999,
+              "description": "Incorporate and get every registration you need to start.",
+              "quota": "Incorporation + 4 registrations",
+              "features": [
+                "Private Limited or LLP incorporation",
+                "DSC for 2 directors",
+                "PAN, TAN and GST",
+                "MSME (Udyam) registration",
+                "Post-incorporation checklist"
+              ]
+            },
+            {
+              "name": "Founder",
+              "price": 4999,
+              "unit": "/ month",
+              "description": "Ongoing compliance for pre-seed and seed-stage startups.",
+              "quota": "GST + books + ROC",
+              "popular": true,
+              "features": [
+                "Monthly bookkeeping",
+                "GST and TDS filings",
+                "ROC annual compliance",
+                "Startup India recognition",
+                "Investor-ready monthly MIS"
+              ]
+            },
+            {
+              "name": "Scale",
+              "price": 12999,
+              "unit": "/ month",
+              "description": "For funded startups with payroll, ESOPs and board reporting.",
+              "quota": "Everything + fundraising support",
+              "features": [
+                "Everything in Founder",
+                "Payroll and ESOP administration",
+                "Fundraise filings (PAS-3, SH-7)",
+                "80-IAC exemption application",
+                "Dedicated startup advisor"
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "testimonials": [
+      {
+        "slug": "ananya-krishnan",
+        "title": "Ananya Krishnan",
+        "data": {
+          "name": "Ananya Krishnan",
+          "role": "Software Engineer, Bengaluru",
+          "rating": 5,
+          "quote": "I had RSUs from a US employer and no idea how to report them. My tax professional explained everything clearly and the return was filed in two days.",
+          "initials": "AK"
+        }
+      },
+      {
+        "slug": "rohit-malhotra",
+        "title": "Rohit Malhotra",
+        "data": {
+          "name": "Rohit Malhotra",
+          "role": "Founder, D2C skincare brand",
+          "rating": 5,
+          "quote": "We moved our GST and books to them after a messy year with a freelancer. Reconciliation is on time every month and we finally trust our input credit numbers.",
+          "initials": "RM"
+        }
+      },
+      {
+        "slug": "priya-sameer-deshpande",
+        "title": "Priya & Sameer Deshpande",
+        "data": {
+          "name": "Priya & Sameer Deshpande",
+          "role": "Co-founders, EdTech startup",
+          "rating": 5,
+          "quote": "Incorporation, DPIIT recognition and our first fundraise filings — all handled with a single point of contact. Investors commented on how clean our data room was.",
+          "initials": "PD"
+        }
+      },
+      {
+        "slug": "mohammed-farhan",
+        "title": "Mohammed Farhan",
+        "data": {
+          "name": "Mohammed Farhan",
+          "role": "Proprietor, hardware trading",
+          "rating": 4,
+          "quote": "Transparent pricing and no surprise charges. The monthly compliance calendar they share has saved me at least two late fees already.",
+          "initials": "MF"
+        }
+      },
+      {
+        "slug": "neha-agarwal",
+        "title": "Neha Agarwal",
+        "data": {
+          "name": "Neha Agarwal",
+          "role": "Independent consultant",
+          "rating": 5,
+          "quote": "Presumptive taxation and advance tax used to confuse me. Now I get a reminder, pay the challan and move on with my work.",
+          "initials": "NA"
+        }
+      }
+    ],
+    "client_logos": [
+      {
+        "slug": "northwind-retail",
+        "title": "Northwind Retail",
+        "data": {
+          "name": "Northwind Retail",
+          "mark": "NW"
+        }
+      },
+      {
+        "slug": "brightpath-labs",
+        "title": "Brightpath Labs",
+        "data": {
+          "name": "Brightpath Labs",
+          "mark": "BP"
+        }
+      },
+      {
+        "slug": "kaveri-textiles",
+        "title": "Kaveri Textiles",
+        "data": {
+          "name": "Kaveri Textiles",
+          "mark": "KT"
+        }
+      },
+      {
+        "slug": "orbit-logistics",
+        "title": "Orbit Logistics",
+        "data": {
+          "name": "Orbit Logistics",
+          "mark": "OL"
+        }
+      },
+      {
+        "slug": "meridian-health",
+        "title": "Meridian Health",
+        "data": {
+          "name": "Meridian Health",
+          "mark": "MH"
+        }
+      },
+      {
+        "slug": "saffron-kitchens",
+        "title": "Saffron Kitchens",
+        "data": {
+          "name": "Saffron Kitchens",
+          "mark": "SK"
+        }
+      },
+      {
+        "slug": "lumen-studios",
+        "title": "Lumen Studios",
+        "data": {
+          "name": "Lumen Studios",
+          "mark": "LS"
+        }
+      },
+      {
+        "slug": "greenfield-agro",
+        "title": "Greenfield Agro",
+        "data": {
+          "name": "Greenfield Agro",
+          "mark": "GA"
+        }
+      },
+      {
+        "slug": "pixelcraft-digital",
+        "title": "Pixelcraft Digital",
+        "data": {
+          "name": "Pixelcraft Digital",
+          "mark": "PC"
+        }
+      },
+      {
+        "slug": "vistara-interiors",
+        "title": "Vistara Interiors",
+        "data": {
+          "name": "Vistara Interiors",
+          "mark": "VI"
+        }
+      }
+    ],
+    "how_it_works": [
+      {
+        "slug": "tell-us-what-you-need",
+        "title": "Tell Us What You Need",
+        "data": {
+          "step": "01",
+          "title": "Tell Us What You Need",
+          "description": "Submit your requirement through the website."
+        }
+      },
+      {
+        "slug": "speak-with-an-expert",
+        "title": "Speak With an Expert",
+        "data": {
+          "step": "02",
+          "title": "Speak With an Expert",
+          "description": "Connect with the right tax or business professional."
+        }
+      },
+      {
+        "slug": "we-handle-the-work",
+        "title": "We Handle the Work",
+        "data": {
+          "step": "03",
+          "title": "We Handle the Work",
+          "description": "Our team manages the filing, documentation or compliance process."
+        }
+      },
+      {
+        "slug": "stay-compliant",
+        "title": "Stay Compliant",
+        "data": {
+          "step": "04",
+          "title": "Stay Compliant",
+          "description": "Receive updates, documents and reminders when required."
+        }
+      }
+    ],
+    "why_choose_us": [
+      {
+        "slug": "experienced-professionals",
+        "title": "Experienced Professionals",
+        "data": {
+          "icon": "users",
+          "title": "Experienced Professionals",
+          "description": "Chartered accountants, company secretaries and tax specialists with 15+ years of practice."
+        }
+      },
+      {
+        "slug": "transparent-pricing",
+        "title": "Transparent Pricing",
+        "data": {
+          "icon": "badge-indian-rupee",
+          "title": "Transparent Pricing",
+          "description": "Fixed fees agreed upfront. Government charges are always shown separately."
+        }
+      },
+      {
+        "slug": "fast-turnaround",
+        "title": "Fast Turnaround",
+        "data": {
+          "icon": "timer",
+          "title": "Fast Turnaround",
+          "description": "Most returns are prepared within 48 hours of receiving complete documents."
+        }
+      },
+      {
+        "slug": "secure-documents",
+        "title": "Secure Documents",
+        "data": {
+          "icon": "lock",
+          "title": "Secure Documents",
+          "description": "Encrypted storage, version history and access limited to the professional on your case."
+        }
+      },
+      {
+        "slug": "personalized-assistance",
+        "title": "Personalized Assistance",
+        "data": {
+          "icon": "heart-handshake",
+          "title": "Personalized Assistance",
+          "description": "A named professional who knows your history — not a call-centre queue."
+        }
+      },
+      {
+        "slug": "end-to-end-support",
+        "title": "End-to-End Support",
+        "data": {
+          "icon": "life-buoy",
+          "title": "End-to-End Support",
+          "description": "From the first consultation to notices years later, we stay with you."
+        }
+      }
+    ],
+    "audiences": [
+      {
+        "slug": "individuals",
+        "title": "Individuals",
+        "data": {
+          "id": "individuals",
+          "title": "Individuals",
+          "description": "ITR filing, tax planning, capital gains and personal tax assistance.",
+          "ctaLabel": "Explore Individual Services",
+          "href": "/individuals",
+          "icon": "receipt",
+          "accent": "from-sky-500/15 to-transparent",
+          "highlights": [
+            "Salaried & multiple Form 16s",
+            "Capital gains & crypto",
+            "NRIs & foreign income",
+            "Notices & refunds"
+          ]
+        }
+      },
+      {
+        "slug": "startups",
+        "title": "Startups",
+        "data": {
+          "id": "startups",
+          "title": "Startups",
+          "description": "Registration, accounting, GST, payroll and compliance.",
+          "ctaLabel": "Explore Startup Services",
+          "href": "/startups",
+          "icon": "rocket",
+          "accent": "from-emerald-500/15 to-transparent",
+          "highlights": [
+            "Incorporation & DPIIT",
+            "Investor-ready books",
+            "ESOPs & fundraising",
+            "Monthly MIS"
+          ]
+        }
+      },
+      {
+        "slug": "businesses",
+        "title": "Businesses",
+        "data": {
+          "id": "businesses",
+          "title": "Businesses",
+          "description": "Accounting, taxation, GST, ROC and ongoing compliance.",
+          "ctaLabel": "Explore Business Services",
+          "href": "/businesses",
+          "icon": "building",
+          "accent": "from-indigo-500/15 to-transparent",
+          "highlights": [
+            "GST & TDS every month",
+            "Payroll & bookkeeping",
+            "ROC annual filings",
+            "Audit coordination"
+          ]
+        }
+      }
+    ],
+    "faqs": [
+      {
+        "slug": "which-itr-should-i-file",
+        "title": "Which ITR should I file?",
+        "data": {
+          "question": "Which ITR should I file?",
+          "answer": "It depends on your sources of income. ITR-1 covers salary, one house property and other income up to ₹50 lakh; ITR-2 adds capital gains and multiple properties; ITR-3 and ITR-4 apply to business or professional income. We confirm the right form after a short review."
+        }
+      },
+      {
+        "slug": "what-documents-are-required-for-itr-filing",
+        "title": "What documents are required for ITR filing?",
+        "data": {
+          "question": "What documents are required for ITR filing?",
+          "answer": "Typically PAN, Aadhaar, Form 16, Form 26AS/AIS, bank interest certificates, capital gains statements and proof of investments. Your professional shares a precise checklist based on your profile."
+        }
+      },
+      {
+        "slug": "how-does-gst-registration-work",
+        "title": "How does GST registration work?",
+        "data": {
+          "question": "How does GST registration work?",
+          "answer": "We collect your PAN, business proof and address documents, file the application on the GST portal, respond to any clarification and share your GSTIN — usually within 7 working days."
+        }
+      },
+      {
+        "slug": "how-often-should-gst-returns-be-filed",
+        "title": "How often should GST returns be filed?",
+        "data": {
+          "question": "How often should GST returns be filed?",
+          "answer": "Regular taxpayers file GSTR-1 and GSTR-3B monthly; QRMP taxpayers file quarterly with monthly payments; composition dealers file quarterly CMP-08 and annual GSTR-4. An annual GSTR-9 applies above the turnover threshold."
+        }
+      },
+      {
+        "slug": "can-you-handle-accounting-for-my-business",
+        "title": "Can you handle accounting for my business?",
+        "data": {
+          "question": "Can you handle accounting for my business?",
+          "answer": "Yes. We offer monthly bookkeeping, payroll, reconciliations and financial statements with a dedicated accountant, in Tally, Zoho Books or QuickBooks."
+        }
+      },
+      {
+        "slug": "how-long-does-company-registration-take",
+        "title": "How long does company registration take?",
+        "data": {
+          "question": "How long does company registration take?",
+          "answer": "A Private Limited company or LLP is typically incorporated within 7–12 working days once documents are ready, subject to MCA processing and name availability."
+        }
+      },
+      {
+        "slug": "do-you-provide-tax-planning",
+        "title": "Do you provide tax planning?",
+        "data": {
+          "question": "Do you provide tax planning?",
+          "answer": "Yes. Tax planning engagements cover regime selection, salary structuring, investments, capital gains planning and advance tax, with a mid-year review."
+        }
+      },
+      {
+        "slug": "can-i-speak-directly-with-an-expert",
+        "title": "Can I speak directly with an expert?",
+        "data": {
+          "question": "Can I speak directly with an expert?",
+          "answer": "Absolutely. Every engagement is handled by a named professional you can reach by phone, WhatsApp or through the client portal."
+        }
+      },
+      {
+        "slug": "how-are-my-documents-protected",
+        "title": "How are my documents protected?",
+        "data": {
+          "question": "How are my documents protected?",
+          "answer": "Documents are stored encrypted, versioned and accessible only to the professional assigned to your case. We never share data with third parties without your consent."
+        }
+      },
+      {
+        "slug": "what-happens-after-i-submit-my-request",
+        "title": "What happens after I submit my request?",
+        "data": {
+          "question": "What happens after I submit my request?",
+          "answer": "You receive a confirmation immediately. Within one working day an expert calls to understand your requirement and shares a fixed-fee proposal and document checklist."
+        }
+      }
+    ],
+    "team": [
+      {
+        "slug": "arjun-nair",
+        "title": "Arjun Nair",
+        "data": {
+          "name": "Arjun Nair",
+          "role": "Founder & Managing Partner, CA",
+          "initials": "AN"
+        }
+      },
+      {
+        "slug": "kavitha-raman",
+        "title": "Kavitha Raman",
+        "data": {
+          "name": "Kavitha Raman",
+          "role": "Partner – GST & Indirect Tax",
+          "initials": "KR"
+        }
+      },
+      {
+        "slug": "siddharth-bose",
+        "title": "Siddharth Bose",
+        "data": {
+          "name": "Siddharth Bose",
+          "role": "Company Secretary – ROC & Legal",
+          "initials": "SB"
+        }
+      },
+      {
+        "slug": "meera-iyer",
+        "title": "Meera Iyer",
+        "data": {
+          "name": "Meera Iyer",
+          "role": "Head of Accounting & Payroll",
+          "initials": "MI"
+        }
+      }
+    ],
+    "values": [
+      {
+        "slug": "clarity-over-jargon",
+        "title": "Clarity over jargon",
+        "data": {
+          "title": "Clarity over jargon",
+          "description": "We explain every number and every deadline in plain language."
+        }
+      },
+      {
+        "slug": "accuracy-first",
+        "title": "Accuracy first",
+        "data": {
+          "title": "Accuracy first",
+          "description": "Two-level review on every filing before it leaves our desk."
+        }
+      },
+      {
+        "slug": "long-term-partnership",
+        "title": "Long-term partnership",
+        "data": {
+          "title": "Long-term partnership",
+          "description": "We measure success by how many years clients stay with us."
+        }
+      }
+    ],
+    "resource_categories": [
+      {
+        "slug": "tax-updates",
+        "title": "Latest Tax Updates",
+        "data": {
+          "id": "tax-updates",
+          "label": "Latest Tax Updates"
+        }
+      },
+      {
+        "slug": "gst-updates",
+        "title": "GST Updates",
+        "data": {
+          "id": "gst-updates",
+          "label": "GST Updates"
+        }
+      },
+      {
+        "slug": "income-tax-guides",
+        "title": "Income Tax Guides",
+        "data": {
+          "id": "income-tax-guides",
+          "label": "Income Tax Guides"
+        }
+      },
+      {
+        "slug": "business-compliance",
+        "title": "Business Compliance",
+        "data": {
+          "id": "business-compliance",
+          "label": "Business Compliance"
+        }
+      },
+      {
+        "slug": "startup-guides",
+        "title": "Startup Guides",
+        "data": {
+          "id": "startup-guides",
+          "label": "Startup Guides"
+        }
+      },
+      {
+        "slug": "financial-planning",
+        "title": "Financial Planning",
+        "data": {
+          "id": "financial-planning",
+          "label": "Financial Planning"
+        }
+      }
+    ],
+    "resources": [
+      {
+        "slug": "compliance-calendar-fy-2026-27",
+        "title": "Compliance calendar for FY 2026-27: every due date in one place",
+        "data": {
+          "slug": "compliance-calendar-fy-2026-27",
+          "category": "tax-updates",
+          "date": "2026-04-01",
+          "title": "Compliance calendar for FY 2026-27: every due date in one place",
+          "excerpt": "Income tax, GST, TDS and ROC deadlines for the year, organised month by month so you can plan cash flow and paperwork.",
+          "readingTime": "6 min read",
+          "body": [
+            "Missing a statutory deadline is expensive: late fees, interest and in some cases loss of input credit or director disqualification. This calendar consolidates the recurring due dates every Indian business and taxpayer should track.",
+            "Monthly: GSTR-1 (11th), GSTR-3B (20th), TDS deposit (7th), PF and ESI (15th). Quarterly: TDS statements, advance tax instalments (15 June, 15 September, 15 December, 15 March). Annual: ITR (31 July for non-audit cases), tax audit (30 September), GSTR-9 (31 December), AOC-4 and MGT-7 (within 30 and 60 days of the AGM).",
+            "Dates can shift when the government issues extensions. Our clients receive reminders through the portal seven days before every applicable deadline."
+          ]
+        }
+      },
+      {
+        "slug": "old-vs-new-tax-regime-which-should-you-pick",
+        "title": "Old vs. new tax regime: a practical way to decide",
+        "data": {
+          "slug": "old-vs-new-tax-regime-which-should-you-pick",
+          "category": "income-tax-guides",
+          "date": "2026-03-18",
+          "title": "Old vs. new tax regime: a practical way to decide",
+          "excerpt": "The new regime is the default, but the old one still wins for many taxpayers with HRA and large deductions. Here is how to compare.",
+          "readingTime": "5 min read",
+          "body": [
+            "The new regime offers lower slab rates but removes most deductions and exemptions. The old regime keeps deductions such as 80C, 80D, HRA and home-loan interest but taxes income at higher rates.",
+            "A quick heuristic: add up the deductions and exemptions you can genuinely claim. If they exceed roughly ₹3.75–4 lakh on a ₹15 lakh salary, the old regime is usually better. Below that, the new regime typically wins.",
+            "Salaried taxpayers can switch every year; those with business income can switch out of the new regime only once. Run both computations before filing rather than assuming."
+          ]
+        }
+      },
+      {
+        "slug": "gstr-2b-reconciliation-checklist",
+        "title": "GSTR-2B reconciliation: a checklist to protect your input tax credit",
+        "data": {
+          "slug": "gstr-2b-reconciliation-checklist",
+          "category": "gst-updates",
+          "date": "2026-02-27",
+          "title": "GSTR-2B reconciliation: a checklist to protect your input tax credit",
+          "excerpt": "Input credit is only as good as your vendors' filings. A monthly reconciliation routine keeps your credit safe and your 3B accurate.",
+          "readingTime": "4 min read",
+          "body": [
+            "GSTR-2B is the auto-drafted statement of eligible input tax credit for a tax period. Credit not appearing in it is generally not available, regardless of what your purchase register says.",
+            "Each month, match purchase invoices to GSTR-2B by GSTIN, invoice number and taxable value. Classify differences as missing in portal, missing in books, mismatch, or duplicate, and follow up with vendors before filing GSTR-3B.",
+            "Keep a running list of vendors who consistently file late. Consider withholding the tax component of their payments until credit reflects."
+          ]
+        }
+      },
+      {
+        "slug": "private-limited-vs-llp-for-founders",
+        "title": "Private Limited vs. LLP: choosing a structure for your startup",
+        "data": {
+          "slug": "private-limited-vs-llp-for-founders",
+          "category": "startup-guides",
+          "date": "2026-02-10",
+          "title": "Private Limited vs. LLP: choosing a structure for your startup",
+          "excerpt": "Investors prefer companies; consultants often prefer LLPs. Compare compliance cost, taxation and fundraising flexibility before you decide.",
+          "readingTime": "7 min read",
+          "body": [
+            "A Private Limited company allows equity fundraising, ESOPs and is the structure most venture investors expect. It carries higher annual compliance: board meetings, statutory audit regardless of turnover, and detailed ROC filings.",
+            "An LLP is simpler and cheaper to maintain, taxed at a flat rate with no dividend distribution complications, but cannot issue ESOPs or raise equity in the conventional sense.",
+            "If you plan to raise institutional money within 18 months, incorporate a company. If you are a services partnership without external investors, an LLP is often the better fit."
+          ]
+        }
+      },
+      {
+        "slug": "roc-annual-filing-guide-for-small-companies",
+        "title": "ROC annual filings for small companies: forms, timelines and penalties",
+        "data": {
+          "slug": "roc-annual-filing-guide-for-small-companies",
+          "category": "business-compliance",
+          "date": "2026-01-22",
+          "title": "ROC annual filings for small companies: forms, timelines and penalties",
+          "excerpt": "AOC-4, MGT-7A, DIR-3 KYC and ADT-1 explained for directors who want to stay compliant without surprises.",
+          "readingTime": "5 min read",
+          "body": [
+            "Every company must hold an AGM within six months of the financial year end and file its financial statements (AOC-4) within 30 days and annual return (MGT-7 or MGT-7A for small companies) within 60 days of the AGM.",
+            "Directors must complete DIR-3 KYC annually by 30 September. Auditor appointments are reported in ADT-1.",
+            "Late filing attracts ₹100 per day per form with no ceiling. Repeated non-filing for two years can lead to strike-off and director disqualification for five years."
+          ]
+        }
+      },
+      {
+        "slug": "advance-tax-for-freelancers-and-consultants",
+        "title": "Advance tax for freelancers and consultants: how to avoid interest",
+        "data": {
+          "slug": "advance-tax-for-freelancers-and-consultants",
+          "category": "financial-planning",
+          "date": "2026-01-08",
+          "title": "Advance tax for freelancers and consultants: how to avoid interest",
+          "excerpt": "If your tax liability exceeds ₹10,000 in a year, you must pay in instalments. Here is a simple system to stay ahead.",
+          "readingTime": "4 min read",
+          "body": [
+            "Advance tax is due in four instalments: 15% by 15 June, 45% by 15 September, 75% by 15 December and 100% by 15 March. Presumptive taxpayers under section 44ADA can pay the full amount by 15 March.",
+            "Estimate annual income conservatively each quarter, subtract TDS already deducted by clients, and pay the balance through Challan 280.",
+            "Shortfalls attract interest under sections 234B and 234C at 1% per month. Setting aside 20–25% of every receipt in a separate account makes this painless."
+          ]
+        }
+      },
+      {
+        "slug": "budget-2026-key-changes-for-individual-taxpayers",
+        "title": "Budget 2026: key changes individual taxpayers should know",
+        "data": {
+          "slug": "budget-2026-key-changes-for-individual-taxpayers",
+          "category": "tax-updates",
+          "date": "2026-02-02",
+          "title": "Budget 2026: key changes individual taxpayers should know",
+          "excerpt": "A summary of the announcements that affect salaried employees, investors and senior citizens, and what to do before 31 March.",
+          "readingTime": "6 min read",
+          "body": [
+            "This note summarises the headline proposals relevant to individuals. Provisions take effect from the dates specified in the Finance Act once passed, so confirm applicability with your professional before acting.",
+            "Review your regime choice, revisit investment declarations with your employer, and check whether any capital gains transactions should be completed before or after the financial year end.",
+            "Our clients receive a personalised impact note through the portal after every Budget."
+          ]
+        }
+      },
+      {
+        "slug": "e-invoicing-threshold-what-small-businesses-must-do",
+        "title": "E-invoicing: what businesses crossing the threshold must do",
+        "data": {
+          "slug": "e-invoicing-threshold-what-small-businesses-must-do",
+          "category": "gst-updates",
+          "date": "2025-12-15",
+          "title": "E-invoicing: what businesses crossing the threshold must do",
+          "excerpt": "Once your aggregate turnover crosses the notified limit, every B2B invoice needs an IRN. Here is the setup checklist.",
+          "readingTime": "4 min read",
+          "body": [
+            "E-invoicing applies to registered persons whose aggregate turnover in any preceding financial year from 2017-18 crossed the notified threshold. Applicability is permanent once triggered.",
+            "Register on the Invoice Registration Portal, integrate your billing software or use the offline utility, and ensure invoices carry the IRN and QR code before they are shared with customers.",
+            "Cancellation is allowed within 24 hours; after that, issue a credit note. Build this into your billing team's process from day one."
+          ]
+        }
+      }
+    ],
+    "videos": [
+      {
+        "slug": "itr",
+        "title": "How to file your Income Tax Return (ITR) with TaxFilr",
+        "data": {
+          "id": "itr",
+          "title": "How to file your Income Tax Return (ITR) with TaxFilr",
+          "description": "Upload Form 16, review the extracted salary and TDS, add other income and deductions, compare the Old and New regimes and generate your ITR JSON — then download it or hand it to an expert for filing.",
+          "duration": "2 min",
+          "file": "taxfilr-itr-walkthrough",
+          "startHref": "/filing/upload",
+          "startLabel": "Start my ITR",
+          "steps": [
+            "Log in or register from Get Started.",
+            "Open Filing → Upload Form 16 (drag & drop the PDF, or try the sample).",
+            "Review the extracted salary, TDS and employer details.",
+            "Add other income and deductions (80C, 80D, HRA…).",
+            "Compare tax under the Old and New regimes.",
+            "Check the tax-saving suggestions.",
+            "Enter your refund bank account and generate the ITR JSON.",
+            "Download the JSON or send it to a TaxFilr expert; track status on the summary page."
+          ]
+        }
+      },
+      {
+        "slug": "gst",
+        "title": "How to prepare and file a GST return with TaxFilr",
+        "data": {
+          "id": "gst",
+          "title": "How to prepare and file a GST return with TaxFilr",
+          "description": "Register your GSTIN, start a GSTR-1 / GSTR-3B return for a period, record sales and purchase invoices, reconcile against GSTR-2B and send the return to a GST professional for filing.",
+          "duration": "2 min",
+          "file": "taxfilr-gst-walkthrough",
+          "startHref": "/gst",
+          "startLabel": "Open GST",
+          "steps": [
+            "Log in and open GST from the top menu.",
+            "Add your business under Registrations: GSTIN, legal name, state and signatory.",
+            "Go to GST returns, pick the registration, return type and period, then Create return.",
+            "Record sales and purchase invoices in the Invoice book, or upload a CSV.",
+            "Run Reconciliation to match your books against GSTR-2B and fix mismatches.",
+            "Click Send for review — a GST professional files it and the ARN appears on your return."
+          ]
+        }
+      }
+    ],
+    "legal": [
+      {
+        "slug": "privacy",
+        "title": "Privacy Policy",
+        "data": {
+          "slug": "privacy",
+          "title": "Privacy Policy",
+          "updated": "1 April 2026",
+          "sections": [
+            {
+              "heading": "Information we collect",
+              "paragraphs": [
+                "When you request a callback, book a consultation or use the TaxFilr client portal, we collect the information you provide: your name, mobile number, email address, the type of client you are and the service you need.",
+                "When you become a client we additionally collect the identity, income, business and financial documents required to prepare your filings — for example PAN, Aadhaar, Form 16, bank statements, invoices and GST registration details."
+              ]
+            },
+            {
+              "heading": "How we use it",
+              "paragraphs": [
+                "We use your information only to:"
+              ],
+              "bullets": [
+                "Contact you about your enquiry and deliver the services you engage us for.",
+                "Prepare, review and file returns and forms with the relevant authorities on your instruction.",
+                "Send deadline reminders, filing status updates and service notifications.",
+                "Meet our legal, professional and record-keeping obligations."
+              ]
+            },
+            {
+              "heading": "Sharing and disclosure",
+              "paragraphs": [
+                "We do not sell your personal information. We share it only with government portals when filing on your behalf, with regulated sub-processors (cloud hosting, communication tools) bound by confidentiality, and where required by law."
+              ]
+            },
+            {
+              "heading": "Security",
+              "paragraphs": [
+                "Documents are stored encrypted at rest and in transit, access is limited to the professionals assigned to your engagement, and every access is logged. Staff accounts require multi-factor authentication."
+              ]
+            },
+            {
+              "heading": "Retention and your rights",
+              "paragraphs": [
+                "We retain engagement records for the period required by applicable tax and professional regulations, after which they are securely deleted. You may request access to, correction of, or deletion of your personal information (subject to legal retention requirements) by contacting us."
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slug": "terms",
+        "title": "Terms of Service",
+        "data": {
+          "slug": "terms",
+          "title": "Terms of Service",
+          "updated": "1 April 2026",
+          "sections": [
+            {
+              "heading": "Engagement",
+              "paragraphs": [
+                "These terms govern the professional services provided by TaxFilr Advisory Private Limited (\"we\", \"us\"). By requesting a service, paying a fee or using the client portal you agree to these terms.",
+                "Each engagement is scoped by the plan or proposal you accept. Work outside that scope is quoted separately before it begins."
+              ]
+            },
+            {
+              "heading": "Fees and government charges",
+              "paragraphs": [
+                "Our professional fees are fixed and communicated in advance. Government fees, stamp duty, penalties, interest and taxes payable to any authority are separate, are your responsibility and are never included in our fees unless stated in writing."
+              ]
+            },
+            {
+              "heading": "Your responsibilities",
+              "paragraphs": [
+                "Timely and accurate filing depends on you providing complete and correct information. You agree to:"
+              ],
+              "bullets": [
+                "Share all documents and information reasonably requested, within the timelines communicated.",
+                "Review and approve computations, returns and drafts before we submit them.",
+                "Inform us promptly of notices, changes in business structure or other events affecting your compliance."
+              ]
+            },
+            {
+              "heading": "Filing and acknowledgements",
+              "paragraphs": [
+                "Where we file on your behalf we do so using official government channels or, where electronic integration is unavailable, manually with your authorisation. We record acknowledgement numbers exactly as issued by the authority and never generate or represent an acknowledgement that has not been issued."
+              ]
+            },
+            {
+              "heading": "Limitation of liability",
+              "paragraphs": [
+                "We exercise professional care and skill. Our aggregate liability for any engagement is limited to the professional fees paid for that engagement. We are not liable for penalties or interest arising from information provided late or inaccurately, or from decisions of any authority."
+              ]
+            },
+            {
+              "heading": "Governing law",
+              "paragraphs": [
+                "These terms are governed by the laws of India and subject to the exclusive jurisdiction of the courts of Bengaluru."
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slug": "disclaimer",
+        "title": "Disclaimer",
+        "data": {
+          "slug": "disclaimer",
+          "title": "Disclaimer",
+          "updated": "1 April 2026",
+          "sections": [
+            {
+              "heading": "General information only",
+              "paragraphs": [
+                "Content on this website, including articles, calculators, guides and FAQs, is provided for general information and does not constitute professional, legal, tax or financial advice. Laws and rates change frequently and outcomes depend on individual facts."
+              ]
+            },
+            {
+              "heading": "No government affiliation",
+              "paragraphs": [
+                "TaxFilr is an independent professional services firm. We are not affiliated with, endorsed by or acting on behalf of the Income Tax Department, the Goods and Services Tax Network, the Ministry of Corporate Affairs or any other government body."
+              ]
+            },
+            {
+              "heading": "Illustrative figures",
+              "paragraphs": [
+                "Statistics, testimonials, savings examples and pricing displayed on this website are illustrative and may be updated at any time. Actual fees are confirmed in your engagement proposal."
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slug": "refund",
+        "title": "Refund & Cancellation Policy",
+        "data": {
+          "slug": "refund",
+          "title": "Refund & Cancellation Policy",
+          "updated": "1 April 2026",
+          "sections": [
+            {
+              "heading": "Before work begins",
+              "paragraphs": [
+                "If you cancel before we have started work on your engagement, professional fees paid are refunded in full within 7–10 working days to the original payment method."
+              ]
+            },
+            {
+              "heading": "After work begins",
+              "paragraphs": [
+                "Once our professionals have begun reviewing documents or preparing your filing, fees for work completed are non-refundable. Any unused portion of a multi-service package may be refunded at our discretion, less work already performed."
+              ]
+            },
+            {
+              "heading": "Government fees",
+              "paragraphs": [
+                "Statutory fees, stamp duty and taxes paid to any authority on your behalf are non-refundable once remitted."
+              ]
+            },
+            {
+              "heading": "How to request a refund",
+              "paragraphs": [
+                "Email support@taxfilr.in with your registered mobile number and engagement reference. We respond to every request within 3 working days."
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "field_guides": [
+      {
+        "slug": "itr-business-turnover",
+        "title": "Total sales in the year (business)",
+        "data": {
+          "key": "itr.business.turnover",
+          "label": "Total sales in the year (business)",
+          "hint": "Everything your shop or business sold from 1 April to 31 March, before any expenses.",
+          "whereToFind": "Your sales register, GST returns (GSTR-1 / GSTR-3B totals) or bank statement credits.",
+          "example": "If you sold goods worth ₹32,50,000 in the year, type 3250000.",
+          "hindi": "साल भर की कुल बिक्री (खर्चा घटाने से पहले)। GST रिटर्न या बिक्री रजिस्टर से लें।"
+        }
+      },
+      {
+        "slug": "itr-business-profit",
+        "title": "Profit from business",
+        "data": {
+          "key": "itr.business.profit",
+          "label": "Profit from business",
+          "hint": "Sales minus your business expenses (purchases, rent, salaries, electricity). If you use the simple 'presumptive' scheme, at least 6% of digital sales / 8% of cash sales.",
+          "whereToFind": "Profit & loss statement from your accountant, or estimate: total sales − total expenses.",
+          "example": "Sales ₹32,50,000 with expenses ₹28,00,000 → profit ₹4,50,000 → type 450000.",
+          "hindi": "बिक्री में से खर्चा घटाने के बाद जो बचा, वह मुनाफ़ा। छोटे व्यापारी 6%/8% वाला आसान (presumptive) तरीका भी चुन सकते हैं।"
+        }
+      },
+      {
+        "slug": "itr-profession-receipts",
+        "title": "Fees received (doctor, lawyer, freelancer, consultant)",
+        "data": {
+          "key": "itr.profession.receipts",
+          "label": "Fees received (doctor, lawyer, freelancer, consultant)",
+          "hint": "Total fees you received for professional work in the year. Leave 0 if you only run a shop / trading business.",
+          "whereToFind": "Invoices you raised, or Form 26AS / AIS on the income-tax portal (payments where TDS was cut).",
+          "example": "A freelance designer paid ₹9,00,000 in the year types 900000.",
+          "hindi": "पेशेवर काम (डॉक्टर, वकील, फ्रीलांस) की कुल फ़ीस। दुकान/व्यापार वाले 0 छोड़ें।"
+        }
+      },
+      {
+        "slug": "itr-profession-profit",
+        "title": "Profit from profession",
+        "data": {
+          "key": "itr.profession.profit",
+          "label": "Profit from profession",
+          "hint": "Fees minus your work expenses. Under the simple scheme (Section 44ADA) you can declare 50% of fees as profit and skip bookkeeping.",
+          "example": "Fees ₹9,00,000 → simple scheme profit ₹4,50,000 → type 450000.",
+          "hindi": "फ़ीस में से खर्चा घटाकर मुनाफ़ा। आसान तरीके में फ़ीस का 50% मुनाफ़ा मान सकते हैं।"
+        }
+      },
+      {
+        "slug": "itr-tax-advancetax",
+        "title": "Tax you already paid yourself (advance / self-assessment tax)",
+        "data": {
+          "key": "itr.tax.advanceTax",
+          "label": "Tax you already paid yourself (advance / self-assessment tax)",
+          "hint": "Any income tax you paid directly through a bank challan during the year. Leave 0 if you never paid tax yourself.",
+          "whereToFind": "Form 26AS on incometax.gov.in → 'Part C – Taxes paid', or the challan receipt (Challan 280) from your bank.",
+          "example": "Paid ₹40,000 in December and ₹35,000 in March → type 75000.",
+          "hindi": "जो टैक्स आपने खुद बैंक चालान से जमा किया (एडवांस टैक्स)। Form 26AS में दिखता है।"
+        }
+      },
+      {
+        "slug": "itr-tax-tdsother",
+        "title": "TDS cut by customers or banks",
+        "data": {
+          "key": "itr.tax.tdsOther",
+          "label": "TDS cut by customers or banks",
+          "hint": "Tax that others deducted before paying you (customers deducting 1–2% on your bills, banks on FD interest). This is already paid on your behalf and reduces what you owe.",
+          "whereToFind": "Form 26AS / AIS on incometax.gov.in, or Form 16A certificates given by the payer.",
+          "example": "Form 26AS shows TDS of ₹18,500 → type 18500.",
+          "hindi": "ग्राहकों या बैंक ने भुगतान से पहले जो टैक्स काटा (TDS)। Form 26AS में देखें।"
+        }
+      },
+      {
+        "slug": "itr-interest-savings",
+        "title": "Interest from savings bank account",
+        "data": {
+          "key": "itr.interest.savings",
+          "label": "Interest from savings bank account",
+          "hint": "Interest the bank added to your savings account in the year (all banks together).",
+          "whereToFind": "Bank passbook / statement — look for lines called 'Int.Pd' or 'Interest credit', usually every 3 months. Or your AIS on the income-tax portal.",
+          "example": "₹1,240 + ₹1,310 + ₹1,190 + ₹1,400 across the year → type 5140.",
+          "hindi": "बचत खाते पर बैंक ने जो ब्याज दिया (सारे बैंक जोड़कर)। पासबुक में 'Int' लाइन देखें।"
+        }
+      },
+      {
+        "slug": "itr-interest-fd",
+        "title": "Interest from fixed deposits (FD)",
+        "data": {
+          "key": "itr.interest.fd",
+          "label": "Interest from fixed deposits (FD)",
+          "hint": "Interest earned on FDs this year, even if the FD has not matured yet.",
+          "whereToFind": "Bank's 'Interest certificate' (downloadable from net banking) or Form 26AS / AIS.",
+          "example": "FD of ₹5,00,000 at 7% → about ₹35,000 → type 35000.",
+          "hindi": "FD पर मिला ब्याज (चाहे FD अभी पूरी न हुई हो)। बैंक का interest certificate देखें।"
+        }
+      },
+      {
+        "slug": "itr-interest-rd",
+        "title": "Interest from recurring deposits (RD) or post office",
+        "data": {
+          "key": "itr.interest.rd",
+          "label": "Interest from recurring deposits (RD) or post office",
+          "hint": "Interest on RDs, post-office schemes (NSC, KVP, MIS). Leave 0 if none.",
+          "whereToFind": "RD passbook or post-office statement.",
+          "hindi": "RD या पोस्ट ऑफिस योजनाओं का ब्याज। न हो तो 0 छोड़ें।"
+        }
+      },
+      {
+        "slug": "itr-gains-short",
+        "title": "Profit on shares / mutual funds sold within 1 year",
+        "data": {
+          "key": "itr.gains.short",
+          "label": "Profit on shares / mutual funds sold within 1 year",
+          "hint": "Money you gained by selling shares, mutual funds or property you held for a short time. Only the profit, not the sale amount.",
+          "whereToFind": "'Capital gains statement' from your broker (Zerodha, Groww, etc.) or mutual fund house (CAMS / KFintech).",
+          "example": "Bought shares for ₹1,00,000, sold for ₹1,20,000 after 6 months → gain ₹20,000 → type 20000.",
+          "hindi": "1 साल के अंदर बेचे गए शेयर/म्यूचुअल फंड पर हुआ मुनाफ़ा (सिर्फ़ मुनाफ़ा, बिक्री रकम नहीं)।"
+        }
+      },
+      {
+        "slug": "itr-gains-long",
+        "title": "Profit on shares / mutual funds / property held over 1 year",
+        "data": {
+          "key": "itr.gains.long",
+          "label": "Profit on shares / mutual funds / property held over 1 year",
+          "hint": "Profit from selling things you held for more than a year (2 years for property). Gains up to ₹1.25 lakh on shares are tax-free.",
+          "whereToFind": "Same capital gains statement from the broker / fund house; for property, the sale deed and purchase deed.",
+          "hindi": "1 साल से ज़्यादा रखे शेयर/फंड या 2 साल से ज़्यादा रखी प्रॉपर्टी बेचने पर मुनाफ़ा।"
+        }
+      },
+      {
+        "slug": "itr-other-rent",
+        "title": "Rent you received (whole year)",
+        "data": {
+          "key": "itr.other.rent",
+          "label": "Rent you received (whole year)",
+          "hint": "Total rent from a house or shop you own and let out. Type the yearly amount, not monthly.",
+          "whereToFind": "Rent agreement or bank credits from the tenant.",
+          "example": "₹15,000 a month → type 180000.",
+          "hindi": "अपनी दुकान/मकान किराये पर देकर साल भर में मिला कुल किराया (मासिक नहीं, सालाना)।"
+        }
+      },
+      {
+        "slug": "itr-other-misc",
+        "title": "Any other income",
+        "data": {
+          "key": "itr.other.misc",
+          "label": "Any other income",
+          "hint": "Anything else: commission, lottery, cash gifts over ₹50,000 from non-relatives, family pension, dividend from shares.",
+          "whereToFind": "Your bank statement; dividends appear in AIS on the income-tax portal.",
+          "hindi": "बाकी कोई आय: कमीशन, डिविडेंड, ₹50,000 से ऊपर के गिफ्ट, लॉटरी आदि।"
+        }
+      },
+      {
+        "slug": "itr-hra-rentpaid",
+        "title": "Rent you paid for your home (whole year)",
+        "data": {
+          "key": "itr.hra.rentPaid",
+          "label": "Rent you paid for your home (whole year)",
+          "hint": "Only if you live in a rented house AND your salary includes HRA. Business owners without salary can leave 0.",
+          "whereToFind": "Rent receipts or bank transfers to your landlord. Landlord PAN is needed if rent is over ₹1,00,000 a year.",
+          "example": "₹12,000 a month → type 144000.",
+          "hindi": "अगर आप किराये के घर में रहते हैं और सैलरी में HRA मिलता है, तो साल भर का दिया किराया।"
+        }
+      },
+      {
+        "slug": "itr-ded-80c",
+        "title": "Savings that reduce tax — LIC, PPF, ELSS, child school fees, home-loan principal (80C)",
+        "data": {
+          "key": "itr.ded.80c",
+          "label": "Savings that reduce tax — LIC, PPF, ELSS, child school fees, home-loan principal (80C)",
+          "hint": "Add up what you paid this year into these: life-insurance premium, PPF, ELSS mutual funds, tax-saver FD, NSC, children's tuition fees, home-loan principal. Maximum benefit ₹1,50,000.",
+          "whereToFind": "Premium receipts, PPF passbook, school fee receipts, home-loan statement ('principal repaid').",
+          "example": "LIC ₹36,000 + PPF ₹50,000 + school fees ₹40,000 → type 126000.",
+          "hindi": "LIC, PPF, ELSS, बच्चों की स्कूल फ़ीस, होम लोन का मूल (principal) — सब जोड़कर। अधिकतम ₹1.5 लाख का फ़ायदा।"
+        }
+      },
+      {
+        "slug": "itr-ded-nps",
+        "title": "Money put into NPS pension account (80CCD(1B))",
+        "data": {
+          "key": "itr.ded.nps",
+          "label": "Money put into NPS pension account (80CCD(1B))",
+          "hint": "Your own NPS deposits this year. Extra ₹50,000 benefit over and above 80C. Leave 0 if you don't have NPS.",
+          "whereToFind": "NPS statement from the NSDL / Protean CRA app or SMS.",
+          "hindi": "NPS पेंशन खाते में डाला पैसा। 80C के ऊपर ₹50,000 तक अलग से फ़ायदा।"
+        }
+      },
+      {
+        "slug": "itr-ded-80d",
+        "title": "Health insurance premium (mediclaim) for family and parents (80D)",
+        "data": {
+          "key": "itr.ded.80d",
+          "label": "Health insurance premium (mediclaim) for family and parents (80D)",
+          "hint": "Premium paid for health insurance of you, spouse, children and parents. Up to ₹25,000 for family, plus ₹50,000 for senior-citizen parents.",
+          "whereToFind": "Policy premium receipt or the '80D certificate' from your insurer's app.",
+          "example": "Family policy ₹18,000 + parents' policy ₹32,000 → type 50000.",
+          "hindi": "अपने परिवार और माता-पिता के हेल्थ इंश्योरेंस (मेडिक्लेम) का प्रीमियम।"
+        }
+      },
+      {
+        "slug": "itr-ded-80tta",
+        "title": "Savings-account interest benefit (80TTA)",
+        "data": {
+          "key": "itr.ded.80tta",
+          "label": "Savings-account interest benefit (80TTA)",
+          "hint": "Type the same savings-account interest you entered above, up to ₹10,000 — that much is tax-free. Senior citizens get ₹50,000 (80TTB).",
+          "hindi": "ऊपर लिखा बचत खाते का ब्याज यहाँ दोबारा लिखें (₹10,000 तक टैक्स-फ्री)।"
+        }
+      },
+      {
+        "slug": "itr-ded-homeloaninterest",
+        "title": "Interest paid on home loan (Section 24)",
+        "data": {
+          "key": "itr.ded.homeLoanInterest",
+          "label": "Interest paid on home loan (Section 24)",
+          "hint": "Only the interest part of your home-loan EMIs this year (not the principal). Maximum ₹2,00,000 for a self-occupied house.",
+          "whereToFind": "'Provisional interest certificate' from your bank's net banking / app.",
+          "example": "Certificate shows interest ₹1,86,000 → type 186000.",
+          "hindi": "होम लोन की EMI में ब्याज (interest) वाला हिस्सा। बैंक का interest certificate देखें।"
+        }
+      },
+      {
+        "slug": "itr-ded-other",
+        "title": "Other deductions (donations, education-loan interest, disability)",
+        "data": {
+          "key": "itr.ded.other",
+          "label": "Other deductions (donations, education-loan interest, disability)",
+          "hint": "Donations to approved charities (80G), interest on an education loan (80E), disability (80U). Leave 0 if none.",
+          "whereToFind": "Donation receipt with the charity's 80G registration number; education-loan interest certificate.",
+          "hindi": "दान (80G), एजुकेशन लोन का ब्याज (80E), दिव्यांगता (80U) आदि।"
+        }
+      },
+      {
+        "slug": "gst-profile-gstin",
+        "title": "Your GST number (GSTIN)",
+        "data": {
+          "key": "gst.profile.gstin",
+          "label": "Your GST number (GSTIN)",
+          "hint": "The 15-character number on your GST registration certificate. It starts with your state code (e.g. 27 for Maharashtra) and contains your PAN.",
+          "whereToFind": "GST registration certificate (Form REG-06), or on any invoice you have issued. Also on gst.gov.in after login.",
+          "example": "27ABCDE1234F1Z5",
+          "hindi": "आपका 15 अंकों का GST नंबर, GST सर्टिफिकेट या अपने बिल पर लिखा होता है।"
+        }
+      },
+      {
+        "slug": "gst-profile-legalname",
+        "title": "Legal name (as on PAN)",
+        "data": {
+          "key": "gst.profile.legalName",
+          "label": "Legal name (as on PAN)",
+          "hint": "The name printed on your PAN card / GST certificate — for a proprietor this is your own name.",
+          "whereToFind": "GST certificate, 'Legal Name of Business' line.",
+          "example": "Ramesh Kumar Gupta",
+          "hindi": "PAN कार्ड / GST सर्टिफिकेट पर लिखा नाम। प्रोप्राइटर के लिए आपका अपना नाम।"
+        }
+      },
+      {
+        "slug": "gst-profile-tradename",
+        "title": "Shop / brand name (trade name)",
+        "data": {
+          "key": "gst.profile.tradeName",
+          "label": "Shop / brand name (trade name)",
+          "hint": "The name on your shop board or bills, if different from the legal name.",
+          "example": "Gupta General Store",
+          "hindi": "दुकान के बोर्ड या बिल पर लिखा नाम, अगर कानूनी नाम से अलग है।"
+        }
+      },
+      {
+        "slug": "gst-profile-businesstype",
+        "title": "Type of business",
+        "data": {
+          "key": "gst.profile.businessType",
+          "label": "Type of business",
+          "hint": "Proprietorship (single owner), Partnership, LLP, Private Limited, HUF, etc.",
+          "whereToFind": "GST certificate, 'Constitution of Business' line.",
+          "example": "Proprietorship",
+          "hindi": "व्यवसाय का प्रकार: प्रोप्राइटरशिप, पार्टनरशिप, प्राइवेट लिमिटेड आदि।"
+        }
+      },
+      {
+        "slug": "gst-profile-state",
+        "title": "State of registration",
+        "data": {
+          "key": "gst.profile.state",
+          "label": "State of registration",
+          "hint": "The state where your business is registered — decides whether a sale is 'within state' (CGST + SGST) or 'to another state' (IGST).",
+          "example": "Maharashtra",
+          "hindi": "जिस राज्य में GST रजिस्ट्रेशन है।"
+        }
+      },
+      {
+        "slug": "gst-profile-address",
+        "title": "Registered business address",
+        "data": {
+          "key": "gst.profile.address",
+          "label": "Registered business address",
+          "hint": "Address printed on the GST certificate ('Principal Place of Business').",
+          "hindi": "GST सर्टिफिकेट पर लिखा मुख्य कारोबार का पता।"
+        }
+      },
+      {
+        "slug": "gst-profile-signatory",
+        "title": "Person who signs the return",
+        "data": {
+          "key": "gst.profile.signatory",
+          "label": "Person who signs the return",
+          "hint": "The owner or partner responsible for filing — usually you.",
+          "example": "Ramesh Kumar Gupta",
+          "hindi": "रिटर्न पर हस्ताक्षर करने वाला व्यक्ति — आम तौर पर मालिक।"
+        }
+      },
+      {
+        "slug": "gst-profile-designation",
+        "title": "Their role",
+        "data": {
+          "key": "gst.profile.designation",
+          "label": "Their role",
+          "hint": "Proprietor, Partner, Director, Manager…",
+          "example": "Proprietor",
+          "hindi": "उनका पद: प्रोप्राइटर, पार्टनर, डायरेक्टर…"
+        }
+      },
+      {
+        "slug": "gst-return-type",
+        "title": "Which return?",
+        "data": {
+          "key": "gst.return.type",
+          "label": "Which return?",
+          "hint": "GSTR-1 = list of your sales (monthly/quarterly). GSTR-3B = summary where you pay the tax. GSTR-4 = yearly return for composition-scheme shops. GSTR-9 = yearly summary.",
+          "whereToFind": "Most regular shops file GSTR-1 and GSTR-3B every month; if you opted for the composition scheme, file GSTR-4.",
+          "hindi": "GSTR-1 = बिक्री की सूची, GSTR-3B = टैक्स भरने वाला सारांश, GSTR-4 = कंपोज़िशन स्कीम का सालाना रिटर्न।"
+        }
+      },
+      {
+        "slug": "gst-return-period",
+        "title": "Month the return is for",
+        "data": {
+          "key": "gst.return.period",
+          "label": "Month the return is for",
+          "hint": "Pick the month whose sales/purchases you are reporting — not the month you are filing in.",
+          "example": "Filing in May for April's sales → pick April.",
+          "hindi": "जिस महीने की बिक्री/खरीद बता रहे हैं वह महीना चुनें (फाइल करने का महीना नहीं)।"
+        }
+      },
+      {
+        "slug": "gst-invoice-documenttype",
+        "title": "What is this document?",
+        "data": {
+          "key": "gst.invoice.documentType",
+          "label": "What is this document?",
+          "hint": "Sales = bill you gave a customer. Purchase = bill a supplier gave you. Credit note = you reduced a customer's bill / took goods back. Debit note = you charged extra.",
+          "hindi": "Sales = आपने ग्राहक को दिया बिल। Purchase = सप्लायर से मिला बिल। Credit note = बिल घटाया/सामान वापस लिया।"
+        }
+      },
+      {
+        "slug": "gst-invoice-supplytype",
+        "title": "Does GST apply to it?",
+        "data": {
+          "key": "gst.invoice.supplyType",
+          "label": "Does GST apply to it?",
+          "hint": "Taxable = normal GST bill. Exempt / Nil-rated = items with no GST (fresh vegetables, milk, books). Zero-rated = exports. Reverse charge = the buyer pays the GST (e.g. transporter, lawyer bills).",
+          "hindi": "Taxable = सामान्य GST बिल। Exempt/Nil = जिन पर GST नहीं (सब्ज़ी, दूध)। Zero-rated = एक्सपोर्ट।"
+        }
+      },
+      {
+        "slug": "gst-invoice-number",
+        "title": "Bill number",
+        "data": {
+          "key": "gst.invoice.number",
+          "label": "Bill number",
+          "hint": "The invoice number printed on the bill. Sales bills must be in a running series for the year.",
+          "example": "INV/2024-25/0147",
+          "hindi": "बिल पर छपा इनवॉइस नंबर।"
+        }
+      },
+      {
+        "slug": "gst-invoice-date",
+        "title": "Bill date",
+        "data": {
+          "key": "gst.invoice.date",
+          "label": "Bill date",
+          "hint": "Date printed on the bill.",
+          "hindi": "बिल की तारीख।"
+        }
+      },
+      {
+        "slug": "gst-invoice-counterpartygstin",
+        "title": "Customer's / supplier's GST number",
+        "data": {
+          "key": "gst.invoice.counterpartyGstin",
+          "label": "Customer's / supplier's GST number",
+          "hint": "The other party's GSTIN, if they are GST-registered (B2B). Leave blank for walk-in customers without GST (B2C).",
+          "whereToFind": "Printed on their bill or letterhead; verify on gst.gov.in → 'Search Taxpayer'.",
+          "example": "07AAACX9999Q1Z3",
+          "hindi": "दूसरी पार्टी का GST नंबर (अगर है)। बिना GST वाले ग्राहक के लिए खाली छोड़ें।"
+        }
+      },
+      {
+        "slug": "gst-invoice-counterpartyname",
+        "title": "Customer's / supplier's name",
+        "data": {
+          "key": "gst.invoice.counterpartyName",
+          "label": "Customer's / supplier's name",
+          "hint": "Name on their bill. For walk-in cash sales you can write 'Cash sale'.",
+          "example": "Sharma Traders",
+          "hindi": "ग्राहक/सप्लायर का नाम। नकद बिक्री के लिए 'Cash sale' लिख सकते हैं।"
+        }
+      },
+      {
+        "slug": "gst-invoice-placeofsupply",
+        "title": "Where the goods were delivered (state)",
+        "data": {
+          "key": "gst.invoice.placeOfSupply",
+          "label": "Where the goods were delivered (state)",
+          "hint": "The state where the buyer received the goods or service. Same state as yours → CGST + SGST. Another state → IGST.",
+          "example": "Maharashtra",
+          "hindi": "जिस राज्य में सामान/सेवा पहुँची। अपना राज्य → CGST+SGST; दूसरा राज्य → IGST।"
+        }
+      },
+      {
+        "slug": "gst-invoice-hsn",
+        "title": "HSN / SAC code of the item",
+        "data": {
+          "key": "gst.invoice.hsn",
+          "label": "HSN / SAC code of the item",
+          "hint": "The government's item code: HSN for goods, SAC for services. Businesses under ₹5 crore need 4 digits; above that 6 digits.",
+          "whereToFind": "On your supplier's bill, in your billing software, or search 'HSN code <item>' on cbic-gst.gov.in.",
+          "example": "Rice = 1006, Mobile phones = 8517, Accounting services = 9982.",
+          "hindi": "सामान का सरकारी कोड (HSN) या सेवा का कोड (SAC)। सप्लायर के बिल पर मिल जाता है।"
+        }
+      },
+      {
+        "slug": "gst-invoice-taxablevalue",
+        "title": "Bill amount before GST",
+        "data": {
+          "key": "gst.invoice.taxableValue",
+          "label": "Bill amount before GST",
+          "hint": "Value of the goods/services only, without adding GST.",
+          "example": "Item ₹10,000 + 18% GST ₹1,800 = bill ₹11,800 → type 10000.",
+          "hindi": "GST जोड़ने से पहले की रकम।"
+        }
+      },
+      {
+        "slug": "gst-invoice-cgst",
+        "title": "CGST (central GST) on the bill",
+        "data": {
+          "key": "gst.invoice.cgst",
+          "label": "CGST (central GST) on the bill",
+          "hint": "For sales within your own state, GST is split into two equal halves — this is the central half.",
+          "example": "18% GST on ₹10,000 → CGST ₹900.",
+          "hindi": "अपने राज्य में बिक्री पर GST का आधा हिस्सा (केंद्र)।"
+        }
+      },
+      {
+        "slug": "gst-invoice-sgst",
+        "title": "SGST (state GST) on the bill",
+        "data": {
+          "key": "gst.invoice.sgst",
+          "label": "SGST (state GST) on the bill",
+          "hint": "The state's half — always equal to CGST for within-state sales.",
+          "example": "18% GST on ₹10,000 → SGST ₹900.",
+          "hindi": "अपने राज्य में बिक्री पर GST का आधा हिस्सा (राज्य)। CGST के बराबर।"
+        }
+      },
+      {
+        "slug": "gst-invoice-igst",
+        "title": "IGST (for sales to another state)",
+        "data": {
+          "key": "gst.invoice.igst",
+          "label": "IGST (for sales to another state)",
+          "hint": "Used instead of CGST + SGST when the buyer is in a different state. Leave 0 for within-state bills.",
+          "example": "18% GST on ₹10,000 sold to Delhi from Mumbai → IGST ₹1,800.",
+          "hindi": "दूसरे राज्य में बिक्री पर पूरा GST यहाँ। अपने राज्य के बिल के लिए 0।"
+        }
+      }
+    ],
+    "portal_text": [
+      {
+        "slug": "itr-steps-upload",
+        "title": "itr.steps.upload",
+        "data": {
+          "key": "itr.steps.upload",
+          "text": "Start"
+        }
+      },
+      {
+        "slug": "itr-steps-review",
+        "title": "itr.steps.review",
+        "data": {
+          "key": "itr.steps.review",
+          "text": "Check salary details"
+        }
+      },
+      {
+        "slug": "itr-steps-additional-income",
+        "title": "itr.steps.additional_income",
+        "data": {
+          "key": "itr.steps.additional_income",
+          "text": "Business & other income"
+        }
+      },
+      {
+        "slug": "itr-steps-deductions",
+        "title": "itr.steps.deductions",
+        "data": {
+          "key": "itr.steps.deductions",
+          "text": "Tax-saving expenses"
+        }
+      },
+      {
+        "slug": "itr-steps-compute",
+        "title": "itr.steps.compute",
+        "data": {
+          "key": "itr.steps.compute",
+          "text": "Your tax"
+        }
+      },
+      {
+        "slug": "itr-steps-suggestions",
+        "title": "itr.steps.suggestions",
+        "data": {
+          "key": "itr.steps.suggestions",
+          "text": "Ways to save tax"
+        }
+      },
+      {
+        "slug": "itr-steps-generate",
+        "title": "itr.steps.generate",
+        "data": {
+          "key": "itr.steps.generate",
+          "text": "Prepare return"
+        }
+      },
+      {
+        "slug": "itr-steps-summary",
+        "title": "itr.steps.summary",
+        "data": {
+          "key": "itr.steps.summary",
+          "text": "Done"
+        }
+      },
+      {
+        "slug": "itr-upload-title",
+        "title": "itr.upload.title",
+        "data": {
+          "key": "itr.upload.title",
+          "text": "Let's file your income tax return"
+        }
+      },
+      {
+        "slug": "itr-upload-subtitle",
+        "title": "itr.upload.subtitle",
+        "data": {
+          "key": "itr.upload.subtitle",
+          "text": "Answer a few simple questions. We will pick the right form and work out your tax — no accountant language."
+        }
+      },
+      {
+        "slug": "itr-upload-salaried-title",
+        "title": "itr.upload.salaried.title",
+        "data": {
+          "key": "itr.upload.salaried.title",
+          "text": "I get a salary (I have Form 16)"
+        }
+      },
+      {
+        "slug": "itr-upload-salaried-body",
+        "title": "itr.upload.salaried.body",
+        "data": {
+          "key": "itr.upload.salaried.body",
+          "text": "Upload the Form 16 PDF your employer gave you. We read it and fill everything for you."
+        }
+      },
+      {
+        "slug": "itr-upload-business-title",
+        "title": "itr.upload.business.title",
+        "data": {
+          "key": "itr.upload.business.title",
+          "text": "I run a business, shop or work for myself"
+        }
+      },
+      {
+        "slug": "itr-upload-business-body",
+        "title": "itr.upload.business.body",
+        "data": {
+          "key": "itr.upload.business.body",
+          "text": "No Form 16 needed. You'll just tell us your total sales, profit and any tax already paid."
+        }
+      },
+      {
+        "slug": "itr-upload-business-button",
+        "title": "itr.upload.business.button",
+        "data": {
+          "key": "itr.upload.business.button",
+          "text": "Start without Form 16"
+        }
+      },
+      {
+        "slug": "itr-upload-drop",
+        "title": "itr.upload.drop",
+        "data": {
+          "key": "itr.upload.drop",
+          "text": "Drop your Form 16 PDF here"
+        }
+      },
+      {
+        "slug": "itr-upload-sample-title",
+        "title": "itr.upload.sample.title",
+        "data": {
+          "key": "itr.upload.sample.title",
+          "text": "Just looking around?"
+        }
+      },
+      {
+        "slug": "itr-upload-sample-body",
+        "title": "itr.upload.sample.body",
+        "data": {
+          "key": "itr.upload.sample.body",
+          "text": "Try the flow with a sample Form 16 to see how it works."
+        }
+      },
+      {
+        "slug": "itr-income-title",
+        "title": "itr.income.title",
+        "data": {
+          "key": "itr.income.title",
+          "text": "Your income & tax-saving expenses"
+        }
+      },
+      {
+        "slug": "itr-income-subtitle",
+        "title": "itr.income.subtitle",
+        "data": {
+          "key": "itr.income.subtitle",
+          "text": "Fill only what applies to you — leave the rest as 0. Tap the ⓘ next to any box to see where the number comes from."
+        }
+      },
+      {
+        "slug": "itr-income-business-title",
+        "title": "itr.income.business.title",
+        "data": {
+          "key": "itr.income.business.title",
+          "text": "Business or professional income"
+        }
+      },
+      {
+        "slug": "itr-income-business-body",
+        "title": "itr.income.business.body",
+        "data": {
+          "key": "itr.income.business.body",
+          "text": "For shopkeepers, traders, contractors, doctors, freelancers. Round figures are fine — we'll refine them at review."
+        }
+      },
+      {
+        "slug": "itr-income-interest-title",
+        "title": "itr.income.interest.title",
+        "data": {
+          "key": "itr.income.interest.title",
+          "text": "Interest from banks"
+        }
+      },
+      {
+        "slug": "itr-income-interest-body",
+        "title": "itr.income.interest.body",
+        "data": {
+          "key": "itr.income.interest.body",
+          "text": "Banks report this to the tax department, so include it even if it's small."
+        }
+      },
+      {
+        "slug": "itr-income-gains-title",
+        "title": "itr.income.gains.title",
+        "data": {
+          "key": "itr.income.gains.title",
+          "text": "Profit from selling shares, mutual funds or property"
+        }
+      },
+      {
+        "slug": "itr-income-gains-body",
+        "title": "itr.income.gains.body",
+        "data": {
+          "key": "itr.income.gains.body",
+          "text": "Skip if you didn't sell any investments this year."
+        }
+      },
+      {
+        "slug": "itr-income-other-title",
+        "title": "itr.income.other.title",
+        "data": {
+          "key": "itr.income.other.title",
+          "text": "Rent and other income"
+        }
+      },
+      {
+        "slug": "itr-income-hra-title",
+        "title": "itr.income.hra.title",
+        "data": {
+          "key": "itr.income.hra.title",
+          "text": "Rent you pay for your home (salaried with HRA only)"
+        }
+      },
+      {
+        "slug": "itr-income-hra-metro",
+        "title": "itr.income.hra.metro",
+        "data": {
+          "key": "itr.income.hra.metro",
+          "text": "I live in Delhi, Mumbai, Chennai or Kolkata"
+        }
+      },
+      {
+        "slug": "itr-income-hra-nonmetro",
+        "title": "itr.income.hra.nonMetro",
+        "data": {
+          "key": "itr.income.hra.nonMetro",
+          "text": "I live in another city or town"
+        }
+      },
+      {
+        "slug": "itr-income-taxpaid-title",
+        "title": "itr.income.taxPaid.title",
+        "data": {
+          "key": "itr.income.taxPaid.title",
+          "text": "Tax already paid"
+        }
+      },
+      {
+        "slug": "itr-income-taxpaid-body",
+        "title": "itr.income.taxPaid.body",
+        "data": {
+          "key": "itr.income.taxPaid.body",
+          "text": "Tax cut by others or paid by you during the year. We subtract this so you only pay the balance (or get a refund)."
+        }
+      },
+      {
+        "slug": "itr-income-deductions-title",
+        "title": "itr.income.deductions.title",
+        "data": {
+          "key": "itr.income.deductions.title",
+          "text": "Expenses that reduce your tax (old regime)"
+        }
+      },
+      {
+        "slug": "itr-income-deductions-body",
+        "title": "itr.income.deductions.body",
+        "data": {
+          "key": "itr.income.deductions.body",
+          "text": "Insurance, savings, school fees, home loan — the government lets you subtract these from income. We'll also check if the new regime (no deductions, lower rates) is better for you."
+        }
+      },
+      {
+        "slug": "itr-income-back",
+        "title": "itr.income.back",
+        "data": {
+          "key": "itr.income.back",
+          "text": "Back"
+        }
+      },
+      {
+        "slug": "itr-income-next",
+        "title": "itr.income.next",
+        "data": {
+          "key": "itr.income.next",
+          "text": "Calculate my tax"
+        }
+      },
+      {
+        "slug": "gst-returns-title",
+        "title": "gst.returns.title",
+        "data": {
+          "key": "gst.returns.title",
+          "text": "GST returns"
+        }
+      },
+      {
+        "slug": "gst-returns-subtitle",
+        "title": "gst.returns.subtitle",
+        "data": {
+          "key": "gst.returns.subtitle",
+          "text": "Step 1: start a return for a month. Step 2: add your bills. Step 3: check and send it for filing."
+        }
+      },
+      {
+        "slug": "gst-returns-start-title",
+        "title": "gst.returns.start.title",
+        "data": {
+          "key": "gst.returns.start.title",
+          "text": "Start a return"
+        }
+      },
+      {
+        "slug": "gst-returns-start-body",
+        "title": "gst.returns.start.body",
+        "data": {
+          "key": "gst.returns.start.body",
+          "text": "Pick your GST number, the return type and the month. The due date is shown automatically."
+        }
+      },
+      {
+        "slug": "gst-returns-registration",
+        "title": "gst.returns.registration",
+        "data": {
+          "key": "gst.returns.registration",
+          "text": "Your GST number"
+        }
+      },
+      {
+        "slug": "gst-returns-create",
+        "title": "gst.returns.create",
+        "data": {
+          "key": "gst.returns.create",
+          "text": "Start this return"
+        }
+      },
+      {
+        "slug": "gst-invoices-title",
+        "title": "gst.invoices.title",
+        "data": {
+          "key": "gst.invoices.title",
+          "text": "Your bills for this return"
+        }
+      },
+      {
+        "slug": "gst-invoices-subtitle",
+        "title": "gst.invoices.subtitle",
+        "data": {
+          "key": "gst.invoices.subtitle",
+          "text": "Add every sales bill you issued and every purchase bill you received for the month. Tap ⓘ on any box for help."
+        }
+      },
+      {
+        "slug": "gst-invoices-add-title",
+        "title": "gst.invoices.add.title",
+        "data": {
+          "key": "gst.invoices.add.title",
+          "text": "Add a bill"
+        }
+      },
+      {
+        "slug": "gst-invoices-add-body",
+        "title": "gst.invoices.add.body",
+        "data": {
+          "key": "gst.invoices.add.body",
+          "text": "Same-state bill: fill CGST and SGST (equal halves). Other-state bill: fill only IGST."
+        }
+      },
+      {
+        "slug": "gst-invoices-add-button",
+        "title": "gst.invoices.add.button",
+        "data": {
+          "key": "gst.invoices.add.button",
+          "text": "Save bill"
+        }
+      },
+      {
+        "slug": "gst-invoices-import-title",
+        "title": "gst.invoices.import.title",
+        "data": {
+          "key": "gst.invoices.import.title",
+          "text": "Have bills in Excel / Tally?"
+        }
+      },
+      {
+        "slug": "gst-invoices-import-body",
+        "title": "gst.invoices.import.body",
+        "data": {
+          "key": "gst.invoices.import.body",
+          "text": "Export as CSV and upload — we read the columns by name (document type, invoice number, date, taxable value, CGST, SGST, IGST, GSTIN, place of supply). Duplicates are skipped."
+        }
+      },
+      {
+        "slug": "gst-invoices-list-title",
+        "title": "gst.invoices.list.title",
+        "data": {
+          "key": "gst.invoices.list.title",
+          "text": "Bills added so far"
+        }
+      },
+      {
+        "slug": "gst-profile-title",
+        "title": "gst.profile.title",
+        "data": {
+          "key": "gst.profile.title",
+          "text": "Your GST registration"
+        }
+      },
+      {
+        "slug": "gst-profile-subtitle",
+        "title": "gst.profile.subtitle",
+        "data": {
+          "key": "gst.profile.subtitle",
+          "text": "Copy these details from your GST certificate once; every return will use them."
+        }
+      }
+    ]
+  },
+  "publish": true
+}
