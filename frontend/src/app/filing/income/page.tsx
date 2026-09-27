@@ -7,14 +7,19 @@ import { useFiling } from "@/contexts/FilingContext";
 import Card, { CardTitle, CardDescription } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
+import { FillField, sourcesForField } from "@/lib/document-reader";
 
 export default function AdditionalIncomePage() {
   const router = useRouter();
   const { isAuthenticated, isReady } = useAuth();
   const { form16Data, additionalIncome, setAdditionalIncome, setCurrentStep,
     metroCity, setMetroCity, rentPaid, setRentPaid,
-    extraDeductions, setExtraDeductions, taxPaid, setTaxPaid } = useFiling();
+    extraDeductions, setExtraDeductions, taxPaid, setTaxPaid, documents } = useFiling();
   const t = usePortalText();
+  const from = (field: FillField) => {
+    const names = sourcesForField(documents, field);
+    return names.length ? `Filled from ${names.join(", ")}` : undefined;
+  };
 
   useEffect(() => {
     if (!isReady) return;
@@ -40,12 +45,20 @@ export default function AdditionalIncomePage() {
   };
 
   const amount = (value: number) => (value ? String(value) : "");
+  const filledCount = documents.reduce((n, d) => n + d.fills.filter((f) => f.include && f.amount > 0).length, 0);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">{t("itr.income.title")}</h1>
         <p className="text-muted mt-1">{t("itr.income.subtitle")}</p>
+      </div>
+
+      <div className={`rounded-xl border px-4 py-3 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2 ${filledCount ? "bg-emerald-50 border-emerald-200" : "bg-amber-50 border-amber-200"}`}>
+        <span>{filledCount ? `${filledCount} amount${filledCount > 1 ? "s" : ""} ${t("itr.income.fromDocs").toLowerCase()}` : t("itr.income.uploadMore")}</span>
+        <Button size="sm" variant="outline" onClick={() => { setCurrentStep("documents"); router.push("/filing/documents"); }}>
+          {filledCount ? "Add or change files" : "Upload files"}
+        </Button>
       </div>
 
       <Card variant="bordered">
@@ -67,11 +80,11 @@ export default function AdditionalIncomePage() {
         <CardTitle>{t("itr.income.interest.title")}</CardTitle>
         <CardDescription>{t("itr.income.interest.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <GuidedField guide="itr.interest.savings" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.interest.savings" note={from("savingsInterest")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.savingsInterest)} onChange={(e) => updateIncome("savingsInterest", e.target.value)} />
-          <GuidedField guide="itr.interest.fd" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.interest.fd" note={from("fdInterest")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.fdInterest)} onChange={(e) => updateIncome("fdInterest", e.target.value)} />
-          <GuidedField guide="itr.interest.rd" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.interest.rd" note={from("rdInterest")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.rdInterest)} onChange={(e) => updateIncome("rdInterest", e.target.value)} />
         </div>
       </Card>
@@ -80,9 +93,9 @@ export default function AdditionalIncomePage() {
         <CardTitle>{t("itr.income.gains.title")}</CardTitle>
         <CardDescription>{t("itr.income.gains.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <GuidedField guide="itr.gains.short" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.gains.short" note={from("capitalGainsSTCG")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.capitalGainsSTCG)} onChange={(e) => updateIncome("capitalGainsSTCG", e.target.value)} />
-          <GuidedField guide="itr.gains.long" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.gains.long" note={from("capitalGainsLTCG")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.capitalGainsLTCG)} onChange={(e) => updateIncome("capitalGainsLTCG", e.target.value)} />
         </div>
       </Card>
@@ -90,7 +103,7 @@ export default function AdditionalIncomePage() {
       <Card variant="bordered">
         <CardTitle>{t("itr.income.other.title")}</CardTitle>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <GuidedField guide="itr.other.rent" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.other.rent" note={from("rentalIncome")} type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.rentalIncome)} onChange={(e) => updateIncome("rentalIncome", e.target.value)} />
           <GuidedField guide="itr.other.misc" type="number" min={0} placeholder="0" rupee
             value={amount(additionalIncome.otherIncome)} onChange={(e) => updateIncome("otherIncome", e.target.value)} />
@@ -121,9 +134,9 @@ export default function AdditionalIncomePage() {
         <CardTitle>{t("itr.income.taxPaid.title")}</CardTitle>
         <CardDescription>{t("itr.income.taxPaid.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <GuidedField guide="itr.tax.advanceTax" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.tax.advanceTax" note={from("advanceTax")} type="number" min={0} placeholder="0" rupee
             value={amount(taxPaid.advanceTax)} onChange={(e) => updateTaxPaid("advanceTax", e.target.value)} />
-          <GuidedField guide="itr.tax.tdsOther" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.tax.tdsOther" note={from("otherTds")} type="number" min={0} placeholder="0" rupee
             value={amount(taxPaid.otherTds)} onChange={(e) => updateTaxPaid("otherTds", e.target.value)} />
         </div>
       </Card>
@@ -132,17 +145,17 @@ export default function AdditionalIncomePage() {
         <CardTitle>{t("itr.income.deductions.title")}</CardTitle>
         <CardDescription>{t("itr.income.deductions.body")}</CardDescription>
         <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <GuidedField guide="itr.ded.80c" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.80c" note={from("section80C")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.section80C || 0)} onChange={(e) => updateDeduction("section80C", e.target.value)} />
-          <GuidedField guide="itr.ded.nps" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.nps" note={from("section80CCD1B")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.section80CCD1B || 0)} onChange={(e) => updateDeduction("section80CCD1B", e.target.value)} />
-          <GuidedField guide="itr.ded.80d" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.80d" note={from("section80D")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.section80D || 0)} onChange={(e) => updateDeduction("section80D", e.target.value)} />
-          <GuidedField guide="itr.ded.80tta" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.80tta" note={from("section80TTA")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.section80TTA || 0)} onChange={(e) => updateDeduction("section80TTA", e.target.value)} />
-          <GuidedField guide="itr.ded.homeLoanInterest" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.homeLoanInterest" note={from("section24")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.section24 || 0)} onChange={(e) => updateDeduction("section24", e.target.value)} />
-          <GuidedField guide="itr.ded.other" type="number" min={0} placeholder="0" rupee
+          <GuidedField guide="itr.ded.other" note={from("otherDeductions")} type="number" min={0} placeholder="0" rupee
             value={amount(extraDeductions.otherDeductions || 0)} onChange={(e) => updateDeduction("otherDeductions", e.target.value)} />
         </div>
       </Card>

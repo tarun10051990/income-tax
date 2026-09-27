@@ -7,12 +7,13 @@ import { usePortalText } from "@/components/filing/GuidedField";
 const STEPS: { key: FilingStep; icon: string }[] = [
   { key: "upload", icon: "1" },
   { key: "review", icon: "2" },
-  { key: "additional_income", icon: "3" },
-  { key: "deductions", icon: "4" },
-  { key: "compute", icon: "5" },
-  { key: "suggestions", icon: "6" },
-  { key: "generate", icon: "7" },
-  { key: "summary", icon: "8" },
+  { key: "documents", icon: "3" },
+  { key: "additional_income", icon: "4" },
+  { key: "deductions", icon: "5" },
+  { key: "compute", icon: "6" },
+  { key: "suggestions", icon: "7" },
+  { key: "generate", icon: "8" },
+  { key: "summary", icon: "9" },
 ];
 
 interface FileStepperProps {

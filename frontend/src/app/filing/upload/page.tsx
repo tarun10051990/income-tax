@@ -134,7 +134,12 @@ export default function UploadPage() {
 
   const handleBusiness = () => {
     startWithoutForm16(user?.name ?? "");
-    router.push("/filing/income");
+    router.push("/filing/documents");
+  };
+
+  const handleDocuments = () => {
+    startWithoutForm16(user?.name ?? "");
+    router.push("/filing/documents");
   };
 
   return (
@@ -145,7 +150,14 @@ export default function UploadPage() {
       </div>
 
       {!isProcessing && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card variant="bordered" className="border-amber-300 bg-amber-50">
+            <CardTitle>{t("itr.upload.docs.title")}</CardTitle>
+            <CardDescription>{t("itr.upload.docs.body")}</CardDescription>
+            <Button className="mt-3" onClick={handleDocuments}>
+              {t("itr.upload.docs.button")}
+            </Button>
+          </Card>
           <Card variant="bordered" className="border-primary/40 bg-primary/5">
             <CardTitle>{t("itr.upload.salaried.title")}</CardTitle>
             <CardDescription>{t("itr.upload.salaried.body")}</CardDescription>
