@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Financial tracking: investments and tax payments start unverified, only verified payments count as paid,
  * liabilities/refunds are staff-managed, dashboards aggregate from records, and clients never see each other.
  */
+@ActiveProfiles("test")
 @SpringBootTest(properties = {
         "spring.datasource.url=jdbc:h2:mem:finance;DB_CLOSE_DELAY=-1",
         "rate-limit.enabled=false",
