@@ -8,11 +8,13 @@ import Card, { CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/utils";
+import { usePortalText } from "@/components/filing/GuidedField";
 
 export default function ComputePage() {
   const router = useRouter();
   const { isAuthenticated, isReady } = useAuth();
-  const { form16Data, taxResult, computeTaxResult, setCurrentStep } = useFiling();
+  const { form16Data, taxResult, plainSavings, computeTaxResult, setCurrentStep } = useFiling();
+  const t = usePortalText();
 
   useEffect(() => {
     if (!isReady) return;
@@ -51,6 +53,43 @@ export default function ComputePage() {
           </div>
         </div>
       </Card>
+
+      {plainSavings && (
+        <Card variant="bordered" className="bg-amber-50 border-amber-200">
+          <CardTitle>{t("itr.saved.title")}</CardTitle>
+          <p className="mt-2 text-lg font-semibold">{plainSavings.headline}</p>
+          <p className="mt-1 text-sm text-muted">{plainSavings.explain}</p>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+            <div className="rounded-lg bg-white/70 p-3">
+              <p className="text-xs text-muted">{t("itr.saved.without")}</p>
+              <p className="font-mono font-semibold text-base">{formatCurrency(plainSavings.taxWithoutSavings)}</p>
+            </div>
+            <div className="rounded-lg bg-white/70 p-3">
+              <p className="text-xs text-muted">{t("itr.saved.pay")}</p>
+              <p className="font-mono font-semibold text-base">{formatCurrency(plainSavings.taxYouPay)}</p>
+            </div>
+            <div className="rounded-lg bg-emerald-100 p-3">
+              <p className="text-xs text-emerald-800">{t("itr.saved.saved")}</p>
+              <p className="font-mono font-semibold text-base text-emerald-800">{formatCurrency(plainSavings.taxSaved)}</p>
+            </div>
+          </div>
+          {plainSavings.items.length > 0 && (
+            <div className="mt-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted">{t("itr.saved.items")}</p>
+              <ul className="mt-2 divide-y divide-amber-200 text-sm">
+                {plainSavings.items.map((item) => (
+                  <li key={item.key} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 py-2">
+                    <span>{item.what}</span>
+                    <span className="font-mono whitespace-nowrap">
+                      {formatCurrency(item.amount)} <span className="text-muted">→ about {formatCurrency(item.taxCut)} less tax</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </Card>
+      )}
 
       {/* Side-by-side Comparison Table */}
       <Card variant="bordered">
