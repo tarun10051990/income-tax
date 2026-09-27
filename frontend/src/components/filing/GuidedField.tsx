@@ -17,13 +17,15 @@ interface GuidedFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "
   /** Replaces the input (e.g. a select) while keeping the label and help. */
   children?: ReactNode;
   rupee?: boolean;
+  /** Small green note under the input, e.g. "Filled from sbi-statement.pdf". */
+  note?: string;
 }
 
 /**
  * Form control with a plain-language label, a one-line hint and an expandable "Where do I find
  * this?" panel (source document, example, Hindi). All copy comes from the CMS field guide.
  */
-export default function GuidedField({ guide, children, rupee, className, ...props }: GuidedFieldProps) {
+export default function GuidedField({ guide, children, rupee, note, className, ...props }: GuidedFieldProps) {
   const content = useSiteContent();
   const entry = fieldGuideOf(content, guide);
   const [open, setOpen] = useState(false);
@@ -70,6 +72,7 @@ export default function GuidedField({ guide, children, rupee, className, ...prop
           />
         </div>
       )}
+      {note && <p className="mt-1 text-xs text-secondary font-medium">✓ {note}</p>}
       {entry.hint && <p className="mt-1 text-xs text-muted">{entry.hint}</p>}
       {open && hasMore && (
         <div id={`${id}-help`} className="mt-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs space-y-1.5">

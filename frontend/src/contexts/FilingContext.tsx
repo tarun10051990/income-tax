@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { Form16Data, OnboardingData, FilingStep } from "@/lib/types";
 import { TaxInput, TaxResult, TaxSuggestion, computeTax, generateTaxSuggestions } from "@/lib/tax-engine";
+import { PlainSavings, explainSavings } from "@/lib/plain-savings";
+import { ReadDocument, totalsByField } from "@/lib/document-reader";
 
 interface FilingContextType {
   currentStep: FilingStep;
@@ -17,6 +19,12 @@ interface FilingContextType {
   setExtraDeductions: (data: Partial<TaxInput["deductions"]>) => void;
   taxResult: TaxResult | null;
   taxSuggestions: TaxSuggestion[];
+  plainSavings: PlainSavings | null;
+  /** Statements / receipts the user uploaded and what we read from them. */
+  documents: ReadDocument[];
+  setDocuments: (docs: ReadDocument[]) => void;
+  /** Copies the included amounts of every document into the income / deduction fields. */
+  applyDocuments: (docs: ReadDocument[]) => void;
   computeTaxResult: () => void;
   metroCity: boolean;
   setMetroCity: (v: boolean) => void;
@@ -72,6 +80,8 @@ export function FilingProvider({ children }: { children: ReactNode }) {
   const [extraDeductions, setExtraDeductions] = useState<Partial<TaxInput["deductions"]>>({});
   const [taxResult, setTaxResult] = useState<TaxResult | null>(null);
   const [taxSuggestions, setTaxSuggestions] = useState<TaxSuggestion[]>([]);
+  const [plainSavings, setPlainSavings] = useState<PlainSavings | null>(null);
+  const [documents, setDocuments] = useState<ReadDocument[]>([]);
   const [metroCity, setMetroCity] = useState(true);
   const [rentPaid, setRentPaid] = useState(0);
   const [taxPaid, setTaxPaid] = useState<TaxPaid>(defaultTaxPaid);
@@ -107,11 +117,42 @@ export function FilingProvider({ children }: { children: ReactNode }) {
 
     const suggestions = generateTaxSuggestions(input);
     setTaxSuggestions(suggestions);
+    setPlainSavings(explainSavings(input, result));
   }, [form16Data, onboardingData, additionalIncome, extraDeductions, metroCity, rentPaid, taxPaid]);
 
   const startWithoutForm16 = useCallback((name: string) => {
     setForm16Data(blankForm16(name));
-    setCurrentStep("additional_income");
+    setCurrentStep("documents");
+  }, []);
+
+  const applyDocuments = useCallback((docs: ReadDocument[]) => {
+    setDocuments(docs);
+    const totals = totalsByField(docs);
+    const form16 = docs.find((d) => d.form16 && (d.form16.salary.basicSalary > 0 || d.form16.tax.tdsDeducted > 0))?.form16;
+    if (form16) setForm16Data(form16);
+    setExtraDeductions((prev) => ({
+      ...prev,
+      ...(totals.section80C !== undefined && { section80C: totals.section80C }),
+      ...(totals.section80CCD1B !== undefined && { section80CCD1B: totals.section80CCD1B }),
+      ...(totals.section80D !== undefined && { section80D: totals.section80D }),
+      ...(totals.section80TTA !== undefined && { section80TTA: totals.section80TTA }),
+      ...(totals.section24 !== undefined && { section24: totals.section24 }),
+      ...(totals.otherDeductions !== undefined && { otherDeductions: totals.otherDeductions }),
+    }));
+    setAdditionalIncome((prev) => ({
+      ...prev,
+      ...(totals.savingsInterest !== undefined && { savingsInterest: totals.savingsInterest }),
+      ...(totals.fdInterest !== undefined && { fdInterest: totals.fdInterest }),
+      ...(totals.rdInterest !== undefined && { rdInterest: totals.rdInterest }),
+      ...(totals.capitalGainsSTCG !== undefined && { capitalGainsSTCG: totals.capitalGainsSTCG }),
+      ...(totals.capitalGainsLTCG !== undefined && { capitalGainsLTCG: totals.capitalGainsLTCG }),
+      ...(totals.rentalIncome !== undefined && { rentalIncome: totals.rentalIncome }),
+    }));
+    setTaxPaid((prev) => ({
+      ...prev,
+      ...(totals.otherTds !== undefined && { otherTds: totals.otherTds }),
+      ...(totals.advanceTax !== undefined && { advanceTax: totals.advanceTax }),
+    }));
   }, []);
 
   const resetFiling = useCallback(() => {
@@ -122,6 +163,8 @@ export function FilingProvider({ children }: { children: ReactNode }) {
     setExtraDeductions({});
     setTaxResult(null);
     setTaxSuggestions([]);
+    setPlainSavings(null);
+    setDocuments([]);
     setMetroCity(true);
     setRentPaid(0);
     setTaxPaid(defaultTaxPaid);
@@ -142,6 +185,10 @@ export function FilingProvider({ children }: { children: ReactNode }) {
         setExtraDeductions,
         taxResult,
         taxSuggestions,
+        plainSavings,
+        documents,
+        setDocuments,
+        applyDocuments,
         computeTaxResult,
         metroCity,
         setMetroCity,

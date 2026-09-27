@@ -90,6 +90,7 @@ export type FilingStep =
   | "onboarding"
   | "upload"
   | "review"
+  | "documents"
   | "additional_income"
   | "deductions"
   | "compute"

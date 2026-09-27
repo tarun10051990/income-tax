@@ -9,11 +9,13 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/utils";
 import { investmentOptions } from "@/lib/tax-engine";
+import { usePortalText } from "@/components/filing/GuidedField";
 
 export default function SuggestionsPage() {
   const router = useRouter();
   const { isAuthenticated, isReady } = useAuth();
-  const { form16Data, taxSuggestions, computeTaxResult, setCurrentStep } = useFiling();
+  const { form16Data, plainSavings, computeTaxResult, setCurrentStep } = useFiling();
+  const t = usePortalText();
 
   useEffect(() => {
     if (!isReady) return;
@@ -23,106 +25,80 @@ export default function SuggestionsPage() {
     computeTaxResult();
   }, [isAuthenticated, isReady, form16Data, router, setCurrentStep, computeTaxResult]);
 
-  const totalPotentialSaving = taxSuggestions.reduce((a, s) => a + s.potentialSaving, 0);
+  const tips = plainSavings?.tips ?? [];
+  const totalSave = tips.reduce((a, s) => a + s.saveAbout, 0);
+  const onNew = plainSavings?.betterMethod === "new";
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Tax-Saving Suggestions</h1>
-        <p className="text-muted mt-1">Personalized investment recommendations to minimize your tax</p>
+        <h1 className="text-2xl font-bold">{t("itr.tips.title")}</h1>
+        <p className="text-muted mt-1">{t("itr.tips.subtitle")}</p>
       </div>
 
-      {/* Summary Card */}
-      {totalPotentialSaving > 0 && (
+      {plainSavings && (
+        <Card variant="bordered" className="bg-amber-50 border-amber-200">
+          <p className="text-lg font-semibold">{plainSavings.headline}</p>
+          <p className="text-sm text-muted mt-1">{plainSavings.explain}</p>
+        </Card>
+      )}
+
+      {totalSave > 0 && (
         <Card variant="bordered" className="bg-gradient-to-r from-primary/5 to-secondary/5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <svg className="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
+            <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 text-2xl">💡</div>
             <div>
-              <h3 className="text-lg font-bold">
-                You can save up to {formatCurrency(totalPotentialSaving)} in taxes!
-              </h3>
-              <p className="text-sm text-muted mt-1">
-                By investing in the recommended instruments below under the Old Tax Regime
-              </p>
+              <h3 className="text-lg font-bold">{t("itr.tips.total")} {formatCurrency(totalSave)}</h3>
+              {onNew && <p className="text-sm text-muted mt-1">{t("itr.tips.newRegime")}</p>}
             </div>
           </div>
         </Card>
       )}
 
-      {/* AI Suggestions */}
-      {taxSuggestions.length > 0 ? (
+      {tips.length > 0 ? (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Personalized Recommendations</h2>
-          {taxSuggestions.map((suggestion, index) => (
-            <Card key={index} variant="bordered" className="hover:shadow-md transition-shadow">
-              <div className="flex items-start justify-between gap-4">
+          {tips.map((tip, index) => (
+            <Card key={tip.key} variant="bordered" className="hover:shadow-md transition-shadow">
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <Badge variant="info">Section {suggestion.section}</Badge>
-                    <Badge variant={
-                      suggestion.riskLevel === "low" ? "success" :
-                      suggestion.riskLevel === "medium" ? "warning" : "danger"
-                    }>
-                      {suggestion.riskLevel} risk
-                    </Badge>
+                    <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">{index + 1}</span>
+                    <h3 className="font-semibold">{tip.action}</h3>
                   </div>
-                  <h3 className="font-semibold">{suggestion.title}</h3>
-                  <p className="text-sm text-muted mt-1">{suggestion.description}</p>
-
-                  {/* Usage bar */}
+                  <p className="text-sm">{tip.why}</p>
+                  <p className="text-sm text-muted mt-2"><span className="font-medium text-foreground">{t("itr.tips.keepInMind")}: </span>{tip.keepInMind}</p>
                   <div className="mt-3">
-                    <div className="flex justify-between text-xs text-muted mb-1">
-                      <span>Used: {formatCurrency(suggestion.currentUsed)}</span>
-                      <span>Limit: {formatCurrency(suggestion.maxBenefit)}</span>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted mb-1">{t("itr.tips.options")}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tip.options.map((opt) => (
+                        <span key={opt} className="text-xs bg-gray-100 text-foreground px-2 py-1 rounded">{opt}</span>
+                      ))}
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-primary h-full rounded-full transition-all"
-                        style={{ width: `${Math.min((suggestion.currentUsed / suggestion.maxBenefit) * 100, 100)}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-muted mt-1">
-                      Remaining: {formatCurrency(suggestion.remainingLimit)}
-                    </p>
-                  </div>
-
-                  {/* Investment options */}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {suggestion.investmentOptions.map((opt) => (
-                      <span key={opt} className="text-xs bg-gray-100 text-muted px-2 py-1 rounded">
-                        {opt}
-                      </span>
-                    ))}
                   </div>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-xs text-muted">Potential Tax Saving</p>
-                  <p className="text-xl font-bold text-secondary">{formatCurrency(suggestion.potentialSaving)}</p>
-                  <p className="text-xs text-muted mt-1">Lock-in: {suggestion.lockInPeriod}</p>
-                </div>
+                {tip.saveAbout > 0 && (
+                  <div className="md:text-right flex-shrink-0 rounded-lg bg-emerald-50 px-4 py-3">
+                    <p className="text-xs text-muted">{t("itr.tips.saveAbout")}</p>
+                    <p className="text-xl font-bold text-secondary">{formatCurrency(tip.saveAbout)}</p>
+                    <p className="text-xs text-muted mt-1">{t("itr.tips.roomLeft")}: {formatCurrency(tip.roomLeft)}</p>
+                  </div>
+                )}
               </div>
             </Card>
           ))}
         </div>
       ) : (
         <Card variant="bordered" className="text-center py-8">
-          <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 className="font-semibold">Great job!</h3>
-          <p className="text-sm text-muted mt-1">You have maximized all available deductions.</p>
+          <div className="text-4xl mb-3">🎉</div>
+          <h3 className="font-semibold">{t("itr.tips.none")}</h3>
         </Card>
       )}
 
       {/* Investment Options */}
-      <div>
-        <h2 className="text-lg font-semibold mb-4">All Investment Options</h2>
+      <details className="group">
+        <summary className="cursor-pointer text-lg font-semibold mb-4 list-none flex items-center gap-2">
+          <span className="transition-transform group-open:rotate-90">▸</span> Want details? All the saving options compared
+        </summary>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {investmentOptions.map((inv) => (
             <Card key={inv.name} variant="bordered" className="hover:shadow-md transition-shadow">
@@ -158,7 +134,7 @@ export default function SuggestionsPage() {
             </Card>
           ))}
         </div>
-      </div>
+      </details>
 
       {/* Navigation */}
       <div className="flex justify-between">
