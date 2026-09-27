@@ -1,0 +1,194 @@
+[
+  {
+    "eventKey": "FILING_STARTED",
+    "subject": "Filing {{caseNumber}} created",
+    "body": "Your {{taxType}} filing {{caseNumber}} has been created. Upload the required documents to continue.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "DOCUMENT_REQUIRED",
+    "subject": "Documents required for {{caseNumber}}",
+    "body": "We need additional documents for {{caseNumber}}. Please upload them from your dashboard.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "QUERY_RAISED",
+    "subject": "Query {{queryNumber}} on {{caseNumber}}",
+    "body": "Our reviewer raised a query on {{caseNumber}}: {{question}}",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "QUERY_ANSWERED",
+    "subject": "Response received for {{queryNumber}}",
+    "body": "The taxpayer responded to {{queryNumber}} on case {{caseNumber}}.",
+    "inApp": true,
+    "email": false,
+    "sms": false
+  },
+  {
+    "eventKey": "FILING_APPROVED",
+    "subject": "{{caseNumber}} approved",
+    "body": "Your {{taxType}} return {{caseNumber}} has been approved and is ready for filing.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "FILING_REJECTED",
+    "subject": "{{caseNumber}} sent back",
+    "body": "Return {{caseNumber}} was rejected during review. Open the case to see the reviewer notes.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "FILING_SUBMITTED",
+    "subject": "{{caseNumber}} under review",
+    "body": "Return {{caseNumber}} has been submitted to our team for review.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "FILING_COMPLETED",
+    "subject": "{{caseNumber}} completed",
+    "body": "Return {{caseNumber}} is complete. The acknowledgement is available on the case.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "FILING_STATUS_CHANGED",
+    "subject": "{{caseNumber}} moved to {{toStatus}}",
+    "body": "Case {{caseNumber}} moved from {{fromStatus}} to {{toStatus}}.",
+    "inApp": true,
+    "email": false,
+    "sms": false
+  },
+  {
+    "eventKey": "DEADLINE_APPROACHING",
+    "subject": "{{caseNumber}} is due on {{dueDate}}",
+    "body": "Case {{caseNumber}} is due on {{dueDate}}. Complete the pending actions to file on time.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "PAYMENT_REQUIRED",
+    "subject": "Service fee invoice {{invoiceNumber}}",
+    "body": "Invoice {{invoiceNumber}} for INR {{amount}} covers our professional fee. Tax payable to the government is shown separately on your return.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "CONSULTANT_APPROVED",
+    "subject": "Your professional profile is live",
+    "body": "Hi {{name}}, {{message}}",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "CONSULTANT_REJECTED",
+    "subject": "Profile verification unsuccessful",
+    "body": "Hi {{name}}, {{message}}",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "CONSULTANT_SUSPENDED",
+    "subject": "Your professional profile has been suspended",
+    "body": "Hi {{name}}, {{message}}",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_REQUESTED",
+    "subject": "New consultation request {{reference}}",
+    "body": "{{clientName}} has requested a {{mode}} consultation on {{when}}. It will be confirmed once payment is received.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_CONFIRMED",
+    "subject": "Consultation {{reference}} confirmed",
+    "body": "Your {{mode}} consultation with {{consultantName}} on {{when}} is confirmed. Invoice {{invoiceNumber}} is available in your bookings.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_CONFIRMED_CONSULTANT",
+    "subject": "Booking {{reference}} confirmed",
+    "body": "{{clientName}} has paid for the {{mode}} consultation on {{when}}.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_RESCHEDULED",
+    "subject": "Consultation {{reference}} rescheduled",
+    "body": "The consultation has been moved to {{when}}.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_CANCELLED",
+    "subject": "Consultation {{reference}} cancelled",
+    "body": "The consultation scheduled for {{when}} has been cancelled. {{reason}}",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_COMPLETED",
+    "subject": "Consultation {{reference}} completed",
+    "body": "Thank you for consulting {{consultantName}}. Please rate your experience from your bookings page.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "BOOKING_REFUNDED",
+    "subject": "Refund issued for {{reference}}",
+    "body": "A refund of INR {{amount}} has been issued for consultation {{reference}}.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  },
+  {
+    "eventKey": "CONSULTATION_MESSAGE",
+    "subject": "New message on {{reference}}",
+    "body": "{{senderName}} sent you a message about consultation {{reference}}.",
+    "inApp": true,
+    "email": false,
+    "sms": false
+  },
+  {
+    "eventKey": "DOCUMENT_SHARED",
+    "subject": "Document shared on {{reference}}",
+    "body": "{{senderName}} shared {{fileName}} for consultation {{reference}}.",
+    "inApp": true,
+    "email": false,
+    "sms": false
+  },
+  {
+    "eventKey": "PAYOUT_PAID",
+    "subject": "Payout {{reference}} paid",
+    "body": "INR {{amount}} for {{count}} completed consultations has been transferred.",
+    "inApp": true,
+    "email": true,
+    "sms": false
+  }
+]

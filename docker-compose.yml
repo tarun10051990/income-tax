@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: taxfilr
+      MYSQL_USER: taxfilr
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD:-taxfilr_dev}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_dev}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysqldata:/var/lib/mysql
+      # Creates every table on first start (see backend/src/main/resources/db/mysql/schema.sql).
+      - ./backend/src/main/resources/db/mysql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-root_dev}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DATABASE_URL: jdbc:mysql://mysql:3306/taxfilr?serverTimezone=UTC&characterEncoding=utf8
+      DATABASE_USERNAME: taxfilr
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-taxfilr_dev}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET (32+ random chars)}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000}
+      SEED_DEMO_USERS: ${SEED_DEMO_USERS:-false}
+      SEED_USER_PASSWORD: ${SEED_USER_PASSWORD:-}
+      DOCUMENT_STORAGE_DIR: /app/data/documents
+    volumes:
+      - documents:/app/data/documents
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080/api}
+    ports:
+      - "3000:3000"
+    environment:
+      # Server-side CMS fetch runs inside the container network.
+      CMS_API_URL: http://backend:8080/api
+    depends_on:
+      - backend
+
+volumes:
+  mysqldata:
+  documents:
