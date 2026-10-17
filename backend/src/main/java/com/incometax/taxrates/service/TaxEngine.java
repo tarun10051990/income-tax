@@ -100,7 +100,7 @@ public final class TaxEngine {
         BigDecimal specialIncome = BigDecimal.ZERO;
         BigDecimal exemptIncome = BigDecimal.ZERO;
         List<TaxCategoryRate> incomeCategories = book.categories().stream()
-                .filter(c -> c.isActive() && c.getKind() == TaxCategoryRate.Kind.INCOME)
+                .filter(c -> c.isActive() && c.getKind() == TaxCategoryRate.Kind.INCOME && c.allowedIn(regime))
                 .sorted(Comparator.comparingInt(TaxCategoryRate::getSortOrder))
                 .toList();
         List<Line> slabLinesPending = new ArrayList<>();
@@ -175,7 +175,8 @@ public final class TaxEngine {
             adjusted.add(new Special(special.category(), special.amount(), special.exempt(), special.taxable().subtract(use)));
         }
 
-        BigDecimal totalIncome = round10(slabTaxable.add(specialIncome));
+        // Total income counts gains after the 112A exemption but before the basic-exemption adjustment.
+        BigDecimal totalIncome = round10(slabTaxable.add(specials.stream().map(Special::taxable).reduce(BigDecimal.ZERO, BigDecimal::add)));
         Charge charge = charge(setting, regime, slabs, surchargeBands, slabTaxable, adjusted, totalIncome);
         BigDecimal surcharge = charge.surcharge();
         if (surcharge.signum() > 0) {
@@ -212,7 +213,7 @@ public final class TaxEngine {
                 : totalTax.multiply(BigDecimal.valueOf(100)).divide(grossTotal, 4, RoundingMode.HALF_UP);
         return new RegimeResult(regime, money(grossTotal), standardDeduction, hraExemption, money(totalDeductions),
                 money(slabTaxable), totalIncome, charge.slabTax(), charge.specialTax(), charge.rebate(), money(surcharge),
-                charge.surchargeRate(), cess, totalTax, money(taxesPaid), net.signum() > 0 ? round10(net) : BigDecimal.ZERO.setScale(2),
+                charge.surchargeRate(), cess, totalTax, money(taxesPaid), net.signum() > 0 ? money(net) : BigDecimal.ZERO.setScale(2),
                 net.signum() < 0 ? money(net.negate()) : BigDecimal.ZERO.setScale(2), effectiveRate, incomeLines, deductionLines);
     }
 

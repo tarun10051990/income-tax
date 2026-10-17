@@ -73,10 +73,10 @@ class ItrComputationIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON).content(FORM))
                 .andExpect(status().isOk()).andReturn();
         JsonNode data = objectMapper.readTree(saved.getResponse().getContentAsString()).get("data");
-        // new regime: total income 12.5L (incl. LTCG) is above 12L, so no rebate: slab tax on 10.5L = 45,000
-        // + LTCG (2L - 1.25L) x 12.5% = 9,375 -> 54,375 + 4% cess = 56,550; 20,000 TDS already paid
-        assertThat(data.at("/result/newRegime/totalTax").decimalValue()).isEqualByComparingTo("56550");
-        assertThat(data.at("/result/newRegime/netPayable").decimalValue()).isEqualByComparingTo("36550");
+        // new regime: total income 10.5L slab + 75k taxable LTCG = 11.25L <= 12L, so 87A wipes the 45,000 slab tax;
+        // LTCG (2L - 1.25L) x 12.5% = 9,375 + 4% cess = 9,750; 20,000 TDS already paid -> refund 10,250
+        assertThat(data.at("/result/newRegime/totalTax").decimalValue()).isEqualByComparingTo("9750");
+        assertThat(data.at("/result/newRegime/refund").decimalValue()).isEqualByComparingTo("10250");
 
         mockMvc.perform(post("/api/itr/computations").header("Authorization", bearer)
                         .contentType(MediaType.APPLICATION_JSON).content(FORM))
@@ -95,6 +95,6 @@ class ItrComputationIntegrationTest {
         mockMvc.perform(get("/api/itr/computations").param("financialYear", "2025-26").header("Authorization", bearer))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.input.amounts.SALARY").value(1075000))
-                .andExpect(jsonPath("$.data.result.newRegime.totalTax").value(56550));
+                .andExpect(jsonPath("$.data.result.newRegime.totalTax").value(9750));
     }
 }

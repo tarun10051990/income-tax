@@ -101,12 +101,18 @@ public class ItrComputationService {
         return new TaxRateDtos.SavedComputation(c.getId(), input, result, c.getUpdatedAt().toString());
     }
 
+    private static final int MAX_ENTRIES = 100;
+    private static final BigDecimal MAX_AMOUNT = new BigDecimal("1000000000000");
+
     private static Map<String, BigDecimal> validate(TaxEngine.RateBook book, Map<String, BigDecimal> amounts) {
         Map<String, TaxCategoryRate> active = book.categories().stream().filter(TaxCategoryRate::isActive)
                 .collect(Collectors.toMap(TaxCategoryRate::getCode, Function.identity(), (a, b) -> a));
         Map<String, BigDecimal> clean = new LinkedHashMap<>();
         if (amounts == null) {
             return clean;
+        }
+        if (amounts.size() > MAX_ENTRIES) {
+            throw ApiException.badRequest("TOO_MANY_ENTRIES", "Too many income or deduction entries");
         }
         amounts.forEach((code, amount) -> {
             if (amount == null || amount.signum() == 0) {
@@ -118,7 +124,10 @@ public class ItrComputationService {
             if (amount.signum() < 0) {
                 throw ApiException.badRequest("NEGATIVE_AMOUNT", "Amount for " + active.get(code).getName() + " cannot be negative");
             }
-            clean.put(code, amount);
+            if (amount.compareTo(MAX_AMOUNT) > 0) {
+                throw ApiException.badRequest("AMOUNT_TOO_LARGE", "Amount for " + active.get(code).getName() + " is too large");
+            }
+            clean.put(code, amount.setScale(2, java.math.RoundingMode.HALF_UP));
         });
         return clean;
     }

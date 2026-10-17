@@ -128,8 +128,7 @@ export function FilingProvider({ children }: { children: ReactNode }) {
   const [form16Data, setForm16Data] = useState<Form16Data | null>(null);
   const [amounts, setAmounts] = useState<Record<string, number>>({});
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("BELOW_60");
-  const [rateBook, setRateBook] = useState<RateBook | null>(null);
-  const [rateBookError, setRateBookError] = useState<string | null>(null);
+  const [loadedRates, setLoadedRates] = useState<{ fy?: string; book: RateBook | null; error: string | null }>({ book: null, error: null });
   const [taxResult, setTaxResult] = useState<TaxResult | null>(null);
   const [serverResult, setServerResult] = useState<ServerTaxResult | null>(null);
   const [computing, setComputing] = useState(false);
@@ -142,12 +141,15 @@ export function FilingProvider({ children }: { children: ReactNode }) {
   const [taxPaid, setTaxPaid] = useState<TaxPaid>(defaultTaxPaid);
 
   const financialYear = onboardingData?.financialYear;
+  // Only use rates that belong to the year currently chosen.
+  const rateBook = loadedRates.fy === financialYear ? loadedRates.book : null;
+  const rateBookError = loadedRates.fy === financialYear ? loadedRates.error : null;
 
   useEffect(() => {
     let cancelled = false;
     taxRatesApi.rates(financialYear)
-      .then((book) => { if (!cancelled) { setRateBook(book); setRateBookError(null); } })
-      .catch((e: Error) => { if (!cancelled) setRateBookError(e.message || "Could not load tax rates"); });
+      .then((book) => { if (!cancelled) setLoadedRates({ fy: financialYear, book, error: null }); })
+      .catch((e: Error) => { if (!cancelled) setLoadedRates({ fy: financialYear, book: null, error: e.message || "Could not load tax rates" }); });
     return () => { cancelled = true; };
   }, [financialYear]);
 
@@ -166,6 +168,7 @@ export function FilingProvider({ children }: { children: ReactNode }) {
     if (salary > 0) all.SALARY = salary;
     if (form16Data?.deductions.professionalTax) all.DED_PROF_TAX = form16Data.deductions.professionalTax;
     if (form16Data?.deductions.pfContribution) all.DED_80C = (all.DED_80C || 0) + form16Data.deductions.pfContribution;
+    if (form16Data?.deductions.otherDeductions) all.DED_OTHER = (all.DED_OTHER || 0) + form16Data.deductions.otherDeductions;
     return all;
   }, [amounts, form16Data]);
 
@@ -227,7 +230,7 @@ export function FilingProvider({ children }: { children: ReactNode }) {
           section80TTA: extraDeductions.section80TTA || 0,
           section24: extraDeductions.section24 || 0,
           hraExemption: saved.result.oldRegime.hraExemption,
-          otherDeductions: form16Data.deductions.otherDeductions + (extraDeductions.otherDeductions || 0),
+          otherDeductions: formAmounts.DED_OTHER || 0,
         },
         additionalIncome,
         tdsDeducted: form16Data.tax.tdsDeducted,

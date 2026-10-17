@@ -58,7 +58,7 @@ public class TaxRateController {
 
     @GetMapping("/api/admin/tax-rates")
     public ApiResponse<TaxRateDtos.RateBookView> adminRates(@RequestParam(required = false) String financialYear) {
-        return ApiResponse.ok(taxRateService.view(financialYear == null ? taxRateService.latestYear() : financialYear, false));
+        return ApiResponse.ok(taxRateService.adminView(financialYear, currentUser.require()));
     }
 
     @PutMapping("/api/admin/tax-rates/categories/{id}")

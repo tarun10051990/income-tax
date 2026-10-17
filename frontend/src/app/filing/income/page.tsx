@@ -52,7 +52,11 @@ export default function AdditionalIncomePage() {
   const deductions = categories.filter((c) => c.kind === "DEDUCTION" && !c.autoFromCodes && c.code !== "DED_PROF_TAX"
     && categoryVisibleForAge(c, ageGroup));
   const autoDeductions = categories.filter((c) => c.kind === "DEDUCTION" && c.autoFromCodes && categoryVisibleForAge(c, ageGroup));
-  const toggle = (group: string) => setToggled((prev) => ({ ...prev, [group]: !picked.has(group) }));
+  const toggle = (group: string) => {
+    const on = !picked.has(group);
+    if (!on) incomeIn(group).forEach((c) => setAmount(c.code, 0));
+    setToggled((prev) => ({ ...prev, [group]: on }));
+  };
   const updateTaxPaid = (field: keyof typeof taxPaid, value: string) => setTaxPaid({ ...taxPaid, [field]: Number(value) || 0 });
   const amount = (value: number) => (value ? String(value) : "");
 

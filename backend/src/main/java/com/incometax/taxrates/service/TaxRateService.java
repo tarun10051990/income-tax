@@ -168,6 +168,12 @@ public class TaxRateService {
         return view(fy, false);
     }
 
+    /** Admin view including inactive categories; only editors may read it. */
+    public TaxRateDtos.RateBookView adminView(String financialYear, User actor) {
+        requireEditor(actor);
+        return view(financialYear == null ? latestYear() : financialYear, false);
+    }
+
     private static void requireEditor(User actor) {
         if (actor == null || !EDITORS.contains(actor.getRole())) {
             throw ApiException.forbidden("Only an admin can change tax rates");
