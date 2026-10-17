@@ -835,3 +835,152 @@ alter table tax_payments add constraint FKguxsxiwhhriw7y30s3fc5166n foreign key 
 alter table tax_refunds add constraint FKhxok18tuejuqfbexy14o798qk foreign key (owner_id) references users (id);
 alter table tax_returns add constraint FKdhqgg2s78bwvyggf3coesbj40 foreign key (user_id) references users (id);
 alter table taxpayer_profiles add constraint FKgtulmcjbdiex01qgkltvvjj6e foreign key (user_id) references users (id);
+
+-- ===== Income-tax rate tables and saved ITR computations (seed data: tax_rates_seed.sql) =====
+-- Table: tax_regime_settings
+CREATE TABLE tax_regime_settings (
+    active bit not null,
+    cess_rate decimal(6,4) not null,
+    max_surcharge_rate decimal(6,4) not null,
+    rebate_income_limit decimal(15,2) not null,
+    rebate_marginal_relief bit not null,
+    rebate_max_amount decimal(15,2) not null,
+    regime varchar(3) not null,
+    standard_deduction decimal(15,2) not null,
+    updated_at datetime(6),
+    assessment_year varchar(9) not null,
+    financial_year varchar(9) not null,
+    id varchar(255) not null,
+    updated_by varchar(255),
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: tax_slabs
+CREATE TABLE tax_slabs (
+    income_from decimal(15,2) not null,
+    income_to decimal(15,2),
+    rate decimal(6,4) not null,
+    regime varchar(3) not null,
+    sort_order integer not null,
+    financial_year varchar(9) not null,
+    id varchar(255) not null,
+    age_group enum ('ALL','BELOW_60','SENIOR','SUPER_SENIOR') not null,
+    slab_type enum ('INCOME_TAX','SURCHARGE') not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: tax_category_rates
+CREATE TABLE tax_category_rates (
+    active bit not null,
+    basic_exemption_adjustable bit not null,
+    deduction_limit decimal(15,2),
+    exemption_limit decimal(15,2),
+    rate decimal(6,4),
+    senior_deduction_limit decimal(15,2),
+    sort_order integer not null,
+    standard_deduction_rate decimal(6,4),
+    surcharge_cap decimal(6,4),
+    updated_at datetime(6),
+    financial_year varchar(9) not null,
+    allowed_regimes varchar(10) not null,
+    rebate_regimes varchar(10),
+    exemption_group varchar(20),
+    income_head varchar(20) not null,
+    group_code varchar(30) not null,
+    section varchar(30),
+    age_groups varchar(40),
+    code varchar(40) not null,
+    auto_from_codes varchar(200),
+    hint varchar(1000),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    updated_by varchar(255),
+    kind enum ('INCOME','DEDUCTION') not null,
+    treatment enum ('SLAB','SPECIAL_RATE','EXEMPT') not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: itr_tax_computations
+CREATE TABLE itr_tax_computations (
+    advance_tax decimal(15,2),
+    basic_salary decimal(15,2),
+    hra_received decimal(15,2),
+    metro_city bit not null,
+    other_tds decimal(15,2),
+    recommended_regime varchar(3),
+    rent_paid decimal(15,2),
+    savings decimal(15,2),
+    tds_on_salary decimal(15,2),
+    created_at datetime(6),
+    updated_at datetime(6),
+    assessment_year varchar(9) not null,
+    financial_year varchar(9) not null,
+    user_id varchar(36) not null,
+    id varchar(255) not null,
+    age_group enum ('ALL','BELOW_60','SENIOR','SUPER_SENIOR') not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: itr_income_entries
+CREATE TABLE itr_income_entries (
+    amount decimal(15,2) not null,
+    sort_order integer not null,
+    category_code varchar(40) not null,
+    computation_id varchar(255) not null,
+    id varchar(255) not null,
+    kind enum ('INCOME','DEDUCTION') not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: itr_regime_results
+CREATE TABLE itr_regime_results (
+    cess decimal(15,2) not null,
+    effective_rate decimal(8,4) not null,
+    gross_total_income decimal(15,2) not null,
+    hra_exemption decimal(15,2) not null,
+    net_payable decimal(15,2) not null,
+    rebate87a decimal(15,2) not null,
+    refund decimal(15,2) not null,
+    regime varchar(3) not null,
+    slab_income decimal(15,2) not null,
+    slab_tax decimal(15,2) not null,
+    special_rate_tax decimal(15,2) not null,
+    standard_deduction decimal(15,2) not null,
+    surcharge decimal(15,2) not null,
+    surcharge_rate decimal(6,4) not null,
+    taxable_income decimal(15,2) not null,
+    taxes_paid decimal(15,2) not null,
+    total_deductions decimal(15,2) not null,
+    total_tax decimal(15,2) not null,
+    computation_id varchar(255) not null,
+    id varchar(255) not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: itr_tax_lines
+CREATE TABLE itr_tax_lines (
+    amount decimal(15,2) not null,
+    exempt_amount decimal(15,2) not null,
+    rate decimal(6,4),
+    sort_order integer not null,
+    tax decimal(15,2) not null,
+    taxable_amount decimal(15,2) not null,
+    treatment varchar(15) not null,
+    group_code varchar(30),
+    section varchar(30),
+    category_code varchar(40) not null,
+    note varchar(500),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    result_id varchar(255) not null,
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+alter table itr_regime_results add constraint uk_itr_regime_result unique (computation_id, regime);
+alter table itr_tax_computations add constraint uk_itr_computation_user_fy unique (user_id, financial_year);
+alter table tax_category_rates add constraint uk_tax_category_fy_code unique (financial_year, code);
+alter table tax_regime_settings add constraint uk_regime_setting_fy unique (financial_year, regime);
+create index idx_tax_slab_fy on tax_slabs (financial_year, regime, slab_type);
+alter table itr_income_entries add constraint FKd3ehqcypj4pxp0buif2a9xh07 foreign key (computation_id) references itr_tax_computations (id);
+alter table itr_regime_results add constraint FK8cgl3ieq7qdgxrgdnwifad0c9 foreign key (computation_id) references itr_tax_computations (id);
+alter table itr_tax_lines add constraint FKj0nvruiv7ddqt4pknh84n1os7 foreign key (result_id) references itr_regime_results (id);

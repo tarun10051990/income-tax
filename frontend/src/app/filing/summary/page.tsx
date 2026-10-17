@@ -1,5 +1,7 @@
 "use client";
 
+import { assessmentYearOf } from "@/lib/tax-rates";
+
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -49,7 +51,7 @@ export default function SummaryPage() {
           </div>
           <div>
             <h2 className="text-2xl font-bold">Your ITR-1 is Ready!</h2>
-            <p className="text-blue-100">FY {onboardingData?.financialYear || "2024-25"} | AY 2025-26 | {regime === "new" ? "New" : "Old"} Regime</p>
+            <p className="text-blue-100">FY {onboardingData?.financialYear || "2025-26"} | AY {assessmentYearOf(onboardingData?.financialYear || "2025-26")} | {regime === "new" ? "New" : "Old"} Regime</p>
           </div>
         </div>
 

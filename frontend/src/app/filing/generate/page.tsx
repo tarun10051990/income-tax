@@ -1,5 +1,7 @@
 "use client";
 
+import { assessmentYearOf } from "@/lib/tax-rates";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -94,7 +96,7 @@ export default function GeneratePage() {
           </div>
           <div>
             <p className="text-xs text-muted">Assessment Year</p>
-            <p className="text-sm font-medium">AY 2025-26</p>
+            <p className="text-sm font-medium">AY {assessmentYearOf(onboardingData?.financialYear || "2025-26")}</p>
           </div>
           <div>
             <p className="text-xs text-muted">Email</p>

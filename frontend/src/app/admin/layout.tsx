@@ -30,6 +30,7 @@ const NAVIGATION: { href: string; label: string; section: string }[] = [
   { href: "/admin/cms", label: "Website content", section: "Administration" },
   { href: "/admin/notifications", label: "Templates", section: "Administration" },
   { href: "/admin/users", label: "Staff", section: "Administration" },
+  { href: "/admin/tax-rates", label: "Tax rates", section: "Administration" },
   { href: "/admin/config", label: "Rules and deadlines", section: "Administration" },
   { href: "/admin/audit-logs", label: "Audit trail", section: "Administration" },
 ];

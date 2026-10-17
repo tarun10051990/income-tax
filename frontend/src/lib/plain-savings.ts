@@ -86,7 +86,7 @@ export function explainSavings(input: TaxInput, result: TaxResult): PlainSavings
     ["nps", "Extra pension saving (NPS)", d.section80CCD1B, 50000],
     ["80d", "Health insurance for you and family", d.section80D, 100000],
     ["24", "Home loan interest", d.section24, 200000],
-    ["80tta", "Savings account interest (tax-free part)", d.section80TTA, 10000],
+    ["80tta", "Bank / post office interest (tax-free part)", d.section80TTA, 50000],
     ["other", "Donations and other allowed amounts", d.otherDeductions, Number.POSITIVE_INFINITY],
   ];
   const items: SavedItem[] = raw

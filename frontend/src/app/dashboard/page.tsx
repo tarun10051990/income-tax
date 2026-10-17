@@ -37,7 +37,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-bold">Welcome back, {user?.name?.split(" ")[0]}</h1>
           <p className="text-muted mt-1">
-            {onboardingData ? `FY ${onboardingData.financialYear} | AY 2025-26` : "Let's get your taxes filed"}
+            {onboardingData ? `FY ${onboardingData.financialYear} | AY ${assessmentYearOf(onboardingData.financialYear)}` : "Let's get your taxes filed"}
           </p>
         </div>
         <Link href="/filing/upload">
@@ -123,7 +123,7 @@ export default function DashboardPage() {
           <CardTitle>Filing Progress</CardTitle>
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-muted">FY 2024-25 (AY 2025-26)</span>
+              <span className="text-sm text-muted">{onboardingData ? `FY ${onboardingData.financialYear} (AY ${assessmentYearOf(onboardingData.financialYear)})` : "FY 2025-26 (AY 2026-27)"}</span>
               <Badge variant="warning">Not Started</Badge>
             </div>
             <ProgressBar value={0} showLabel />
@@ -209,14 +209,26 @@ export default function DashboardPage() {
 
 // Onboarding Flow Component
 import { OnboardingData } from "@/lib/types";
+import { assessmentYearOf, taxRatesApi } from "@/lib/tax-rates";
 
 function OnboardingFlow({ onComplete }: { onComplete: (data: OnboardingData) => void }) {
   const [step, setStep] = useState(1);
+  const [years, setYears] = useState<string[]>(["2025-26", "2024-25"]);
   const [data, setData] = useState<OnboardingData>({
-    financialYear: "2024-25",
+    financialYear: "2025-26",
     employmentType: "salaried",
     taxRegimePreference: "compare",
   });
+
+  useEffect(() => {
+    taxRatesApi.years()
+      .then((rows) => {
+        if (!rows.length) return;
+        setYears(rows.map((r) => r.financialYear));
+        setData((d) => ({ ...d, financialYear: rows[0].financialYear }));
+      })
+      .catch(() => undefined);
+  }, []);
 
   const handleComplete = () => {
     onComplete(data);
@@ -236,7 +248,7 @@ function OnboardingFlow({ onComplete }: { onComplete: (data: OnboardingData) => 
             <div className="space-y-6">
               <h2 className="text-lg font-semibold">Select Financial Year</h2>
               <div className="grid grid-cols-2 gap-3">
-                {["2024-25", "2023-24"].map((fy) => (
+                {years.map((fy) => (
                   <button
                     key={fy}
                     onClick={() => setData((d) => ({ ...d, financialYear: fy }))}
