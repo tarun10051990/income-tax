@@ -209,14 +209,26 @@ export default function DashboardPage() {
 
 // Onboarding Flow Component
 import { OnboardingData } from "@/lib/types";
+import { taxRatesApi } from "@/lib/tax-rates";
 
 function OnboardingFlow({ onComplete }: { onComplete: (data: OnboardingData) => void }) {
   const [step, setStep] = useState(1);
+  const [years, setYears] = useState<string[]>(["2025-26", "2024-25"]);
   const [data, setData] = useState<OnboardingData>({
-    financialYear: "2024-25",
+    financialYear: "2025-26",
     employmentType: "salaried",
     taxRegimePreference: "compare",
   });
+
+  useEffect(() => {
+    taxRatesApi.years()
+      .then((rows) => {
+        if (!rows.length) return;
+        setYears(rows.map((r) => r.financialYear));
+        setData((d) => ({ ...d, financialYear: rows[0].financialYear }));
+      })
+      .catch(() => undefined);
+  }, []);
 
   const handleComplete = () => {
     onComplete(data);
@@ -236,7 +248,7 @@ function OnboardingFlow({ onComplete }: { onComplete: (data: OnboardingData) => 
             <div className="space-y-6">
               <h2 className="text-lg font-semibold">Select Financial Year</h2>
               <div className="grid grid-cols-2 gap-3">
-                {["2024-25", "2023-24"].map((fy) => (
+                {years.map((fy) => (
                   <button
                     key={fy}
                     onClick={() => setData((d) => ({ ...d, financialYear: fy }))}

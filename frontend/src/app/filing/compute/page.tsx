@@ -9,11 +9,13 @@ import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
 import { formatCurrency } from "@/lib/utils";
 import { usePortalText } from "@/components/filing/GuidedField";
+import { RateBook, Regime, TaxLine, slabsFor } from "@/lib/tax-rates";
 
 export default function ComputePage() {
   const router = useRouter();
   const { isAuthenticated, isReady } = useAuth();
-  const { form16Data, taxResult, plainSavings, computeTaxResult, setCurrentStep } = useFiling();
+  const { form16Data, taxResult, plainSavings, computeTaxResult, setCurrentStep,
+    serverResult, rateBook, ageGroup, computing, computeError } = useFiling();
   const t = usePortalText();
 
   useEffect(() => {
@@ -24,7 +26,17 @@ export default function ComputePage() {
     computeTaxResult();
   }, [isAuthenticated, isReady, form16Data, router, setCurrentStep, computeTaxResult]);
 
-  if (!taxResult) return null;
+  if (computeError) {
+    return (
+      <Card variant="bordered" className="bg-red-50 border-red-200">
+        <p className="text-sm text-red-700">{computeError}</p>
+        <Button className="mt-3" size="sm" onClick={() => computeTaxResult()}>Try again</Button>
+      </Card>
+    );
+  }
+  if (!taxResult || !serverResult) {
+    return computing ? <p className="text-muted">{t("itr.compute.loading")}</p> : null;
+  }
 
   const better = taxResult.recommendedRegime;
 
@@ -119,7 +131,10 @@ export default function ComputePage() {
               <ComparisonRow label="Total Income" oldVal={taxResult.totalIncome} newVal={taxResult.totalIncome} />
               <ComparisonRow label="Total Deductions" oldVal={taxResult.deductionsOld} newVal={taxResult.deductionsNew} isDeduction />
               <ComparisonRow label="Taxable Income" oldVal={taxResult.taxableIncomeOld} newVal={taxResult.taxableIncomeNew} highlight />
-              <ComparisonRow label="Income Tax" oldVal={taxResult.taxOldRegime} newVal={taxResult.taxNewRegime} />
+              <ComparisonRow label="Tax at slab rates" oldVal={serverResult.oldRegime.slabTax} newVal={serverResult.newRegime.slabTax} />
+              <ComparisonRow label="Tax at flat rates (shares, gains, crypto)" oldVal={serverResult.oldRegime.specialRateTax} newVal={serverResult.newRegime.specialRateTax} />
+              <ComparisonRow label="Rebate u/s 87A" oldVal={serverResult.oldRegime.rebate87A} newVal={serverResult.newRegime.rebate87A} isDeduction />
+              <ComparisonRow label="Surcharge" oldVal={serverResult.oldRegime.surcharge} newVal={serverResult.newRegime.surcharge} />
               <ComparisonRow label="Health & Education Cess (4%)" oldVal={taxResult.cessOld} newVal={taxResult.cessNew} />
               <ComparisonRow label="Total Tax Payable" oldVal={taxResult.totalTaxOld} newVal={taxResult.totalTaxNew} highlight bold />
               <ComparisonRow label="Tax already paid (TDS / advance tax)" oldVal={taxResult.taxPaid} newVal={taxResult.taxPaid} isDeduction />
@@ -139,46 +154,18 @@ export default function ComputePage() {
         </div>
       </Card>
 
-      {/* Tax Slabs Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card variant="bordered">
-          <CardTitle>Old Regime Tax Slabs</CardTitle>
-          <div className="mt-4 space-y-2">
-            {[
-              { range: "Up to Rs. 2,50,000", rate: "Nil" },
-              { range: "Rs. 2,50,001 - 5,00,000", rate: "5%" },
-              { range: "Rs. 5,00,001 - 10,00,000", rate: "20%" },
-              { range: "Above Rs. 10,00,000", rate: "30%" },
-            ].map((slab) => (
-              <div key={slab.range} className="flex justify-between items-center text-sm py-1">
-                <span className="text-muted">{slab.range}</span>
-                <span className="font-medium">{slab.rate}</span>
-              </div>
-            ))}
-            <p className="text-xs text-muted pt-2">Rebate u/s 87A if taxable income ≤ Rs. 5,00,000</p>
-          </div>
-        </Card>
+      <Card variant="bordered">
+        <CardTitle>{t("itr.compute.lines.title")}</CardTitle>
+        <p className="text-sm text-muted mt-1">{t("itr.compute.lines.body")}</p>
+        <LinesTable lines={(better === "old" ? serverResult.oldRegime : serverResult.newRegime).incomeLines} />
+      </Card>
 
-        <Card variant="bordered">
-          <CardTitle>New Regime Tax Slabs (FY 2024-25)</CardTitle>
-          <div className="mt-4 space-y-2">
-            {[
-              { range: "Up to Rs. 3,00,000", rate: "Nil" },
-              { range: "Rs. 3,00,001 - 7,00,000", rate: "5%" },
-              { range: "Rs. 7,00,001 - 10,00,000", rate: "10%" },
-              { range: "Rs. 10,00,001 - 12,00,000", rate: "15%" },
-              { range: "Rs. 12,00,001 - 15,00,000", rate: "20%" },
-              { range: "Above Rs. 15,00,000", rate: "30%" },
-            ].map((slab) => (
-              <div key={slab.range} className="flex justify-between items-center text-sm py-1">
-                <span className="text-muted">{slab.range}</span>
-                <span className="font-medium">{slab.rate}</span>
-              </div>
-            ))}
-            <p className="text-xs text-muted pt-2">Rebate u/s 87A if taxable income ≤ Rs. 7,00,000</p>
-          </div>
-        </Card>
-      </div>
+      {rateBook && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SlabCard title={`Old Regime Tax Slabs (FY ${rateBook.financialYear})`} book={rateBook} regime="OLD" age={ageGroup} />
+          <SlabCard title={`New Regime Tax Slabs (FY ${rateBook.financialYear})`} book={rateBook} regime="NEW" age={ageGroup} />
+        </div>
+      )}
 
       {/* Navigation */}
       <div className="flex justify-between">
@@ -212,5 +199,60 @@ function ComparisonRow({
         {isDeduction && "-"}{formatCurrency(newVal)}
       </td>
     </tr>
+  );
+}
+
+function LinesTable({ lines }: { lines: TaxLine[] }) {
+  if (!lines.length) return null;
+  return (
+    <div className="mt-4 overflow-x-auto">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-border text-left">
+            <th className="py-2 px-3 font-semibold">Income</th>
+            <th className="py-2 px-3 font-semibold text-right">Amount</th>
+            <th className="py-2 px-3 font-semibold text-right">Tax-free</th>
+            <th className="py-2 px-3 font-semibold text-right">Tax</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {lines.map((l) => (
+            <tr key={l.code}>
+              <td className="py-2 px-3">
+                <p className="font-medium">{l.name}{l.section ? <span className="text-muted font-normal"> · sec {l.section}</span> : null}</p>
+                {l.note && <p className="text-xs text-muted">{l.note}</p>}
+              </td>
+              <td className="py-2 px-3 text-right font-mono">{formatCurrency(l.amount)}</td>
+              <td className="py-2 px-3 text-right font-mono text-secondary">{l.exemptAmount ? formatCurrency(l.exemptAmount) : "-"}</td>
+              <td className="py-2 px-3 text-right font-mono">{formatCurrency(l.tax)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-xs text-muted mt-2">Slab-rate tax is shared across those incomes in proportion; rebate, surcharge and 4% cess are applied on the total.</p>
+    </div>
+  );
+}
+
+function SlabCard({ title, book, regime, age }: { title: string; book: RateBook; regime: Regime; age: "BELOW_60" | "SENIOR" | "SUPER_SENIOR" }) {
+  const setting = book.settings.find((s) => s.regime === regime);
+  const rupees = (n: number) => `Rs. ${n.toLocaleString("en-IN")}`;
+  return (
+    <Card variant="bordered">
+      <CardTitle>{title}</CardTitle>
+      <div className="mt-4 space-y-2">
+        {slabsFor(book, regime, age).map((s) => (
+          <div key={s.id} className="flex justify-between items-center text-sm py-1">
+            <span className="text-muted">{s.incomeTo === null ? `Above ${rupees(s.incomeFrom)}` : `${rupees(s.incomeFrom)} - ${rupees(s.incomeTo)}`}</span>
+            <span className="font-medium">{s.rate === 0 ? "Nil" : `${+(s.rate * 100).toFixed(2)}%`}</span>
+          </div>
+        ))}
+        {setting && (
+          <p className="text-xs text-muted pt-2">
+            Standard deduction {rupees(setting.standardDeduction)} · no tax (rebate u/s 87A) if income ≤ {rupees(setting.rebateIncomeLimit)}
+          </p>
+        )}
+      </div>
+    </Card>
   );
 }
