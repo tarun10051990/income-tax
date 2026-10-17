@@ -110,6 +110,8 @@ mvn spring-boot:run
 
 ```bash
 mysql -u root -p < backend/src/main/resources/db/mysql/schema.sql   # creates database taxfilr + all tables
+# database already has some tables? run this instead: creates missing tables and adds missing columns/keys (safe to re-run)
+mysql -u root -p < backend/src/main/resources/db/mysql/schema_upgrade.sql
 mysql -u root -p taxfilr < backend/src/main/resources/db/mysql/cms_seed.sql   # optional: all website content rows (the API seeds them itself on first boot)
 cd backend
 SPRING_PROFILES_ACTIVE=mysql DATABASE_URL='jdbc:mysql://localhost:3306/taxfilr?serverTimezone=UTC' \

@@ -58,7 +58,9 @@ mysql -h taxfilr-mysql.xxxx.ap-south-1.rds.amazonaws.com -u taxfilr_admin -p -e 
 `schema.sql` contains the `CREATE TABLE` statement for every table (41) plus all foreign keys and
 unique indexes. The API runs with `SPRING_PROFILES_ACTIVE=mysql`, which uses `ddl-auto=validate`
 — it refuses to start if the schema does not match the code, so the schema file is the single source
-of truth. When you upgrade the application, apply the new `schema.sql` diff first.
+of truth. When you upgrade the application, run `schema_upgrade.sql` first: it creates missing tables and
+adds missing columns, indexes and foreign keys without dropping anything, and is safe to re-run. After
+changing `schema.sql`, regenerate it with `python3 backend/scripts/gen_schema_upgrade.py`.
 
 ## 2. Secrets
 
@@ -225,7 +227,7 @@ open https://taxfilr.in/admin/cms                    # website content (after lo
 
 ## Upgrades
 
-1. Apply any new statements from `schema.sql` to RDS (take a snapshot first).
+1. Run `backend/src/main/resources/db/mysql/schema_upgrade.sql` against RDS (take a snapshot first).
 2. Build/push new image tags, register new task-definition revisions, `aws ecs update-service --force-new-deployment`.
 
 ## Option B: single EC2 instance with docker compose (pilot)
