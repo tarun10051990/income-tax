@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, ReactNode } from "react";
 import { Form16Data, OnboardingData, FilingStep } from "@/lib/types";
 import { TaxInput, TaxResult, TaxSuggestion, generateTaxSuggestions } from "@/lib/tax-engine";
 import { AgeGroup, RateBook, ServerTaxResult, ComputeRequest, taxRatesApi } from "@/lib/tax-rates";
@@ -193,7 +193,11 @@ export function FilingProvider({ children }: { children: ReactNode }) {
     otherDeductions: sumOf(amounts, "DED_80CCD2", "DED_80E", "DED_80G", "DED_OTHER"),
   }), [amounts]);
 
+  const computeInFlight = useRef<Promise<void> | null>(null);
   const computeTaxResult = useCallback(async () => {
+    // A second call while one is running (e.g. React StrictMode effects) reuses the first request.
+    if (computeInFlight.current) return computeInFlight.current;
+    const run = (async () => {
     if (!form16Data) return;
     const fy = financialYear || rateBook?.financialYear;
     if (!fy) return;
@@ -227,7 +231,9 @@ export function FilingProvider({ children }: { children: ReactNode }) {
           section80C: extraDeductions.section80C || 0,
           section80CCD1B: extraDeductions.section80CCD1B || 0,
           section80D: extraDeductions.section80D || 0,
-          section80TTA: extraDeductions.section80TTA || 0,
+          section80TTA: saved.result.oldRegime.deductionLines
+            .filter((l) => l.code === "DED_80TTA" || l.code === "DED_80TTB")
+            .reduce((n, l) => n + l.exemptAmount, 0),
           section24: extraDeductions.section24 || 0,
           hraExemption: saved.result.oldRegime.hraExemption,
           otherDeductions: formAmounts.DED_OTHER || 0,
@@ -245,6 +251,13 @@ export function FilingProvider({ children }: { children: ReactNode }) {
       setComputeError(e instanceof Error ? e.message : "Could not work out your tax. Please try again.");
     } finally {
       setComputing(false);
+    }
+    })();
+    computeInFlight.current = run;
+    try {
+      await run;
+    } finally {
+      computeInFlight.current = null;
     }
   }, [form16Data, financialYear, rateBook, ageGroup, metroCity, rentPaid, formAmounts, taxPaid, extraDeductions, additionalIncome]);
 

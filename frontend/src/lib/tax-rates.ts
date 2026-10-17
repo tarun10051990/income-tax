@@ -158,6 +158,12 @@ export const adminTaxRatesApi = {
     apiRequest<RateBook>("/admin/tax-rates/copy-year", { ...admin, method: "POST", body }),
 };
 
+/** "2025-26" -> "2026-27" */
+export function assessmentYearOf(financialYear: string): string {
+  const [a, b] = financialYear.split("-").map(Number);
+  return `${a + 1}-${String(b + 1).padStart(2, "0")}`;
+}
+
 const pct = (rate: number) => `${+(rate * 100).toFixed(2)}%`;
 const lakh = (n: number) => (n >= 100000 ? `₹${+(n / 100000).toFixed(2)} lakh` : `₹${n.toLocaleString("en-IN")}`);
 

@@ -47,7 +47,13 @@ public class TaxRateController {
     @PostMapping("/api/itr/computations")
     @Operation(summary = "Work out tax from the ITR form and save every category and result for the signed-in user")
     public ApiResponse<TaxRateDtos.SavedComputation> compute(@Valid @RequestBody TaxRateDtos.ComputeRequest request) {
-        return ApiResponse.ok(computationService.computeAndSave(request, currentUser.require()));
+        var user = currentUser.require();
+        try {
+            return ApiResponse.ok(computationService.computeAndSave(request, user));
+        } catch (org.springframework.dao.DataIntegrityViolationException firstSaveRace) {
+            // Two first saves for the same year raced; the row now exists, so this attempt updates it.
+            return ApiResponse.ok(computationService.computeAndSave(request, user));
+        }
     }
 
     @GetMapping("/api/itr/computations")
