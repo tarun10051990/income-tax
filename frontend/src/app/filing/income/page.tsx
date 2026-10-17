@@ -10,15 +10,21 @@ import GuidedField, { usePortalText } from "@/components/filing/GuidedField";
 import { AgeGroup, TaxCategory, categoryVisibleForAge, treatmentLabel } from "@/lib/tax-rates";
 
 /** Order and look of the "What did you have this year?" tiles; names / help come from the CMS. */
-const GROUPS: Array<{ code: string; emoji: string; gradient: string }> = [
-  { code: "SHARES_FUNDS", emoji: "📈", gradient: "from-fuchsia-500 to-purple-600" },
-  { code: "TRADING_BUSINESS", emoji: "💼", gradient: "from-orange-400 to-pink-500" },
-  { code: "PROPERTY_GOLD", emoji: "🏠", gradient: "from-amber-400 to-orange-500" },
-  { code: "INTEREST_DIVIDEND", emoji: "🏦", gradient: "from-sky-400 to-blue-600" },
-  { code: "RENT", emoji: "🔑", gradient: "from-emerald-400 to-teal-600" },
-  { code: "CRYPTO_LOTTERY", emoji: "🎲", gradient: "from-violet-500 to-indigo-600" },
-  { code: "EXEMPT", emoji: "🌾", gradient: "from-lime-400 to-green-600" },
+const GROUPS: Array<{ code: string; emoji: string; colors: [string, string] }> = [
+  { code: "SHARES_FUNDS", emoji: "📈", colors: ["#d946ef", "#9333ea"] },
+  { code: "TRADING_BUSINESS", emoji: "💼", colors: ["#fb923c", "#ec4899"] },
+  { code: "PROPERTY_GOLD", emoji: "🏠", colors: ["#fbbf24", "#f97316"] },
+  { code: "INTEREST_DIVIDEND", emoji: "🏦", colors: ["#38bdf8", "#2563eb"] },
+  { code: "RENT", emoji: "🔑", colors: ["#34d399", "#0d9488"] },
+  { code: "CRYPTO_LOTTERY", emoji: "🎲", colors: ["#8b5cf6", "#4f46e5"] },
+  { code: "EXEMPT", emoji: "🌾", colors: ["#a3e635", "#16a34a"] },
 ];
+
+/** Inline so the picked colour always shows, whatever CSS the build generated. */
+const pickedStyle = ([from, to]: [string, string]) => ({
+  backgroundColor: to,
+  backgroundImage: `linear-gradient(135deg, ${from}, ${to})`,
+});
 
 const AGES: AgeGroup[] = ["BELOW_60", "SENIOR", "SUPER_SENIOR"];
 
@@ -86,8 +92,10 @@ export default function AdditionalIncomePage() {
         <div className="mt-4 flex flex-wrap gap-2">
           {AGES.map((age) => (
             <button key={age} type="button" onClick={() => setAgeGroup(age)}
+              aria-pressed={ageGroup === age}
+              style={ageGroup === age ? pickedStyle(["#d946ef", "#9333ea"]) : undefined}
               className={`rounded-full px-4 py-2 text-sm font-medium border transition ${ageGroup === age
-                ? "bg-gradient-to-r from-fuchsia-500 to-purple-600 text-white border-transparent shadow"
+                ? "text-white border-transparent shadow"
                 : "bg-white border-border hover:border-purple-300"}`}>
               {t(`itr.income.age.${age}`)}
             </button>
@@ -103,9 +111,16 @@ export default function AdditionalIncomePage() {
             const on = picked.has(g.code);
             return (
               <button key={g.code} type="button" onClick={() => toggle(g.code)} aria-pressed={on}
-                className={`rounded-2xl p-4 text-left transition border-2 ${on
-                  ? `bg-gradient-to-br ${g.gradient} text-white border-transparent shadow-lg scale-[1.02]`
+                style={on ? pickedStyle(g.colors) : undefined}
+                className={`relative rounded-2xl p-4 text-left transition border-2 ${on
+                  ? "text-white border-transparent shadow-lg scale-[1.02] ring-2 ring-purple-300 ring-offset-2"
                   : "bg-white border-border hover:border-purple-300"}`}>
+                {on && (
+                  <span aria-hidden
+                    className="absolute top-2 right-2 grid h-6 w-6 place-items-center rounded-full bg-white text-xs font-bold text-purple-700 shadow">
+                    ✓
+                  </span>
+                )}
                 <span className="text-2xl" aria-hidden>{g.emoji}</span>
                 <p className="mt-2 font-semibold text-sm">{t(`itr.group.${g.code}`)}</p>
                 <p className={`text-xs mt-0.5 ${on ? "text-white/90" : "text-muted"}`}>{t(`itr.group.${g.code}.hint`)}</p>

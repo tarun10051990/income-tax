@@ -72,6 +72,13 @@ export function writeToken(scope: Scope, token: string | null): void {
   }
 }
 
+let customerSessionExpired: (() => void) | null = null;
+
+/** Called when the API rejects the saved customer sign-in (expired, or the user no longer exists). */
+export function onCustomerSessionExpired(handler: (() => void) | null): void {
+  customerSessionExpired = handler;
+}
+
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -107,6 +114,11 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
     } catch {
       envelope = null;
     }
+  }
+
+  if (response.status === 401 && scope === "customer" && token === undefined && !path.startsWith("/auth/")) {
+    writeToken("customer", null);
+    customerSessionExpired?.();
   }
 
   if (!response.ok || envelope === null || envelope.success !== true) {
