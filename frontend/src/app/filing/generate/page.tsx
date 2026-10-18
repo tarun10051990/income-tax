@@ -1,6 +1,6 @@
 "use client";
 
-import { assessmentYearOf } from "@/lib/tax-rates";
+import { assessmentYearOf, downloadReturn, type ExportFormat } from "@/lib/tax-rates";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,8 @@ export default function GeneratePage() {
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [downloading, setDownloading] = useState<ExportFormat | null>(null);
+  const [downloadError, setDownloadError] = useState("");
 
   useEffect(() => {
     if (!isReady) return;
@@ -43,6 +45,31 @@ export default function GeneratePage() {
     await new Promise((r) => setTimeout(r, 2000));
     setGenerated(true);
     setIsGenerating(false);
+  };
+
+  const handleDownload = async (format: ExportFormat) => {
+    if (!form16Data) return;
+    setDownloading(format);
+    setDownloadError("");
+    try {
+      await downloadReturn({
+        financialYear: onboardingData?.financialYear || "2025-26",
+        format,
+        itrType,
+        name: form16Data.employee.name || user?.name,
+        pan: form16Data.employee.pan || user?.pan,
+        employerName: form16Data.employer.name,
+        employerTan: form16Data.employer.tan,
+        bankName: bankDetails.bankName,
+        accountNumber: bankDetails.accountNumber,
+        ifsc: bankDetails.ifsc,
+        accountType: bankDetails.accountType,
+      });
+    } catch (e) {
+      setDownloadError(e instanceof Error ? e.message : "Download failed. Please try again.");
+    } finally {
+      setDownloading(null);
+    }
   };
 
   if (!form16Data || !taxResult) return null;
@@ -205,25 +232,26 @@ export default function GeneratePage() {
                 <p className="text-sm text-muted mt-1">Download your return in the preferred format</p>
               </div>
               <div className="flex flex-wrap gap-3 justify-center">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" loading={downloading === "JSON"} disabled={downloading !== null} onClick={() => handleDownload("JSON")}>
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   JSON
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" loading={downloading === "EXCEL"} disabled={downloading !== null} onClick={() => handleDownload("EXCEL")}>
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   Excel
                 </Button>
-                <Button size="sm">
+                <Button size="sm" loading={downloading === "PDF"} disabled={downloading !== null} onClick={() => handleDownload("PDF")}>
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                   </svg>
                   PDF Summary
                 </Button>
               </div>
+              {downloadError && <p className="text-sm text-red-600">{downloadError}</p>}
             </div>
           </Card>
 

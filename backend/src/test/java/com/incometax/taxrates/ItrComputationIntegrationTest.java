@@ -97,4 +97,54 @@ class ItrComputationIntegrationTest {
                 .andExpect(jsonPath("$.data.input.amounts.SALARY").value(1075000))
                 .andExpect(jsonPath("$.data.result.newRegime.totalTax").value(9750));
     }
+
+    @Test
+    void savedReturnDownloadsAsJsonExcelAndPdf() throws Exception {
+        MvcResult reg = mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Ravi Kumar\",\"email\":\"ravi.export@example.com\",\"phone\":\"9876500033\","
+                                + "\"pan\":\"ABCDE3333F\",\"password\":\"Passw0rd!\"}"))
+                .andExpect(status().isOk()).andReturn();
+        String bearer = "Bearer " + objectMapper.readTree(reg.getResponse().getContentAsString()).at("/data/token").asText();
+        String form = FORM.replace("2025-26", "2024-25");
+        String export = "{\"financialYear\":\"2024-25\",\"format\":\"%s\",\"itrType\":\"ITR-2\",\"bankName\":\"SBI\"}";
+
+        mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content(export.formatted("PDF")))
+                .andExpect(status().isNotFound());
+
+        // FY 2024-25 so this user's save doesn't add a second 2025-26 row to the per-category test
+        MvcResult saved = mockMvc.perform(post("/api/itr/computations").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content(form))
+                .andExpect(status().isOk()).andReturn();
+        String totalTax = objectMapper.readTree(saved.getResponse().getContentAsString())
+                .at("/data/result/newRegime/totalTax").asText();
+
+        MvcResult json = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content(export.formatted("JSON")))
+                .andExpect(status().isOk()).andReturn();
+        assertThat(json.getResponse().getHeader("Content-Disposition")).contains("TaxFilr_ITR-2_AY2025-26.json");
+        JsonNode body = objectMapper.readTree(json.getResponse().getContentAsByteArray());
+        assertThat(body.at("/taxpayer/PAN").asText()).isEqualTo("ABCDE3333F");
+        assertThat(body.at("/bank/Bank").asText()).isEqualTo("SBI");
+        assertThat(body.at("/taxComputation/newRegime/totalTax").decimalValue()).isEqualByComparingTo(totalTax);
+
+        MvcResult xlsx = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content(export.formatted("EXCEL")))
+                .andExpect(status().isOk()).andReturn();
+        try (var workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(
+                new java.io.ByteArrayInputStream(xlsx.getResponse().getContentAsByteArray()))) {
+            assertThat(workbook.getSheet("Summary")).isNotNull();
+            assertThat(workbook.getSheet("Income").getLastRowNum()).isGreaterThanOrEqualTo(3);
+        }
+
+        MvcResult pdf = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
+                        .contentType(MediaType.APPLICATION_JSON).content(export.formatted("PDF")))
+                .andExpect(status().isOk()).andReturn();
+        assertThat(pdf.getResponse().getContentType()).isEqualTo("application/pdf");
+        assertThat(new String(pdf.getResponse().getContentAsByteArray(), 0, 4)).isEqualTo("%PDF");
+
+        mockMvc.perform(post("/api/itr/computations/export")
+                        .contentType(MediaType.APPLICATION_JSON).content(export.formatted("PDF")))
+                .andExpect(status().isUnauthorized());
+    }
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import { assessmentYearOf } from "@/lib/tax-rates";
+import { assessmentYearOf, downloadReturn } from "@/lib/tax-rates";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFiling } from "@/contexts/FilingContext";
@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export default function SummaryPage() {
   const router = useRouter();
-  const { isAuthenticated, isReady } = useAuth();
+  const { isAuthenticated, isReady, user } = useAuth();
   const { form16Data, taxResult, taxSuggestions, onboardingData, setCurrentStep } = useFiling();
 
   useEffect(() => {
@@ -23,6 +23,31 @@ export default function SummaryPage() {
     if (!form16Data || !taxResult) { router.push("/filing/upload"); return; }
     setCurrentStep("summary");
   }, [isAuthenticated, isReady, form16Data, taxResult, router, setCurrentStep]);
+
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
+
+  const handleDownload = async () => {
+    if (!form16Data || !taxResult) return;
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      await downloadReturn({
+        financialYear: onboardingData?.financialYear || "2025-26",
+        format: "JSON",
+        itrType: onboardingData?.employmentType === "business" ? "ITR-3"
+          : onboardingData?.employmentType === "freelancer" || taxResult.businessIncome > 0 ? "ITR-4" : "ITR-1",
+        name: form16Data.employee.name || user?.name,
+        pan: form16Data.employee.pan || user?.pan,
+        employerName: form16Data.employer.name,
+        employerTan: form16Data.employer.tan,
+      });
+    } catch (e) {
+      setDownloadError(e instanceof Error ? e.message : "Download failed. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   if (!form16Data || !taxResult) return null;
 
@@ -158,15 +183,16 @@ export default function SummaryPage() {
             <div className="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
             <div className="flex-1">
               <p className="text-sm font-medium">Download your ITR form</p>
-              <p className="text-xs text-muted">JSON format for uploading to Income Tax Portal</p>
+              <p className="text-xs text-muted">Your income and tax figures in one file, to keep handy while filing</p>
+              {downloadError && <p className="text-xs text-red-600 mt-1">{downloadError}</p>}
             </div>
-            <Button size="sm">Download JSON</Button>
+            <Button size="sm" loading={downloading} onClick={handleDownload}>Download JSON</Button>
           </div>
           <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
             <div className="w-8 h-8 bg-muted text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
             <div className="flex-1">
               <p className="text-sm font-medium">Upload to Income Tax Portal</p>
-              <p className="text-xs text-muted">Visit incometax.gov.in and upload the JSON file</p>
+              <p className="text-xs text-muted">Visit incometax.gov.in and file using these figures</p>
             </div>
             <Button variant="outline" size="sm" onClick={() => window.open("https://www.incometax.gov.in", "_blank")}>
               Visit Portal

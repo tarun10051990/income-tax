@@ -6,13 +6,20 @@ import com.incometax.taxrates.dto.TaxRateDtos;
 import com.incometax.taxrates.entity.TaxCategoryRate;
 import com.incometax.taxrates.entity.TaxRegimeSetting;
 import com.incometax.taxrates.entity.TaxSlab;
+import com.incometax.exception.ApiException;
 import com.incometax.taxrates.service.ItrComputationService;
+import com.incometax.taxrates.service.ItrExporter;
 import com.incometax.taxrates.service.TaxEngine;
 import com.incometax.taxrates.service.TaxRateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +31,7 @@ public class TaxRateController {
 
     private final TaxRateService taxRateService;
     private final ItrComputationService computationService;
+    private final ItrExporter itrExporter;
     private final CurrentUser currentUser;
 
     @GetMapping("/api/public/tax/years")
@@ -60,6 +68,20 @@ public class TaxRateController {
     @Operation(summary = "The signed-in user's saved ITR computation for a financial year")
     public ApiResponse<TaxRateDtos.SavedComputation> saved(@RequestParam String financialYear) {
         return ApiResponse.ok(computationService.saved(financialYear, currentUser.require()).orElse(null));
+    }
+
+    @PostMapping("/api/itr/computations/export")
+    @Operation(summary = "Download the signed-in user's saved return as JSON, Excel or PDF")
+    public ResponseEntity<byte[]> export(@Valid @RequestBody TaxRateDtos.ExportRequest request) {
+        var user = currentUser.require();
+        var saved = computationService.saved(request.financialYear(), user).orElseThrow(() -> new ApiException(
+                HttpStatus.NOT_FOUND, "NO_COMPUTATION", "Work out your tax first, then download your return"));
+        byte[] body = itrExporter.export(saved, request, user);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment()
+                        .filename(itrExporter.fileName(saved, request)).build().toString())
+                .contentType(MediaType.parseMediaType(request.format().contentType()))
+                .body(body);
     }
 
     @GetMapping("/api/admin/tax-rates")
