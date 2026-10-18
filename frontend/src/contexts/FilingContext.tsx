@@ -3,7 +3,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, useRef, ReactNode } from "react";
 import { Form16Data, OnboardingData, FilingStep } from "@/lib/types";
 import { TaxInput, TaxResult, TaxSuggestion, generateTaxSuggestions } from "@/lib/tax-engine";
-import { AgeGroup, RateBook, ServerTaxResult, ComputeRequest, taxRatesApi } from "@/lib/tax-rates";
+import { AgeGroup, RateBook, ServerTaxResult, ComputeRequest, taxRatesApi, rememberReturnDetails } from "@/lib/tax-rates";
+import { useAuth } from "@/contexts/AuthContext";
 import { PlainSavings, explainSavings } from "@/lib/plain-savings";
 import { ReadDocument, totalsByField } from "@/lib/document-reader";
 
@@ -304,7 +305,18 @@ export function FilingProvider({ children }: { children: ReactNode }) {
     setMetroCity(true);
     setRentPaid(0);
     setTaxPaid(defaultTaxPaid);
+    rememberReturnDetails(null);
   }, []);
+
+  // A filing belongs to one customer: drop it when someone else signs in on this tab.
+  // Re-login as the same customer (e.g. after the token expires) keeps it.
+  const { user } = useAuth();
+  const filingOwner = useRef<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    if (filingOwner.current !== null && filingOwner.current !== user.email) resetFiling();
+    filingOwner.current = user.email;
+  }, [user, resetFiling]);
 
   return (
     <FilingContext.Provider

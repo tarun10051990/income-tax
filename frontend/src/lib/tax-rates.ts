@@ -1,4 +1,4 @@
-import { apiRequest } from "@/lib/api";
+import { apiDownload, apiRequest, saveBlob } from "@/lib/api";
 
 /** Income-tax rates stored in the database (tax_regime_settings, tax_slabs, tax_category_rates). */
 
@@ -189,4 +189,49 @@ export function slabsFor(book: RateBook, regime: Regime, age: AgeGroup): TaxSlab
 
 export function categoryVisibleForAge(c: TaxCategory, age: AgeGroup): boolean {
   return !c.ageGroups || c.ageGroups.split(",").map((s) => s.trim()).includes(age);
+}
+
+export type ExportFormat = "JSON" | "EXCEL" | "PDF";
+
+export interface ExportRequest {
+  financialYear: string;
+  format: ExportFormat;
+  itrType?: string;
+  name?: string;
+  pan?: string;
+  employerName?: string;
+  employerTan?: string;
+  bankName?: string;
+  accountNumber?: string;
+  ifsc?: string;
+  accountType?: string;
+}
+
+const EXTENSION: Record<ExportFormat, string> = { JSON: "json", EXCEL: "xlsx", PDF: "pdf" };
+
+/** Downloads the signed-in user's saved return (built on the server from the saved computation). */
+export async function downloadReturn(request: ExportRequest): Promise<void> {
+  const blob = await apiDownload("/itr/computations/export", "customer", request);
+  saveBlob(blob, `TaxFilr_${request.itrType || "ITR"}_AY${assessmentYearOf(request.financialYear)}.${EXTENSION[request.format]}`);
+}
+
+export type ReturnDetails = Pick<ExportRequest, "itrType" | "bankName" | "accountNumber" | "ifsc" | "accountType">;
+
+const RETURN_DETAILS_KEY = "taxfilr.filing.return";
+
+/** ITR type and refund bank picked on the generate page, kept for this browser tab only. */
+export function rememberReturnDetails(details: ReturnDetails | null): void {
+  if (typeof window === "undefined") return;
+  if (details === null) window.sessionStorage.removeItem(RETURN_DETAILS_KEY);
+  else window.sessionStorage.setItem(RETURN_DETAILS_KEY, JSON.stringify(details));
+}
+
+export function rememberedReturnDetails(): ReturnDetails | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(RETURN_DETAILS_KEY);
+    return raw ? (JSON.parse(raw) as ReturnDetails) : null;
+  } catch {
+    return null;
+  }
 }

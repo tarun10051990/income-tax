@@ -40,6 +40,20 @@ public final class TaxRateDtos {
     public record SavedComputation(String id, ComputeRequest input, TaxEngine.Result result, String updatedAt) {
     }
 
+    public record ExportRequest(
+            @NotBlank String financialYear,
+            @NotNull com.incometax.taxrates.service.ItrExporter.Format format,
+            @jakarta.validation.constraints.Size(max = 10) String itrType,
+            @jakarta.validation.constraints.Size(max = 120) String name,
+            @jakarta.validation.constraints.Size(max = 10) String pan,
+            @jakarta.validation.constraints.Size(max = 200) String employerName,
+            @jakarta.validation.constraints.Size(max = 10) String employerTan,
+            @jakarta.validation.constraints.Size(max = 120) String bankName,
+            @jakarta.validation.constraints.Size(max = 34) String accountNumber,
+            @jakarta.validation.constraints.Size(max = 11) String ifsc,
+            @jakarta.validation.constraints.Size(max = 20) String accountType) {
+    }
+
     public record CategoryUpdate(
             @NotBlank String name,
             String hint,

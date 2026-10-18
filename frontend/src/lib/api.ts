@@ -134,17 +134,47 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 }
 
 /** Streams a generated export (CSV, Excel, PDF) rather than a JSON envelope. */
-export async function apiDownload(path: string, scope: Scope = "admin"): Promise<Blob> {
+export async function apiDownload(path: string, scope: Scope = "admin", body?: unknown): Promise<Blob> {
   const headers: Record<string, string> = {};
   const bearer = readToken(scope);
   if (bearer !== null) {
     headers.Authorization = `Bearer ${bearer}`;
   }
-  const response = await fetch(`${API_BASE_URL}${path}`, { headers, cache: "no-store" });
+  if (body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: body === undefined ? "GET" : "POST",
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+    cache: "no-store",
+  });
+  if (response.status === 401 && scope === "customer") {
+    writeToken("customer", null);
+    customerSessionExpired?.();
+  }
   if (!response.ok) {
-    throw new ApiError(response.status, "EXPORT_FAILED", "The export could not be generated");
+    let message = "The export could not be generated";
+    try {
+      message = ((await response.json()) as ApiEnvelope<unknown>).message ?? message;
+    } catch {
+      // not a JSON error body
+    }
+    throw new ApiError(response.status, "EXPORT_FAILED", message);
   }
   return response.blob();
+}
+
+/** Saves a downloaded file through a temporary link. */
+export function saveBlob(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function queryString(params: Record<string, string | number | undefined | null>): string {
