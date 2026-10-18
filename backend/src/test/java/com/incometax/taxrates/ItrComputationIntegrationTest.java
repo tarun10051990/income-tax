@@ -1,5 +1,7 @@
 package com.incometax.taxrates;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.incometax.taxrates.repository.ItrTaxComputationRepository;
@@ -135,6 +137,13 @@ class ItrComputationIntegrationTest {
                 new java.io.ByteArrayInputStream(xlsx.getResponse().getContentAsByteArray()))) {
             assertThat(workbook.getSheet("Summary")).isNotNull();
             assertThat(workbook.getSheet("Income").getLastRowNum()).isGreaterThanOrEqualTo(3);
+            for (var row : workbook.getSheet("Income")) {
+                var rate = row.getCell(5);
+                if (rate != null && rate.getStringCellValue().endsWith("%")) {
+                    String value = rate.getStringCellValue();
+                    assertThat(new BigDecimal(value.substring(0, value.length() - 1))).isGreaterThanOrEqualTo(BigDecimal.ONE);
+                }
+            }
         }
 
         MvcResult pdf = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)

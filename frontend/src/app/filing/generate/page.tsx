@@ -1,6 +1,6 @@
 "use client";
 
-import { assessmentYearOf, downloadReturn, type ExportFormat } from "@/lib/tax-rates";
+import { assessmentYearOf, downloadReturn, rememberReturnDetails, rememberedReturnDetails, type ExportFormat } from "@/lib/tax-rates";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,17 +16,22 @@ export default function GeneratePage() {
   const { isAuthenticated, isReady, user } = useAuth();
   const { form16Data, taxResult, setCurrentStep, onboardingData } = useFiling();
   const [itrType, setItrType] = useState<string>(() => {
+    const remembered = rememberedReturnDetails()?.itrType;
+    if (remembered) return remembered;
     if (onboardingData?.employmentType === "business") return "ITR-3";
     if (onboardingData?.employmentType === "freelancer") return "ITR-4";
     // Business / professional profit declared without books → presumptive ITR-4 (Sugam).
     if ((taxResult?.businessIncome ?? 0) > 0) return "ITR-4";
     return "ITR-1";
   });
-  const [bankDetails, setBankDetails] = useState({
-    bankName: "",
-    accountNumber: "",
-    ifsc: "",
-    accountType: "savings",
+  const [bankDetails, setBankDetails] = useState(() => {
+    const remembered = rememberedReturnDetails();
+    return {
+      bankName: remembered?.bankName ?? "",
+      accountNumber: remembered?.accountNumber ?? "",
+      ifsc: remembered?.ifsc ?? "",
+      accountType: remembered?.accountType ?? "savings",
+    };
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
@@ -39,6 +44,10 @@ export default function GeneratePage() {
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("generate");
   }, [isAuthenticated, isReady, form16Data, router, setCurrentStep]);
+
+  useEffect(() => {
+    rememberReturnDetails({ itrType, ...bankDetails });
+  }, [itrType, bankDetails]);
 
   const handleGenerate = async () => {
     setIsGenerating(true);

@@ -1,6 +1,6 @@
 "use client";
 
-import { assessmentYearOf, downloadReturn } from "@/lib/tax-rates";
+import { assessmentYearOf, downloadReturn, rememberedReturnDetails } from "@/lib/tax-rates";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,10 @@ export default function SummaryPage() {
     setCurrentStep("summary");
   }, [isAuthenticated, isReady, form16Data, taxResult, router, setCurrentStep]);
 
+  const [details] = useState(() => rememberedReturnDetails());
+  const itrType = details?.itrType
+    || (onboardingData?.employmentType === "business" ? "ITR-3"
+      : onboardingData?.employmentType === "freelancer" || (taxResult?.businessIncome ?? 0) > 0 ? "ITR-4" : "ITR-1");
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState("");
 
@@ -35,8 +39,8 @@ export default function SummaryPage() {
       await downloadReturn({
         financialYear: onboardingData?.financialYear || "2025-26",
         format: "JSON",
-        itrType: onboardingData?.employmentType === "business" ? "ITR-3"
-          : onboardingData?.employmentType === "freelancer" || taxResult.businessIncome > 0 ? "ITR-4" : "ITR-1",
+        ...details,
+        itrType,
         name: form16Data.employee.name || user?.name,
         pan: form16Data.employee.pan || user?.pan,
         employerName: form16Data.employer.name,
@@ -75,7 +79,7 @@ export default function SummaryPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-2xl font-bold">Your ITR-1 is Ready!</h2>
+            <h2 className="text-2xl font-bold">Your {itrType} is Ready!</h2>
             <p className="text-blue-100">FY {onboardingData?.financialYear || "2025-26"} | AY {assessmentYearOf(onboardingData?.financialYear || "2025-26")} | {regime === "new" ? "New" : "Old"} Regime</p>
           </div>
         </div>

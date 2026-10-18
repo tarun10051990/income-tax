@@ -214,3 +214,24 @@ export async function downloadReturn(request: ExportRequest): Promise<void> {
   const blob = await apiDownload("/itr/computations/export", "customer", request);
   saveBlob(blob, `TaxFilr_${request.itrType || "ITR"}_AY${assessmentYearOf(request.financialYear)}.${EXTENSION[request.format]}`);
 }
+
+export type ReturnDetails = Pick<ExportRequest, "itrType" | "bankName" | "accountNumber" | "ifsc" | "accountType">;
+
+const RETURN_DETAILS_KEY = "taxfilr.filing.return";
+
+/** ITR type and refund bank picked on the generate page, kept for this browser tab only. */
+export function rememberReturnDetails(details: ReturnDetails | null): void {
+  if (typeof window === "undefined") return;
+  if (details === null) window.sessionStorage.removeItem(RETURN_DETAILS_KEY);
+  else window.sessionStorage.setItem(RETURN_DETAILS_KEY, JSON.stringify(details));
+}
+
+export function rememberedReturnDetails(): ReturnDetails | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(RETURN_DETAILS_KEY);
+    return raw ? (JSON.parse(raw) as ReturnDetails) : null;
+  } catch {
+    return null;
+  }
+}

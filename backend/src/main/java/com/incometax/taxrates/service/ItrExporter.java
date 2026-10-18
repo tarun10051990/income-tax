@@ -147,7 +147,7 @@ public class ItrExporter {
 
     private void lineSheet(Sheet sheet, CellStyle bold, List<TaxEngine.Line> lines, boolean income) {
         String[] heads = income
-                ? new String[]{"Income", "Section", "Amount", "Tax-free part", "Taxable", "Rate %", "Tax", "How it is taxed"}
+                ? new String[]{"Income", "Section", "Amount", "Tax-free part", "Taxable", "Rate", "Tax", "How it is taxed"}
                 : new String[]{"Deduction", "Section", "Claimed", "Allowed", "", "", "", "Note"};
         Row head = sheet.createRow(0);
         for (int i = 0; i < heads.length; i++) {
@@ -163,7 +163,7 @@ public class ItrExporter {
             row.createCell(3).setCellValue(num(line.exemptAmount()));
             if (income) {
                 row.createCell(4).setCellValue(num(line.taxableAmount()));
-                row.createCell(5).setCellValue(line.rate() == null ? "Slab" : line.rate().stripTrailingZeros().toPlainString());
+                row.createCell(5).setCellValue(line.rate() == null ? "Slab" : percent(line.rate()));
                 row.createCell(6).setCellValue(num(line.tax()));
             }
             row.createCell(7).setCellValue(line.note() == null ? "" : line.note());
@@ -226,7 +226,7 @@ public class ItrExporter {
                 income.addCell(cell(money(line.amount()), body));
                 income.addCell(cell(money(line.exemptAmount()), body));
                 income.addCell(cell(money(line.taxableAmount()), body));
-                income.addCell(cell(line.rate() == null ? "Slab" : line.rate().stripTrailingZeros().toPlainString() + "%", body));
+                income.addCell(cell(line.rate() == null ? "Slab" : percent(line.rate()), body));
                 income.addCell(cell(line.rate() == null ? "In slab tax" : money(line.tax()), body));
             }
             document.add(income);
@@ -261,10 +261,14 @@ public class ItrExporter {
         TaxEngine.RegimeResult o = result.oldRegime();
         TaxEngine.RegimeResult n = result.newRegime();
         List<Object[]> rows = new ArrayList<>();
-        rows.add(new Object[]{"Total income", o.grossTotalIncome(), n.grossTotalIncome()});
+        BigDecimal incomeOld = totalIncome(o);
+        BigDecimal incomeNew = totalIncome(n);
+        rows.add(new Object[]{"Total income", incomeOld, incomeNew});
         rows.add(new Object[]{"Standard deduction", o.standardDeduction(), n.standardDeduction()});
         rows.add(new Object[]{"HRA exemption", o.hraExemption(), n.hraExemption()});
-        rows.add(new Object[]{"Total deductions", o.totalDeductions(), n.totalDeductions()});
+        rows.add(new Object[]{"Other deductions (80C, 80D etc.)", o.totalDeductions(), n.totalDeductions()});
+        rows.add(new Object[]{"Total deductions", incomeOld.subtract(o.taxableIncome()).max(BigDecimal.ZERO),
+                incomeNew.subtract(n.taxableIncome()).max(BigDecimal.ZERO)});
         rows.add(new Object[]{"Taxable income", o.taxableIncome(), n.taxableIncome()});
         rows.add(new Object[]{"Tax at slab rates", o.slabTax(), n.slabTax()});
         rows.add(new Object[]{"Tax at special rates", o.specialRateTax(), n.specialRateTax()});
@@ -347,6 +351,16 @@ public class ItrExporter {
 
     private static double num(BigDecimal value) {
         return value == null ? 0 : value.doubleValue();
+    }
+
+    /** Income before the standard deduction and HRA exemption, as shown on the "Your tax" page. */
+    private static BigDecimal totalIncome(TaxEngine.RegimeResult r) {
+        return r.grossTotalIncome().add(r.standardDeduction()).add(r.hraExemption());
+    }
+
+    /** Rates are stored as fractions (0.20), shown as 20%. */
+    private static String percent(BigDecimal rate) {
+        return rate.multiply(BigDecimal.valueOf(100)).stripTrailingZeros().toPlainString() + "%";
     }
 
     private static String money(BigDecimal value) {
