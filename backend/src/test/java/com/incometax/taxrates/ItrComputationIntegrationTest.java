@@ -1,6 +1,7 @@
 package com.incometax.taxrates;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,8 +119,10 @@ class ItrComputationIntegrationTest {
         MvcResult saved = mockMvc.perform(post("/api/itr/computations").header("Authorization", bearer)
                         .contentType(MediaType.APPLICATION_JSON).content(form))
                 .andExpect(status().isOk()).andReturn();
-        String totalTax = objectMapper.readTree(saved.getResponse().getContentAsString())
-                .at("/data/result/newRegime/totalTax").asText();
+        JsonNode savedResult = objectMapper.readTree(saved.getResponse().getContentAsString()).at("/data/result");
+        String totalTax = savedResult.at("/newRegime/totalTax").asText();
+        String regimeKey = "OLD".equals(savedResult.at("/recommendedRegime").asText()) ? "/oldRegime" : "/newRegime";
+        BigDecimal chosenTax = savedResult.at(regimeKey + "/totalTax").decimalValue();
 
         MvcResult json = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
                         .contentType(MediaType.APPLICATION_JSON).content(export.formatted("JSON")))
@@ -135,15 +138,31 @@ class ItrComputationIntegrationTest {
                 .andExpect(status().isOk()).andReturn();
         try (var workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(
                 new java.io.ByteArrayInputStream(xlsx.getResponse().getContentAsByteArray()))) {
-            assertThat(workbook.getSheet("Summary")).isNotNull();
-            assertThat(workbook.getSheet("Income").getLastRowNum()).isGreaterThanOrEqualTo(3);
-            for (var row : workbook.getSheet("Income")) {
-                var rate = row.getCell(5);
-                if (rate != null && rate.getStringCellValue().endsWith("%")) {
-                    String value = rate.getStringCellValue();
-                    assertThat(new BigDecimal(value.substring(0, value.length() - 1))).isGreaterThanOrEqualTo(BigDecimal.ONE);
+            assertThat(workbook.getSheetName(0)).isEqualTo("Income Details");
+            assertThat(workbook.getSheet("TDS")).isNotNull();
+            var income = workbook.getSheet("Income Details");
+            assertThat(income.getRow(1).getCell(1).getStringCellValue()).isEqualTo("FORM");
+            assertThat(income.getRow(1).getCell(2).getStringCellValue()).isEqualTo("ITR-2");
+            assertThat(income.getRow(1).getCell(4).getStringCellValue()).isEqualTo("Assessment Year 2025-26");
+            Map<String, Double> byCode = new java.util.HashMap<>();
+            for (var row : income) {
+                var code = row.getCell(2);
+                var value = row.getCell(4);
+                if (code != null && value != null && value.getCellType() == org.apache.poi.ss.usermodel.CellType.NUMERIC) {
+                    byCode.put(code.getStringCellValue(), value.getNumericCellValue());
                 }
             }
+            assertThat(byCode).containsKeys("B1 i", "B3", "B4", "D1", "D4");
+            assertThat(BigDecimal.valueOf(byCode.get("D5")))
+                    .isEqualByComparingTo(chosenTax.setScale(0, java.math.RoundingMode.HALF_UP));
+            var verification = workbook.getSheet("Taxes Paid and Verification");
+            boolean bankListed = false;
+            for (var row : verification) {
+                for (var cell : row) {
+                    if (cell.getCellType() == org.apache.poi.ss.usermodel.CellType.STRING && "SBI".equals(cell.getStringCellValue())) bankListed = true;
+                }
+            }
+            assertThat(bankListed).isTrue();
         }
 
         MvcResult pdf = mockMvc.perform(post("/api/itr/computations/export").header("Authorization", bearer)
@@ -151,6 +170,14 @@ class ItrComputationIntegrationTest {
                 .andExpect(status().isOk()).andReturn();
         assertThat(pdf.getResponse().getContentType()).isEqualTo("application/pdf");
         assertThat(new String(pdf.getResponse().getContentAsByteArray(), 0, 4)).isEqualTo("%PDF");
+        var reader = new com.lowagie.text.pdf.PdfReader(pdf.getResponse().getContentAsByteArray());
+        var extractor = new com.lowagie.text.pdf.parser.PdfTextExtractor(reader);
+        StringBuilder text = new StringBuilder();
+        for (int page = 1; page <= reader.getNumberOfPages(); page++) text.append(extractor.getTextFromPage(page));
+        assertThat(text.toString()).contains("INDIAN INCOME TAX RETURN", "SALARY / PENSION", "Gross Total Income",
+                "Total Tax and Cess", "VERIFICATION", "SBI");
+        assertThat(reader.getNumberOfPages()).isGreaterThanOrEqualTo(3);
+        reader.close();
 
         mockMvc.perform(post("/api/itr/computations/export")
                         .contentType(MediaType.APPLICATION_JSON).content(export.formatted("PDF")))

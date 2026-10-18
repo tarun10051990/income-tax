@@ -5,23 +5,33 @@ import com.incometax.entity.User;
 import com.incometax.exception.ApiException;
 import com.incometax.taxrates.dto.TaxRateDtos;
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -97,47 +107,28 @@ public class ItrExporter {
     }
 
     private byte[] excel(TaxRateDtos.SavedComputation saved, TaxRateDtos.ExportRequest request, User user) {
-        TaxEngine.Result result = saved.result();
-        TaxEngine.RegimeResult chosen = chosen(result);
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            CellStyle bold = workbook.createCellStyle();
-            var font = workbook.createFont();
-            font.setBold(true);
-            bold.setFont(font);
-
-            Sheet summary = workbook.createSheet("Summary");
-            int r = 0;
-            r = textRow(summary, r, bold, "TaxFilr - " + itrType(request) + " summary, AY " + result.assessmentYear());
-            r = textRow(summary, r, null, NOTE);
-            r++;
-            for (String[] pair : concat(taxpayer(request, user), employer(request), bank(request), List.of(
-                    new String[]{"Financial year", result.financialYear()},
-                    new String[]{"Assessment year", result.assessmentYear()},
-                    new String[]{"Regime used", regimeName(result.recommendedRegime())}))) {
-                Row row = summary.createRow(r++);
-                row.createCell(0).setCellValue(pair[0]);
-                row.createCell(1).setCellValue(pair[1]);
+        ItrReturnForm.Form form = ItrReturnForm.build(saved, request, user);
+        try (XSSFWorkbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            ExcelStyles styles = new ExcelStyles(workbook);
+            for (ItrReturnForm.Sheet page : form.sheets()) {
+                XSSFSheet sheet = workbook.createSheet(page.name());
+                sheet.setDisplayGridlines(false);
+                sheet.setColumnWidth(0, 2 * 256);
+                sheet.setColumnWidth(1, 16 * 256);
+                sheet.setColumnWidth(2, 9 * 256);
+                sheet.setColumnWidth(3, 62 * 256);
+                for (int c = 0; c < VALUE_COLUMNS; c++) {
+                    sheet.setColumnWidth(FIRST_VALUE + c, 20 * 256);
+                }
+                sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
+                sheet.getPrintSetup().setFitWidth((short) 1);
+                sheet.getPrintSetup().setFitHeight((short) 0);
+                sheet.setFitToPage(true);
+                int r = excelHeader(sheet, styles, form);
+                for (ItrReturnForm.Block block : page.blocks()) {
+                    r = excelBlock(sheet, styles, block, r) + 1;
+                }
             }
-            r++;
-            Row head = summary.createRow(r++);
-            String[] heads = {"", "Old regime", "New regime"};
-            for (int i = 0; i < heads.length; i++) {
-                head.createCell(i).setCellValue(heads[i]);
-                head.getCell(i).setCellStyle(bold);
-            }
-            for (Object[] line : comparison(result)) {
-                Row row = summary.createRow(r++);
-                row.createCell(0).setCellValue((String) line[0]);
-                row.createCell(1).setCellValue(num((BigDecimal) line[1]));
-                row.createCell(2).setCellValue(num((BigDecimal) line[2]));
-            }
-            summary.setColumnWidth(0, 40 * 256);
-            summary.setColumnWidth(1, 22 * 256);
-            summary.setColumnWidth(2, 22 * 256);
-
-            lineSheet(workbook.createSheet("Income"), bold, chosen.incomeLines(), true);
-            lineSheet(workbook.createSheet("Deductions"), bold, chosen.deductionLines(), false);
-
             workbook.write(out);
             return out.toByteArray();
         } catch (Exception ex) {
@@ -145,111 +136,175 @@ public class ItrExporter {
         }
     }
 
-    private void lineSheet(Sheet sheet, CellStyle bold, List<TaxEngine.Line> lines, boolean income) {
-        String[] heads = income
-                ? new String[]{"Income", "Section", "Amount", "Tax-free part", "Taxable", "Rate", "Tax", "How it is taxed"}
-                : new String[]{"Deduction", "Section", "Claimed", "Allowed", "", "", "", "Note"};
-        Row head = sheet.createRow(0);
-        for (int i = 0; i < heads.length; i++) {
-            head.createCell(i).setCellValue(heads[i]);
-            head.getCell(i).setCellStyle(bold);
-        }
-        int r = 1;
-        for (TaxEngine.Line line : lines == null ? List.<TaxEngine.Line>of() : lines) {
-            Row row = sheet.createRow(r++);
-            row.createCell(0).setCellValue(line.name());
-            row.createCell(1).setCellValue(line.section() == null ? "" : line.section());
-            row.createCell(2).setCellValue(num(line.amount()));
-            row.createCell(3).setCellValue(num(line.exemptAmount()));
-            if (income) {
-                row.createCell(4).setCellValue(num(line.taxableAmount()));
-                row.createCell(5).setCellValue(line.rate() == null ? "Slab" : percent(line.rate()));
-                row.createCell(6).setCellValue(num(line.tax()));
-            }
-            row.createCell(7).setCellValue(line.note() == null ? "" : line.note());
-        }
-        sheet.setColumnWidth(0, 40 * 256);
-        sheet.setColumnWidth(7, 50 * 256);
+    private static final int FIRST_VALUE = 4;
+    private static final int VALUE_COLUMNS = 4;
+    private static final int LAST_COLUMN = FIRST_VALUE + VALUE_COLUMNS - 1;
+
+    private int excelHeader(XSSFSheet sheet, ExcelStyles s, ItrReturnForm.Form form) {
+        Row top = sheet.createRow(1);
+        top.setHeightInPoints(24);
+        put(top, 1, "FORM", s.formLabel);
+        put(top, 2, form.formName(), s.title);
+        put(top, 3, "INDIAN INCOME TAX RETURN", s.title);
+        put(top, FIRST_VALUE, "Assessment Year " + form.assessmentYear(), s.bigTitle);
+        for (int c = FIRST_VALUE + 1; c <= LAST_COLUMN; c++) put(top, c, "", s.bigTitle);
+        sheet.addMergedRegion(new CellRangeAddress(1, 1, FIRST_VALUE, LAST_COLUMN));
+        Row sub = sheet.createRow(2);
+        sub.setHeightInPoints(42);
+        put(sub, 1, "", s.subtitle);
+        put(sub, 2, "", s.subtitle);
+        put(sub, 3, form.subtitle(), s.subtitle);
+        for (int c = FIRST_VALUE; c <= LAST_COLUMN; c++) put(sub, c, "", s.subtitle);
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 1, 2));
+        sheet.addMergedRegion(new CellRangeAddress(2, 2, 3, LAST_COLUMN));
+        Row regime = sheet.createRow(3);
+        put(regime, 1, "Tax regime: " + form.regime(), s.note);
+        sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, LAST_COLUMN));
+        return 5;
     }
 
+    private int excelBlock(XSSFSheet sheet, ExcelStyles s, ItrReturnForm.Block block, int first) {
+        int r = first;
+        int columns = block.columns();
+        for (ItrReturnForm.Row line : block.rows()) {
+            Row row = sheet.createRow(r);
+            boolean bold = line.kind() != ItrReturnForm.Kind.ITEM;
+            put(row, 1, "", s.caption);
+            put(row, 2, line.code(), bold ? s.codeBold : s.code);
+            CellStyle labelStyle = switch (line.kind()) {
+                case NOTE -> s.note;
+                case TABLE_HEAD -> s.tableHead;
+                case ITEM -> s.label;
+                default -> s.labelBold;
+            };
+            put(row, 3, line.label(), labelStyle);
+            List<Object> values = line.values();
+            for (int c = 0; c < VALUE_COLUMNS; c++) {
+                Object value = c < values.size() ? values.get(c) : "";
+                CellStyle style = switch (line.kind()) {
+                    case TABLE_HEAD, HEADING -> s.tableHead;
+                    case TOTAL -> value instanceof BigDecimal ? s.totalAmount : s.totalText;
+                    case NOTE -> s.note;
+                    default -> c >= columns ? s.blank
+                            : value instanceof BigDecimal ? (line.input() ? s.inputAmount : s.amount)
+                            : (line.input() ? s.inputText : s.text);
+                };
+                put(row, FIRST_VALUE + c, value, style);
+            }
+            if (values.isEmpty()) {
+                sheet.addMergedRegion(new CellRangeAddress(r, r, 3, LAST_COLUMN));
+            } else if (values.size() == 1 && columns > 1) {
+                sheet.addMergedRegion(new CellRangeAddress(r, r, FIRST_VALUE, FIRST_VALUE + columns - 1));
+            }
+            int width = values.isEmpty() ? 140 : 70;
+            int lines = Math.max(1, (int) Math.ceil(line.label().length() / (double) width));
+            row.setHeightInPoints(Math.max(15, 13f * lines + 2));
+            r++;
+        }
+        sheet.getRow(first).getCell(1).setCellValue(block.caption());
+        if (r - 1 > first) {
+            sheet.addMergedRegion(new CellRangeAddress(first, r - 1, 1, 1));
+        }
+        return r;
+    }
+
+    private static void put(Row row, int column, Object value, CellStyle style) {
+        Cell cell = row.createCell(column);
+        if (value instanceof BigDecimal number) {
+            cell.setCellValue(number.doubleValue());
+        } else {
+            cell.setCellValue(value == null ? "" : value.toString());
+        }
+        cell.setCellStyle(style);
+    }
+
+    /** Cell styles copied from the ITR utility: Times New Roman, thin borders, green input cells. */
+    private static final class ExcelStyles {
+        final CellStyle formLabel, title, bigTitle, subtitle, caption, code, codeBold, label, labelBold, tableHead,
+                note, text, inputText, amount, inputAmount, totalAmount, totalText, blank;
+
+        ExcelStyles(XSSFWorkbook wb) {
+            short money = wb.createDataFormat().getFormat("#,##0");
+            formLabel = style(wb, font(wb, 10, true, false), HorizontalAlignment.RIGHT, null, false, false);
+            title = style(wb, font(wb, 12, true, false), HorizontalAlignment.CENTER, null, false, false);
+            bigTitle = style(wb, font(wb, 14, true, false), HorizontalAlignment.CENTER, null, false, false);
+            subtitle = style(wb, font(wb, 9, true, false), HorizontalAlignment.CENTER, null, true, true);
+            caption = style(wb, font(wb, 10, true, false), HorizontalAlignment.CENTER, null, true, true);
+            code = style(wb, font(wb, 10, false, false), HorizontalAlignment.CENTER, null, true, true);
+            codeBold = style(wb, font(wb, 10, true, false), HorizontalAlignment.CENTER, null, true, true);
+            label = style(wb, font(wb, 10, false, false), HorizontalAlignment.LEFT, null, true, true);
+            labelBold = style(wb, font(wb, 10, true, false), HorizontalAlignment.LEFT, null, true, true);
+            tableHead = style(wb, font(wb, 10, true, false), HorizontalAlignment.CENTER, GREY, true, true);
+            note = style(wb, font(wb, 9, false, true), HorizontalAlignment.LEFT, null, true, true);
+            text = style(wb, font(wb, 10, false, false), HorizontalAlignment.LEFT, null, true, true);
+            inputText = style(wb, font(wb, 10, false, false), HorizontalAlignment.LEFT, GREEN, true, true);
+            amount = style(wb, font(wb, 10, false, false), HorizontalAlignment.RIGHT, null, true, true);
+            inputAmount = style(wb, font(wb, 10, false, false), HorizontalAlignment.RIGHT, GREEN, true, true);
+            totalAmount = style(wb, font(wb, 10, true, false), HorizontalAlignment.RIGHT, YELLOW, true, true);
+            totalText = style(wb, font(wb, 10, true, false), HorizontalAlignment.LEFT, YELLOW, true, true);
+            blank = style(wb, font(wb, 10, false, false), HorizontalAlignment.LEFT, null, false, false);
+            for (CellStyle st : List.of(amount, inputAmount, totalAmount)) st.setDataFormat(money);
+        }
+
+        private static XSSFFont font(XSSFWorkbook wb, int size, boolean bold, boolean italic) {
+            XSSFFont f = wb.createFont();
+            f.setFontName("Times New Roman");
+            f.setFontHeightInPoints((short) size);
+            f.setBold(bold);
+            f.setItalic(italic);
+            return f;
+        }
+
+        private static CellStyle style(XSSFWorkbook wb, XSSFFont font, HorizontalAlignment align, byte[] fill,
+                                       boolean border, boolean wrap) {
+            XSSFCellStyle st = wb.createCellStyle();
+            st.setFont(font);
+            st.setAlignment(align);
+            st.setVerticalAlignment(VerticalAlignment.CENTER);
+            st.setWrapText(wrap);
+            if (fill != null) {
+                st.setFillForegroundColor(new XSSFColor(fill, null));
+                st.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            }
+            if (border) {
+                st.setBorderTop(BorderStyle.THIN);
+                st.setBorderBottom(BorderStyle.THIN);
+                st.setBorderLeft(BorderStyle.THIN);
+                st.setBorderRight(BorderStyle.THIN);
+            }
+            return st;
+        }
+    }
+
+    private static final byte[] GREEN = {(byte) 0xCC, (byte) 0xFF, (byte) 0xCC};
+    private static final byte[] YELLOW = {(byte) 0xFF, (byte) 0xFF, (byte) 0xCC};
+    private static final byte[] GREY = {(byte) 0xD9, (byte) 0xD9, (byte) 0xD9};
+
     private byte[] pdf(TaxRateDtos.SavedComputation saved, TaxRateDtos.ExportRequest request, User user) {
-        TaxEngine.Result result = saved.result();
-        TaxEngine.RegimeResult chosen = chosen(result);
-        Font title = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16);
-        Font heading = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
-        Font body = FontFactory.getFont(FontFactory.HELVETICA, 9);
-        Font bodyBold = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9);
+        ItrReturnForm.Form form = ItrReturnForm.build(saved, request, user);
+        Font body = FontFactory.getFont(FontFactory.TIMES_ROMAN, 8);
+        Font bold = FontFactory.getFont(FontFactory.TIMES_BOLD, 8);
+        Font italic = FontFactory.getFont(FontFactory.TIMES_ITALIC, 7);
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Document document = new Document(PageSize.A4, 36, 36, 36, 36);
+            Document document = new Document(PageSize.A4, 24, 24, 24, 24);
             PdfWriter.getInstance(document, out);
             document.open();
-            document.add(new Paragraph(itrType(request) + " summary - AY " + result.assessmentYear(), title));
-            document.add(new Paragraph("Financial year " + result.financialYear() + "  |  Regime used: "
-                    + regimeName(result.recommendedRegime()) + "  |  Generated on " + LocalDate.now(), body));
-            document.add(new Paragraph(" "));
-
-            document.add(new Paragraph("Your details", heading));
-            PdfPTable details = new PdfPTable(2);
-            details.setWidthPercentage(100);
-            details.setSpacingBefore(4);
-            for (String[] pair : concat(taxpayer(request, user), employer(request), bank(request), List.of())) {
-                details.addCell(cell(pair[0], bodyBold));
-                details.addCell(cell(pair[1], body));
-            }
-            document.add(details);
-            document.add(new Paragraph(" "));
-
-            document.add(new Paragraph("Old vs new regime (amounts in Rs.)", heading));
-            PdfPTable compare = new PdfPTable(new float[]{3, 2, 2});
-            compare.setWidthPercentage(100);
-            compare.setSpacingBefore(4);
-            compare.addCell(cell("", bodyBold));
-            compare.addCell(cell("Old regime", bodyBold));
-            compare.addCell(cell("New regime", bodyBold));
-            for (Object[] line : comparison(result)) {
-                compare.addCell(cell((String) line[0], body));
-                compare.addCell(cell(money((BigDecimal) line[1]), body));
-                compare.addCell(cell(money((BigDecimal) line[2]), body));
-            }
-            document.add(compare);
-            document.add(new Paragraph(" "));
-
-            document.add(new Paragraph("How each income is taxed (" + regimeName(result.recommendedRegime()) + ")", heading));
-            PdfPTable income = new PdfPTable(new float[]{4, 2, 2, 2, 1.3f, 2});
-            income.setWidthPercentage(100);
-            income.setSpacingBefore(4);
-            for (String h : new String[]{"Income", "Amount", "Tax-free", "Taxable", "Rate", "Tax"}) {
-                income.addCell(cell(h, bodyBold));
-            }
-            for (TaxEngine.Line line : safe(chosen.incomeLines())) {
-                income.addCell(cell(line.name() + (line.section() == null ? "" : " (" + line.section() + ")"), body));
-                income.addCell(cell(money(line.amount()), body));
-                income.addCell(cell(money(line.exemptAmount()), body));
-                income.addCell(cell(money(line.taxableAmount()), body));
-                income.addCell(cell(line.rate() == null ? "Slab" : percent(line.rate()), body));
-                income.addCell(cell(line.rate() == null ? "In slab tax" : money(line.tax()), body));
-            }
-            document.add(income);
-
-            if (!safe(chosen.deductionLines()).isEmpty()) {
-                document.add(new Paragraph(" "));
-                document.add(new Paragraph("Deductions", heading));
-                PdfPTable deductions = new PdfPTable(new float[]{4, 2, 2});
-                deductions.setWidthPercentage(100);
-                deductions.setSpacingBefore(4);
-                for (String h : new String[]{"Deduction", "Claimed", "Allowed"}) {
-                    deductions.addCell(cell(h, bodyBold));
+            boolean firstPage = true;
+            for (ItrReturnForm.Sheet page : form.sheets()) {
+                if (!firstPage) document.newPage();
+                firstPage = false;
+                document.add(pdfHeader(form));
+                PdfPTable bar = new PdfPTable(1);
+                bar.setWidthPercentage(100);
+                bar.setSpacingBefore(6);
+                PdfPCell name = cell(page.name().toUpperCase(), FontFactory.getFont(FontFactory.TIMES_BOLD, 10), PDF_GREY);
+                name.setHorizontalAlignment(Element.ALIGN_CENTER);
+                bar.addCell(name);
+                document.add(bar);
+                for (ItrReturnForm.Block block : page.blocks()) {
+                    document.add(pdfBlock(block, body, bold, italic));
                 }
-                for (TaxEngine.Line line : chosen.deductionLines()) {
-                    deductions.addCell(cell(line.name() + (line.section() == null ? "" : " (" + line.section() + ")"), body));
-                    deductions.addCell(cell(money(line.amount()), body));
-                    deductions.addCell(cell(money(line.exemptAmount()), body));
-                }
-                document.add(deductions);
             }
-
-            document.add(new Paragraph(" "));
-            document.add(new Paragraph(NOTE, FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8)));
             document.close();
             return out.toByteArray();
         } catch (Exception ex) {
@@ -257,30 +312,83 @@ public class ItrExporter {
         }
     }
 
-    private static List<Object[]> comparison(TaxEngine.Result result) {
-        TaxEngine.RegimeResult o = result.oldRegime();
-        TaxEngine.RegimeResult n = result.newRegime();
-        List<Object[]> rows = new ArrayList<>();
-        BigDecimal incomeOld = totalIncome(o);
-        BigDecimal incomeNew = totalIncome(n);
-        rows.add(new Object[]{"Total income", incomeOld, incomeNew});
-        rows.add(new Object[]{"Standard deduction", o.standardDeduction(), n.standardDeduction()});
-        rows.add(new Object[]{"HRA exemption", o.hraExemption(), n.hraExemption()});
-        rows.add(new Object[]{"Other deductions (80C, 80D etc.)", o.totalDeductions(), n.totalDeductions()});
-        rows.add(new Object[]{"Total deductions", incomeOld.subtract(o.taxableIncome()).max(BigDecimal.ZERO),
-                incomeNew.subtract(n.taxableIncome()).max(BigDecimal.ZERO)});
-        rows.add(new Object[]{"Taxable income", o.taxableIncome(), n.taxableIncome()});
-        rows.add(new Object[]{"Tax at slab rates", o.slabTax(), n.slabTax()});
-        rows.add(new Object[]{"Tax at special rates", o.specialRateTax(), n.specialRateTax()});
-        rows.add(new Object[]{"Rebate u/s 87A", o.rebate87A(), n.rebate87A()});
-        rows.add(new Object[]{"Surcharge", o.surcharge(), n.surcharge()});
-        rows.add(new Object[]{"Health & education cess", o.cess(), n.cess()});
-        rows.add(new Object[]{"Total tax", o.totalTax(), n.totalTax()});
-        rows.add(new Object[]{"Tax already paid (TDS / advance tax)", o.taxesPaid(), n.taxesPaid()});
-        rows.add(new Object[]{"Tax still to pay", o.netPayable(), n.netPayable()});
-        rows.add(new Object[]{"Refund", o.refund(), n.refund()});
-        return rows;
+    private static PdfPTable pdfHeader(ItrReturnForm.Form form) {
+        PdfPTable head = new PdfPTable(new float[]{1, 2, 4, 2.6f});
+        head.setWidthPercentage(100);
+        Font f10 = FontFactory.getFont(FontFactory.TIMES_BOLD, 10);
+        Font f12 = FontFactory.getFont(FontFactory.TIMES_BOLD, 12);
+        head.addCell(cell("FORM", f10, null));
+        head.addCell(cell(form.formName(), f12, null));
+        PdfPCell title = cell("INDIAN INCOME TAX RETURN", f12, null);
+        title.setHorizontalAlignment(Element.ALIGN_CENTER);
+        head.addCell(title);
+        PdfPCell ay = cell("Assessment Year " + form.assessmentYear(), FontFactory.getFont(FontFactory.TIMES_BOLD, 13), null);
+        ay.setHorizontalAlignment(Element.ALIGN_CENTER);
+        ay.setRowspan(2);
+        head.addCell(ay);
+        PdfPCell sub = cell(form.subtitle(), FontFactory.getFont(FontFactory.TIMES_BOLD, 7), null);
+        sub.setColspan(3);
+        sub.setHorizontalAlignment(Element.ALIGN_CENTER);
+        head.addCell(sub);
+        PdfPCell regime = cell("Tax regime: " + form.regime(), FontFactory.getFont(FontFactory.TIMES_ITALIC, 8), null);
+        regime.setColspan(4);
+        head.addCell(regime);
+        return head;
     }
+
+    private static PdfPTable pdfBlock(ItrReturnForm.Block block, Font body, Font bold, Font italic) throws Exception {
+        int columns = block.columns();
+        float[] widths = new float[3 + columns];
+        widths[0] = 1.5f;
+        widths[1] = 0.8f;
+        widths[2] = columns > 2 ? 3.2f : 5.6f;
+        for (int i = 0; i < columns; i++) widths[3 + i] = columns > 2 ? 1.6f : 1.9f;
+        PdfPTable table = new PdfPTable(widths);
+        table.setWidthPercentage(100);
+        table.setSpacingBefore(5);
+        table.setSplitLate(false);
+        PdfPCell caption = cell(block.caption(), bold, null);
+        caption.setRowspan(block.rows().size());
+        caption.setHorizontalAlignment(Element.ALIGN_CENTER);
+        caption.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        table.addCell(caption);
+        for (ItrReturnForm.Row line : block.rows()) {
+            boolean strong = line.kind() != ItrReturnForm.Kind.ITEM && line.kind() != ItrReturnForm.Kind.NOTE;
+            boolean head = line.kind() == ItrReturnForm.Kind.TABLE_HEAD || line.kind() == ItrReturnForm.Kind.HEADING;
+            PdfPCell code = cell(line.code(), strong ? bold : body, head ? PDF_GREY : null);
+            code.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(code);
+            PdfPCell label = cell(line.label(), line.kind() == ItrReturnForm.Kind.NOTE ? italic : strong ? bold : body,
+                    head ? PDF_GREY : null);
+            List<Object> values = line.values();
+            if (values.isEmpty()) {
+                label.setColspan(1 + columns);
+                table.addCell(label);
+                continue;
+            }
+            table.addCell(label);
+            for (int i = 0; i < columns; i++) {
+                Object value = i < values.size() ? values.get(i) : "";
+                Color fill = head ? PDF_GREY
+                        : line.kind() == ItrReturnForm.Kind.TOTAL ? PDF_YELLOW
+                        : line.input() ? PDF_GREEN : null;
+                PdfPCell v = cell(value instanceof BigDecimal n ? money(n) : String.valueOf(value), strong ? bold : body, fill);
+                v.setHorizontalAlignment(value instanceof BigDecimal || head ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT);
+                if (head) v.setHorizontalAlignment(Element.ALIGN_CENTER);
+                if (values.size() == 1 && columns > 1) {
+                    v.setColspan(columns);
+                    table.addCell(v);
+                    break;
+                }
+                table.addCell(v);
+            }
+        }
+        return table;
+    }
+
+    private static final Color PDF_GREEN = new Color(0xCC, 0xFF, 0xCC);
+    private static final Color PDF_YELLOW = new Color(0xFF, 0xFF, 0xCC);
+    private static final Color PDF_GREY = new Color(0xD9, 0xD9, 0xD9);
 
     private static List<String[]> taxpayer(TaxRateDtos.ExportRequest request, User user) {
         List<String[]> rows = new ArrayList<>();
@@ -313,54 +421,16 @@ public class ItrExporter {
         return map;
     }
 
-    @SafeVarargs
-    private static List<String[]> concat(List<String[]>... parts) {
-        List<String[]> all = new ArrayList<>();
-        for (List<String[]> part : parts) all.addAll(part);
-        return all;
-    }
-
-    private static int textRow(Sheet sheet, int r, CellStyle style, String text) {
-        Row row = sheet.createRow(r);
-        row.createCell(0).setCellValue(text);
-        if (style != null) row.getCell(0).setCellStyle(style);
-        return r + 1;
-    }
-
-    private static TaxEngine.RegimeResult chosen(TaxEngine.Result result) {
-        return "OLD".equalsIgnoreCase(result.recommendedRegime()) ? result.oldRegime() : result.newRegime();
-    }
-
-    private static String regimeName(String regime) {
-        return "OLD".equalsIgnoreCase(regime) ? "Old regime" : "New regime";
-    }
-
     private static String itrType(TaxRateDtos.ExportRequest request) {
         return isBlank(request.itrType()) ? "ITR" : request.itrType();
     }
 
-    private static PdfPCell cell(String text, Font font) {
+    private static PdfPCell cell(String text, Font font, Color fill) {
         PdfPCell cell = new PdfPCell(new Phrase(text == null ? "" : text, font));
-        cell.setPadding(4);
+        cell.setPadding(3);
+        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        if (fill != null) cell.setBackgroundColor(fill);
         return cell;
-    }
-
-    private static List<TaxEngine.Line> safe(List<TaxEngine.Line> lines) {
-        return lines == null ? List.of() : lines;
-    }
-
-    private static double num(BigDecimal value) {
-        return value == null ? 0 : value.doubleValue();
-    }
-
-    /** Income before the standard deduction and HRA exemption, as shown on the "Your tax" page. */
-    private static BigDecimal totalIncome(TaxEngine.RegimeResult r) {
-        return r.grossTotalIncome().add(r.standardDeduction()).add(r.hraExemption());
-    }
-
-    /** Rates are stored as fractions (0.20), shown as 20%. */
-    private static String percent(BigDecimal rate) {
-        return rate.multiply(BigDecimal.valueOf(100)).stripTrailingZeros().toPlainString() + "%";
     }
 
     private static String money(BigDecimal value) {
