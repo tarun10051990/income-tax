@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useSyncExternalStore, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useSyncExternalStore, ReactNode } from "react";
 import { User } from "@/lib/types";
-import { ApiError, apiRequest, writeToken } from "@/lib/api";
+import { ApiError, apiRequest, onCustomerSessionExpired, readToken, writeToken } from "@/lib/api";
 import { SessionStore } from "@/lib/session-store";
 
 interface AuthResponse {
@@ -48,10 +48,32 @@ function toUser(response: AuthResponse): User {
   };
 }
 
+/** True when there is no saved JWT or its `exp` has passed. */
+function tokenMissingOrExpired(): boolean {
+  const token = readToken("customer");
+  if (token === null) return true;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+    return typeof payload.exp === "number" && payload.exp * 1000 <= Date.now();
+  } catch {
+    return true;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const user = useSyncExternalStore(userStore.subscribe, userStore.getSnapshot, userStore.getServerSnapshot);
   const isReady = useSyncExternalStore(noopSubscribe, () => true, () => false);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const signOut = () => {
+      writeToken("customer", null);
+      userStore.write(null);
+    };
+    if (userStore.getSnapshot() !== null && tokenMissingOrExpired()) signOut();
+    onCustomerSessionExpired(signOut);
+    return () => onCustomerSessionExpired(null);
+  }, []);
 
   const persist = useCallback((response: AuthResponse) => {
     writeToken("customer", response.token);

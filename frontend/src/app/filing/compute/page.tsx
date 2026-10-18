@@ -20,7 +20,7 @@ export default function ComputePage() {
 
   useEffect(() => {
     if (!isReady) return;
-    if (!isAuthenticated) { router.push("/auth/login"); return; }
+    if (!isAuthenticated) { router.push("/auth/login?next=/filing/compute"); return; }
     if (!form16Data) { router.push("/filing/upload"); return; }
     setCurrentStep("compute");
     computeTaxResult();
