@@ -64,7 +64,7 @@ public class UserService {
                 .role(User.Role.USER)
                 .build());
 
-        auditService.record("USER_REGISTERED", "User", user.getId(), null, Map.of("role", user.getRole().name()));
+        auditService.recordAs(user, "USER_REGISTERED", "User", user.getId(), null, Map.of("role", user.getRole().name()));
         return response(user, tokenTtl);
     }
 
@@ -78,6 +78,7 @@ public class UserService {
         if (user.isConsultant()) {
             throw ApiException.forbidden("Professional accounts must sign in through the consultant portal");
         }
+        auditService.recordAs(user, "CUSTOMER_LOGIN", "User", user.getId(), null, null);
         return response(touchLogin(user), tokenTtl);
     }
 
@@ -88,7 +89,7 @@ public class UserService {
         if (!user.isConsultant()) {
             throw ApiException.forbidden("This portal is restricted to registered professionals");
         }
-        auditService.record("CONSULTANT_LOGIN", "User", user.getId(), null, null);
+        auditService.recordAs(user, "CONSULTANT_LOGIN", "User", user.getId(), null, null);
         return response(touchLogin(user), tokenTtl);
     }
 
@@ -105,7 +106,7 @@ public class UserService {
             throw ApiException.forbidden("This portal is restricted to staff accounts");
         }
         if (!requiresMfa(user)) {
-            auditService.record("ADMIN_LOGIN", "User", user.getId(), null,
+            auditService.recordAs(user, "ADMIN_LOGIN", "User", user.getId(), null,
                     Map.of("role", user.getRole().name(), "mfa", "exempt"));
             return response(touchLogin(user), adminTokenTtl);
         }
@@ -116,7 +117,7 @@ public class UserService {
         }
         if (!user.isMfaEnabled()) {
             // Enrolment token: only the MFA enrolment endpoint accepts it, enforced by the controller.
-            auditService.record("ADMIN_MFA_ENROLMENT_STARTED", "User", user.getId(), null, null);
+            auditService.recordAs(user, "ADMIN_MFA_ENROLMENT_STARTED", "User", user.getId(), null, null);
             return AuthResponse.builder()
                     .token(jwtUtil.generateToken(user.getEmail(), user.getRole().name(), adminTokenTtl))
                     .id(user.getId())
@@ -130,11 +131,11 @@ public class UserService {
                     .build();
         }
         if (!TotpUtil.verify(user.getMfaSecret(), request.getTotpCode())) {
-            auditService.record("ADMIN_MFA_FAILED", "User", user.getId(), null, null);
+            auditService.recordAs(user, "ADMIN_MFA_FAILED", "User", user.getId(), null, null);
             throw ApiException.unauthorized("The authenticator code is incorrect or expired");
         }
 
-        auditService.record("ADMIN_LOGIN", "User", user.getId(), null, Map.of("role", user.getRole().name()));
+        auditService.recordAs(user, "ADMIN_LOGIN", "User", user.getId(), null, Map.of("role", user.getRole().name()));
         return response(touchLogin(user), adminTokenTtl);
     }
 
@@ -145,13 +146,13 @@ public class UserService {
         }
         user.setMfaEnabled(true);
         userRepository.save(user);
-        auditService.record("ADMIN_MFA_ENABLED", "User", user.getId(), null, null);
+        auditService.recordAs(user, "ADMIN_MFA_ENABLED", "User", user.getId(), null, null);
         return response(touchLogin(user), adminTokenTtl);
     }
 
     public void changePassword(User user, String currentPassword, String newPassword) {
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            auditService.record("PASSWORD_CHANGE_FAILED", "User", user.getId(), null, null);
+            auditService.recordAs(user, "PASSWORD_CHANGE_FAILED", "User", user.getId(), null, null);
             throw ApiException.badRequest("INVALID_PASSWORD", "Current password is incorrect");
         }
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
@@ -159,7 +160,7 @@ public class UserService {
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        auditService.record("PASSWORD_CHANGED", "User", user.getId(), null, null);
+        auditService.recordAs(user, "PASSWORD_CHANGED", "User", user.getId(), null, null);
     }
 
     public Optional<User> findByEmail(String email) {
@@ -173,7 +174,7 @@ public class UserService {
             throw ApiException.forbidden("This account has been deactivated");
         }
         if (!passwordEncoder.matches(rawPassword, user.getPassword())) {
-            auditService.record("LOGIN_FAILED", "User", user.getId(), null, null);
+            auditService.recordAs(user, "LOGIN_FAILED", "User", user.getId(), null, null);
             throw ApiException.unauthorized("Invalid email or password");
         }
         return user;

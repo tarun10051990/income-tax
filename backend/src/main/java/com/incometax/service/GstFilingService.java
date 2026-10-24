@@ -16,6 +16,9 @@ import com.incometax.exception.ApiException;
 import com.incometax.repository.GstFilingRepository;
 import com.incometax.repository.GstInvoiceRepository;
 import com.incometax.repository.GstProfileRepository;
+import com.incometax.gstrates.dto.GstRateDtos;
+import com.incometax.gstrates.entity.GstRateCategory;
+import com.incometax.gstrates.service.GstRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,7 @@ public class GstFilingService {
     private final GstFilingRepository gstFilingRepository;
     private final GstInvoiceRepository gstInvoiceRepository;
     private final GstProfileRepository gstProfileRepository;
+    private final GstRateService gstRateService;
     private final FilingCaseService filingCaseService;
     private final GstComputationService computationService;
     private final GstReconciliationService reconciliationService;
@@ -233,7 +237,7 @@ public class GstFilingService {
         if (input.getInvoiceDate() == null) {
             throw ApiException.badRequest("INVALID_INVOICE", "Invoice date is required");
         }
-        return GstInvoice.builder()
+        GstInvoice invoice = GstInvoice.builder()
                 .filing(filing)
                 .documentType(input.getDocumentType())
                 .source(input.getSource() == null ? GstInvoice.Source.TAXPAYER_BOOKS : input.getSource())
@@ -252,6 +256,58 @@ public class GstFilingService {
                 .reverseCharge(Boolean.TRUE.equals(input.getReverseCharge()))
                 .itcEligible(input.getItcEligible() == null || input.getItcEligible())
                 .build();
+        if (input.getGstCategoryCode() != null && !input.getGstCategoryCode().isBlank()) {
+            applyGstRate(invoice, filing, input);
+        }
+        return invoice;
+    }
+
+    /**
+     * Uses the rate stored in gst_rate_categories for the invoice date. Tax amounts the user typed in are kept;
+     * only when all of them are blank is the tax worked out (CGST + SGST in the same state, IGST otherwise).
+     */
+    private void applyGstRate(GstInvoice invoice, GstFiling filing, GstRequests.InvoiceInput input) {
+        GstRateCategory category = gstRateService.resolve(input.getGstCategoryCode().trim(), input.getInvoiceDate());
+        invoice.setGstCategoryCode(category.getCode());
+        if (invoice.getHsnSacCode() == null || invoice.getHsnSacCode().isBlank()) {
+            invoice.setHsnSacCode(category.getHsnSac());
+        }
+        if (input.getSupplyType() == null) {
+            invoice.setSupplyType(switch (category.getTreatment()) {
+                case NIL -> GstInvoice.SupplyType.NIL_RATED;
+                case EXEMPT -> GstInvoice.SupplyType.EXEMPT;
+                case ZERO_RATED -> GstInvoice.SupplyType.ZERO_RATED;
+                case TAXABLE -> GstInvoice.SupplyType.TAXABLE;
+            });
+        }
+        if (input.getReverseCharge() == null) {
+            invoice.setReverseCharge(category.isReverseCharge());
+        }
+        boolean taxTyped = input.getCgst() != null || input.getSgst() != null
+                || input.getIgst() != null || input.getCess() != null;
+        if (taxTyped) {
+            return;
+        }
+        GstRateDtos.Calculation tax = GstRateService.calculate(category, invoice.getTaxableValue(),
+                input.getInvoiceDate(), isInterState(filing.getGstProfile(), input.getPlaceOfSupply()));
+        invoice.setCgst(tax.cgst());
+        invoice.setSgst(tax.sgst());
+        invoice.setIgst(tax.igst());
+        invoice.setCess(tax.cess());
+    }
+
+    /** Place of supply may be a state code ("29"), "29-Karnataka" or a state name; blank means same state. */
+    static boolean isInterState(GstProfile profile, String placeOfSupply) {
+        if (placeOfSupply == null || placeOfSupply.isBlank() || profile == null) {
+            return false;
+        }
+        String place = placeOfSupply.trim();
+        String gstin = profile.getGstin();
+        if (gstin != null && gstin.length() >= 2 && Character.isDigit(place.charAt(0))) {
+            return !place.startsWith(gstin.substring(0, 2));
+        }
+        return profile.getState() != null && !place.equalsIgnoreCase(profile.getState().trim())
+                && !place.toLowerCase().contains(profile.getState().trim().toLowerCase());
     }
 
     private java.math.BigDecimal nz(java.math.BigDecimal value) {

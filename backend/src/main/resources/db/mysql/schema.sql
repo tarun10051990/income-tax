@@ -389,6 +389,7 @@ CREATE TABLE gst_invoices (
     counterparty_name varchar(255),
     filing_id varchar(255) not null,
     hsn_sac_code varchar(255),
+    gst_category_code varchar(40),
     id varchar(255) not null,
     invoice_number varchar(255) not null,
     place_of_supply varchar(255),
@@ -984,3 +985,53 @@ create index idx_tax_slab_fy on tax_slabs (financial_year, regime, slab_type);
 alter table itr_income_entries add constraint FKd3ehqcypj4pxp0buif2a9xh07 foreign key (computation_id) references itr_tax_computations (id);
 alter table itr_regime_results add constraint FK8cgl3ieq7qdgxrgdnwifad0c9 foreign key (computation_id) references itr_tax_computations (id);
 alter table itr_tax_lines add constraint FKj0nvruiv7ddqt4pknh84n1os7 foreign key (result_id) references itr_regime_results (id);
+
+-- Table: gst_rate_categories
+CREATE TABLE gst_rate_categories (
+    active bit not null,
+    cess_rate decimal(6,4),
+    effective_from date not null,
+    effective_to date,
+    itc_allowed bit not null,
+    rate decimal(6,4) not null,
+    reverse_charge bit not null,
+    sort_order integer not null,
+    updated_at datetime(6),
+    kind enum ('GOODS','SERVICE') not null,
+    treatment enum ('TAXABLE','NIL','EXEMPT','ZERO_RATED') not null,
+    hsn_sac varchar(20),
+    business_type varchar(30) not null,
+    code varchar(40) not null,
+    hint varchar(1000),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    updated_by varchar(255),
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: gst_rules
+CREATE TABLE gst_rules (
+    active bit not null,
+    amount decimal(15,2),
+    effective_from date not null,
+    effective_to date,
+    max_amount decimal(15,2),
+    rate decimal(6,4),
+    sort_order integer not null,
+    special_state_amount decimal(15,2),
+    updated_at datetime(6),
+    itc enum ('FULL','BLOCKED','CONDITIONAL','NOT_APPLICABLE'),
+    kind enum ('SCHEME','OPTION','THRESHOLD','LEVY','INVESTMENT') not null,
+    code varchar(40) not null,
+    section varchar(40),
+    hint varchar(1000),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    updated_by varchar(255),
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+alter table gst_rate_categories add constraint uk_gst_rate_code_from unique (code, effective_from);
+create index idx_gst_rate_business on gst_rate_categories (business_type);
+alter table gst_rules add constraint uk_gst_rule_code_from unique (code, effective_from);
+create index idx_gst_rule_kind on gst_rules (kind);

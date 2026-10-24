@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
@@ -13,6 +13,7 @@ import { errorMessage, useApiData } from "@/hooks/useApiData";
 import { customerApi } from "@/lib/endpoints";
 import { InvoiceView } from "@/lib/platform-types";
 import { formatCurrency } from "@/lib/utils";
+import { GstRateCategory, gstRatesApi, rateLabel } from "@/lib/gst-rates";
 
 const DOCUMENT_TYPES = [
   "SALES",
@@ -35,6 +36,7 @@ const EMPTY_INVOICE = {
   counterpartyName: "",
   placeOfSupply: "",
   hsnSacCode: "",
+  gstCategoryCode: "",
   taxableValue: "",
   cgst: "",
   sgst: "",
@@ -60,6 +62,10 @@ function InvoiceBook() {
   const fileInput = useRef<HTMLInputElement | null>(null);
   const t = usePortalText();
   const selectClass = "w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm";
+  const [rates, setRates] = useState<GstRateCategory[]>([]);
+  useEffect(() => {
+    gstRatesApi.rates(form.invoiceDate || undefined).then((book) => setRates(book.categories)).catch(() => setRates([]));
+  }, [form.invoiceDate]);
 
   const totals = useMemo(() => {
     const rows = invoices.data?.content ?? [];
@@ -87,6 +93,7 @@ function InvoiceBook() {
         counterpartyName: form.counterpartyName,
         placeOfSupply: form.placeOfSupply,
         hsnSacCode: form.hsnSacCode,
+        gstCategoryCode: form.gstCategoryCode || undefined,
         taxableValue: numeric(form.taxableValue) ?? 0,
         cgst: numeric(form.cgst),
         sgst: numeric(form.sgst),
@@ -192,6 +199,20 @@ function InvoiceBook() {
                 onChange={(event) => setForm({ ...form, counterpartyName: event.target.value })} />
               <GuidedField guide="gst.invoice.placeOfSupply" value={form.placeOfSupply}
                 onChange={(event) => setForm({ ...form, placeOfSupply: event.target.value })} />
+              <label className="block text-sm md:col-span-3">
+                <span className="block font-medium text-foreground mb-1">What are you selling or buying?</span>
+                <select className={selectClass} value={form.gstCategoryCode}
+                  onChange={(event) => setForm({ ...form, gstCategoryCode: event.target.value })}>
+                  <option value="">I will type the GST myself</option>
+                  {rates.map((rate) => (
+                    <option key={rate.id} value={rate.code}>{rate.name} — {rateLabel(rate)}</option>
+                  ))}
+                </select>
+                <span className="block text-xs text-muted mt-1">
+                  Pick an item and leave CGST / SGST / IGST empty: we work out the tax from the GST rate on the bill
+                  date (CGST + SGST in your state, IGST for another state). <Link href="/gst/rates" className="underline">See all rates</Link>
+                </span>
+              </label>
               <GuidedField guide="gst.invoice.hsn" value={form.hsnSacCode}
                 onChange={(event) => setForm({ ...form, hsnSacCode: event.target.value })} />
               <GuidedField guide="gst.invoice.taxableValue" type="number" min={0} rupee value={form.taxableValue}
