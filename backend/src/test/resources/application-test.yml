@@ -1,0 +1,14 @@
+# Test profile: always run the integration tests on in-memory H2, regardless of
+# SPRING_PROFILES_ACTIVE / DATABASE_* set in the developer's environment for MySQL.
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  h2:
+    console:
+      enabled: false

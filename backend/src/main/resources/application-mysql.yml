@@ -1,0 +1,18 @@
+# Activate with SPRING_PROFILES_ACTIVE=mysql
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/taxfilr?useSSL=true&serverTimezone=UTC&characterEncoding=utf8}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DATABASE_USERNAME:taxfilr}
+    password: ${DATABASE_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+      connection-timeout: 30000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      # Schema is managed by backend/src/main/resources/db/mysql/schema.sql; "validate" only checks it matches.
+      ddl-auto: ${DATABASE_DDL:validate}
+  h2:
+    console:
+      enabled: false

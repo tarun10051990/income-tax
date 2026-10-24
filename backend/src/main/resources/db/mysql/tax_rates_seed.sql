@@ -1,0 +1,153 @@
+-- TaxFilr: tax rates for every ITR income category (generated from backend/src/main/resources/seed/tax-rates.json).
+-- Run after schema.sql:  mysql -u root -p taxfilr < backend/src/main/resources/db/mysql/tax_rates_seed.sql
+-- Safe to re-run: a financial year that already has rows is left untouched, so admin edits are kept.
+SET NAMES utf8mb4;
+
+-- ===== FY 2024-25 (AY 2025-26) =====
+INSERT INTO tax_regime_settings (id, financial_year, assessment_year, regime, standard_deduction, rebate_income_limit, rebate_max_amount, rebate_marginal_relief, cess_rate, max_surcharge_rate, active, updated_by, updated_at)
+SELECT * FROM (VALUES
+ROW(UUID(), '2024-25', '2025-26', 'OLD', 50000, 500000, 12500, 0, 0.04, 0.37, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', '2025-26', 'NEW', 75000, 700000, 25000, 1, 0.04, 0.25, 1, 'system', NOW())
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_regime_settings WHERE financial_year = '2024-25');
+INSERT INTO tax_slabs (id, financial_year, regime, slab_type, age_group, income_from, income_to, rate, sort_order)
+SELECT * FROM (VALUES
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'BELOW_60', 0, 250000, 0, 0),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'BELOW_60', 250000, 500000, 0.05, 1),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'BELOW_60', 500000, 1000000, 0.2, 2),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'BELOW_60', 1000000, NULL, 0.3, 3),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SENIOR', 0, 300000, 0, 0),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SENIOR', 300000, 500000, 0.05, 1),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SENIOR', 500000, 1000000, 0.2, 2),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SENIOR', 1000000, NULL, 0.3, 3),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 0, 500000, 0, 0),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 500000, 1000000, 0.2, 1),
+ROW(UUID(), '2024-25', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 1000000, NULL, 0.3, 2),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 0, 300000, 0, 0),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 300000, 700000, 0.05, 1),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 700000, 1000000, 0.1, 2),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 1000000, 1200000, 0.15, 3),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 1200000, 1500000, 0.2, 4),
+ROW(UUID(), '2024-25', 'NEW', 'INCOME_TAX', 'ALL', 1500000, NULL, 0.3, 5),
+ROW(UUID(), '2024-25', 'OLD', 'SURCHARGE', 'ALL', 5000000, 10000000, 0.1, 0),
+ROW(UUID(), '2024-25', 'OLD', 'SURCHARGE', 'ALL', 10000000, 20000000, 0.15, 1),
+ROW(UUID(), '2024-25', 'OLD', 'SURCHARGE', 'ALL', 20000000, 50000000, 0.25, 2),
+ROW(UUID(), '2024-25', 'OLD', 'SURCHARGE', 'ALL', 50000000, NULL, 0.37, 3),
+ROW(UUID(), '2024-25', 'NEW', 'SURCHARGE', 'ALL', 5000000, 10000000, 0.1, 0),
+ROW(UUID(), '2024-25', 'NEW', 'SURCHARGE', 'ALL', 10000000, 20000000, 0.15, 1),
+ROW(UUID(), '2024-25', 'NEW', 'SURCHARGE', 'ALL', 20000000, NULL, 0.25, 2)
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_slabs WHERE financial_year = '2024-25');
+INSERT INTO tax_category_rates (id, financial_year, code, kind, group_code, income_head, section, name, hint, treatment, rate, exemption_limit, exemption_group, standard_deduction_rate, basic_exemption_adjustable, rebate_regimes, surcharge_cap, deduction_limit, senior_deduction_limit, allowed_regimes, age_groups, auto_from_codes, sort_order, active, updated_by, updated_at)
+SELECT * FROM (VALUES
+ROW(UUID(), '2024-25', 'SALARY', 'INCOME', 'SALARY', 'SALARY', '17', 'Salary / pension (gross)', 'Total salary or pension before any deduction - see Form 16 Part B, gross salary.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 10, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'EQUITY_STCG_111A', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '111A', 'Shares & equity mutual funds - sold within 12 months', 'Profit from listed shares / equity mutual funds held 12 months or less, sold on or after 23 July 2024. Taxed at a flat 20%.', 'SPECIAL_RATE', 0.2, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 20, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'EQUITY_STCG_111A_PRE', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '111A', 'Shares & equity mutual funds - sold within 12 months (before 23 Jul 2024)', 'Same as above, but sold between 1 April and 22 July 2024. Taxed at the old flat rate of 15%.', 'SPECIAL_RATE', 0.15, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 30, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'EQUITY_LTCG_112A', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '112A', 'Shares & equity mutual funds - held over 12 months', 'Profit from listed shares, equity mutual funds or equity ETFs held more than 12 months. First Rs 1.25 lakh of such profit in the year is tax-free, the rest is taxed at 12.5%. Enter sales made on or after 23 July 2024.', 'SPECIAL_RATE', 0.125, 125000, '112A', NULL, 1, '', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 40, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'EQUITY_LTCG_112A_PRE', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '112A', 'Shares & equity mutual funds - held over 12 months (before 23 Jul 2024)', 'Same as above, but sold between 1 April and 22 July 2024. Taxed at 10%. The Rs 1.25 lakh tax-free amount is shared with the line above.', 'SPECIAL_RATE', 0.1, 125000, '112A', NULL, 1, '', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 50, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DEBT_MF_50AA', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '50AA', 'Debt mutual funds bought on/after 1 April 2023', 'Profit from debt, liquid, gilt or international funds bought on or after 1 April 2023 - always added to your income and taxed at your slab rate, however long you held them.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 60, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'OTHER_STCG', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '48', 'Other short-term gains (property, gold, unlisted shares, older debt funds)', 'Profit from property or unlisted shares held 24 months or less, gold / jewellery / bonds held up to 24 months (36 months for sales before 23 Jul 2024). Taxed at your slab rate.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 70, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'LTCG_OTHER_112', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '112', 'Other long-term gains (property, gold, unlisted shares)', 'Profit from property, gold, jewellery, unlisted shares or debt funds bought before April 2023, held more than 24 months. Taxed at 12.5% (no indexation). Enter sales made on or after 23 July 2024.', 'SPECIAL_RATE', 0.125, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 80, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'PROPERTY_LTCG_INDEXED', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '112', 'Land / house bought before 23 Jul 2024 - with indexation (20%)', 'Only if you sold land or a house bought before 23 July 2024 and indexed profit at 20% works out cheaper, or you sold any long-term asset before 23 July 2024. Enter the profit after indexation.', 'SPECIAL_RATE', 0.2, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 90, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'INTRADAY_SPECULATIVE', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '43(5)', 'Intraday share trading profit', 'Net profit from buying and selling shares on the same day. Counted as (speculative) business income and taxed at your slab rate. Needs ITR-3.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 100, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'FNO_TRADING', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '43(5)', 'Futures & options (F&O) trading profit', 'Net profit from futures and options after charges. Counted as normal business income and taxed at your slab rate. Needs ITR-3.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 110, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'BUSINESS_PROFIT', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '28 / 44AD', 'Business profit', 'Profit from your shop or business. If you use the simple 44AD scheme, enter 6% (digital receipts) or 8% (cash) of turnover.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 120, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'PROFESSIONAL_INCOME', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '44ADA', 'Freelance / professional income', 'Profit from freelancing, consulting, doctors, lawyers etc. With the simple 44ADA scheme enter 50% of receipts.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 130, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'INTEREST_SAVINGS', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Savings account interest', 'Interest credited to your savings bank accounts during the year.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 140, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'INTEREST_DEPOSITS', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'FD, RD & post office interest', 'Interest on fixed / recurring deposits, post office schemes and bonds (check Form 26AS / AIS).', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 150, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DIVIDEND', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Dividends from shares & mutual funds', 'Dividends credited to your bank account. Added to your income and taxed at your slab rate.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 160, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'RENT_RECEIVED', 'INCOME', 'RENT', 'HOUSE_PROPERTY', '22-24', 'Rent received (after municipal tax)', 'Yearly rent from a house or shop you have let out, minus municipal / property tax paid. 30% is cut automatically for repairs.', 'SLAB', NULL, NULL, NULL, 0.3, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 170, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'CRYPTO_VDA', 'INCOME', 'CRYPTO_LOTTERY', 'OTHER_SOURCES', '115BBH', 'Crypto / NFT profit', 'Profit from selling crypto or other virtual digital assets. Flat 30% tax; losses cannot be adjusted.', 'SPECIAL_RATE', 0.3, NULL, NULL, NULL, 0, 'OLD', NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 180, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'LOTTERY_GAMES', 'INCOME', 'CRYPTO_LOTTERY', 'OTHER_SOURCES', '115BB / 115BBJ', 'Lottery, game show & online game winnings', 'Winnings from lotteries, quizzes, betting or online games. Flat 30% tax.', 'SPECIAL_RATE', 0.3, NULL, NULL, NULL, 0, 'OLD', NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 190, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'OTHER_INCOME', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Any other income', 'Gifts above Rs 50,000 from non-relatives, family pension, interest on income-tax refund etc.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 200, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'AGRICULTURE', 'INCOME', 'EXEMPT', 'EXEMPT', '10(1)', 'Farming income', 'Income from agriculture is not taxed. We only show it in your return.', 'EXEMPT', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 210, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'EXEMPT_OTHER', 'INCOME', 'EXEMPT', 'EXEMPT', '10', 'Other tax-free income', 'PPF / EPF interest and maturity, tax-free bond interest, gifts from relatives. Not taxed, only reported.', 'EXEMPT', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 220, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_PROF_TAX', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '16(iii)', 'Professional tax paid', 'Professional tax cut from your salary (Form 16). Max Rs 2,500.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 2500, NULL, 'OLD', NULL, NULL, 230, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80C', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80C', 'Savings & investments (80C)', 'PF, PPF, ELSS mutual funds, life insurance, home-loan principal, children''s school fees, 5-year FD. Max Rs 1.5 lakh.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 150000, NULL, 'OLD', NULL, NULL, 240, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80CCD1B', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80CCD(1B)', 'Extra NPS contribution', 'Your own extra contribution to NPS, over and above 80C. Max Rs 50,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', NULL, NULL, 250, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80CCD2', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80CCD(2)', 'Employer''s NPS contribution', 'NPS contribution made by your employer (Form 16). Allowed up to 14% of basic salary in the new regime and 10% in the old regime.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 260, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80D_SELF', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - self & family', 'Medical insurance premium for you, spouse and children (and preventive check-up up to Rs 5,000). Max Rs 25,000, or Rs 50,000 if you are 60+.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 25000, 50000, 'OLD', NULL, NULL, 270, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80D_PARENTS', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - parents (below 60)', 'Medical insurance premium for parents younger than 60. Max Rs 25,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 25000, NULL, 'OLD', NULL, NULL, 280, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80D_PARENTS_SENIOR', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - senior citizen parents', 'Medical insurance premium or medical bills for parents aged 60+. Max Rs 50,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', NULL, NULL, 290, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80TTA', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80TTA', 'Savings interest deduction', 'Filled for you: savings account interest is tax-free up to Rs 10,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 10000, NULL, 'OLD', 'BELOW_60', 'INTEREST_SAVINGS', 300, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80TTB', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80TTB', 'Senior citizen interest deduction', 'Filled for you: bank & post office interest is tax-free up to Rs 50,000 for people aged 60+.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', 'SENIOR,SUPER_SENIOR', 'INTEREST_SAVINGS,INTEREST_DEPOSITS', 310, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_24B_SELF', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '24(b)', 'Home loan interest (own house)', 'Interest on a home loan for the house you live in. Max Rs 2 lakh.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 200000, NULL, 'OLD', NULL, NULL, 320, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80E', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80E', 'Education loan interest', 'Interest paid on a loan for higher studies. No upper limit.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 330, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_80G', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80G', 'Donations', 'Eligible amount of donations to approved charities / relief funds (50% or 100% as per receipt).', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 340, 1, 'system', NOW()),
+ROW(UUID(), '2024-25', 'DED_OTHER', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80DD / 80U / 80EEB', 'Other deductions', 'Disability (80U / 80DD), EV loan interest (80EEB) and other Chapter VI-A deductions.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 350, 1, 'system', NOW())
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_category_rates WHERE financial_year = '2024-25');
+
+-- ===== FY 2025-26 (AY 2026-27) =====
+INSERT INTO tax_regime_settings (id, financial_year, assessment_year, regime, standard_deduction, rebate_income_limit, rebate_max_amount, rebate_marginal_relief, cess_rate, max_surcharge_rate, active, updated_by, updated_at)
+SELECT * FROM (VALUES
+ROW(UUID(), '2025-26', '2026-27', 'OLD', 50000, 500000, 12500, 0, 0.04, 0.37, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', '2026-27', 'NEW', 75000, 1200000, 60000, 1, 0.04, 0.25, 1, 'system', NOW())
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_regime_settings WHERE financial_year = '2025-26');
+INSERT INTO tax_slabs (id, financial_year, regime, slab_type, age_group, income_from, income_to, rate, sort_order)
+SELECT * FROM (VALUES
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'BELOW_60', 0, 250000, 0, 0),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'BELOW_60', 250000, 500000, 0.05, 1),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'BELOW_60', 500000, 1000000, 0.2, 2),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'BELOW_60', 1000000, NULL, 0.3, 3),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SENIOR', 0, 300000, 0, 0),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SENIOR', 300000, 500000, 0.05, 1),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SENIOR', 500000, 1000000, 0.2, 2),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SENIOR', 1000000, NULL, 0.3, 3),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 0, 500000, 0, 0),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 500000, 1000000, 0.2, 1),
+ROW(UUID(), '2025-26', 'OLD', 'INCOME_TAX', 'SUPER_SENIOR', 1000000, NULL, 0.3, 2),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 0, 400000, 0, 0),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 400000, 800000, 0.05, 1),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 800000, 1200000, 0.1, 2),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 1200000, 1600000, 0.15, 3),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 1600000, 2000000, 0.2, 4),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 2000000, 2400000, 0.25, 5),
+ROW(UUID(), '2025-26', 'NEW', 'INCOME_TAX', 'ALL', 2400000, NULL, 0.3, 6),
+ROW(UUID(), '2025-26', 'OLD', 'SURCHARGE', 'ALL', 5000000, 10000000, 0.1, 0),
+ROW(UUID(), '2025-26', 'OLD', 'SURCHARGE', 'ALL', 10000000, 20000000, 0.15, 1),
+ROW(UUID(), '2025-26', 'OLD', 'SURCHARGE', 'ALL', 20000000, 50000000, 0.25, 2),
+ROW(UUID(), '2025-26', 'OLD', 'SURCHARGE', 'ALL', 50000000, NULL, 0.37, 3),
+ROW(UUID(), '2025-26', 'NEW', 'SURCHARGE', 'ALL', 5000000, 10000000, 0.1, 0),
+ROW(UUID(), '2025-26', 'NEW', 'SURCHARGE', 'ALL', 10000000, 20000000, 0.15, 1),
+ROW(UUID(), '2025-26', 'NEW', 'SURCHARGE', 'ALL', 20000000, NULL, 0.25, 2)
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_slabs WHERE financial_year = '2025-26');
+INSERT INTO tax_category_rates (id, financial_year, code, kind, group_code, income_head, section, name, hint, treatment, rate, exemption_limit, exemption_group, standard_deduction_rate, basic_exemption_adjustable, rebate_regimes, surcharge_cap, deduction_limit, senior_deduction_limit, allowed_regimes, age_groups, auto_from_codes, sort_order, active, updated_by, updated_at)
+SELECT * FROM (VALUES
+ROW(UUID(), '2025-26', 'SALARY', 'INCOME', 'SALARY', 'SALARY', '17', 'Salary / pension (gross)', 'Total salary or pension before any deduction - see Form 16 Part B, gross salary.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 10, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'EQUITY_STCG_111A', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '111A', 'Shares & equity mutual funds - sold within 12 months', 'Profit from listed shares, equity mutual funds or equity ETFs held for 12 months or less (STT paid). Taxed at a flat 20%.', 'SPECIAL_RATE', 0.2, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 20, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'EQUITY_LTCG_112A', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '112A', 'Shares & equity mutual funds - held over 12 months', 'Profit from listed shares, equity mutual funds or equity ETFs held more than 12 months. First Rs 1.25 lakh of such profit in the year is tax-free, the rest is taxed at 12.5%.', 'SPECIAL_RATE', 0.125, 125000, '112A', NULL, 1, '', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 30, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DEBT_MF_50AA', 'INCOME', 'SHARES_FUNDS', 'CAPITAL_GAINS', '50AA', 'Debt mutual funds bought on/after 1 April 2023', 'Profit from debt, liquid, gilt or international funds bought on or after 1 April 2023 - always added to your income and taxed at your slab rate, however long you held them.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 40, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'OTHER_STCG', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '48', 'Other short-term gains (property, gold, unlisted shares, older debt funds)', 'Profit from property or unlisted shares held 24 months or less, gold / jewellery / bonds held up to 24 months (36 months for sales before 23 Jul 2024). Taxed at your slab rate.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 50, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'LTCG_OTHER_112', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '112', 'Other long-term gains (property, gold, unlisted shares)', 'Profit from property, gold, jewellery, unlisted shares or debt funds bought before April 2023, held more than 24 months. Taxed at 12.5% (no indexation).', 'SPECIAL_RATE', 0.125, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 60, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'PROPERTY_LTCG_INDEXED', 'INCOME', 'PROPERTY_GOLD', 'CAPITAL_GAINS', '112', 'Land / house bought before 23 Jul 2024 - with indexation (20%)', 'Only if you sold land or a house bought before 23 July 2024 and indexed profit at 20% works out cheaper. Enter the profit after indexation.', 'SPECIAL_RATE', 0.2, NULL, NULL, NULL, 1, 'OLD', 0.15, NULL, NULL, 'OLD,NEW', NULL, NULL, 70, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'INTRADAY_SPECULATIVE', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '43(5)', 'Intraday share trading profit', 'Net profit from buying and selling shares on the same day. Counted as (speculative) business income and taxed at your slab rate. Needs ITR-3.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 80, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'FNO_TRADING', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '43(5)', 'Futures & options (F&O) trading profit', 'Net profit from futures and options after charges. Counted as normal business income and taxed at your slab rate. Needs ITR-3.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 90, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'BUSINESS_PROFIT', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '28 / 44AD', 'Business profit', 'Profit from your shop or business. If you use the simple 44AD scheme, enter 6% (digital receipts) or 8% (cash) of turnover.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 100, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'PROFESSIONAL_INCOME', 'INCOME', 'TRADING_BUSINESS', 'BUSINESS', '44ADA', 'Freelance / professional income', 'Profit from freelancing, consulting, doctors, lawyers etc. With the simple 44ADA scheme enter 50% of receipts.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 110, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'INTEREST_SAVINGS', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Savings account interest', 'Interest credited to your savings bank accounts during the year.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 120, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'INTEREST_DEPOSITS', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'FD, RD & post office interest', 'Interest on fixed / recurring deposits, post office schemes and bonds (check Form 26AS / AIS).', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 130, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DIVIDEND', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Dividends from shares & mutual funds', 'Dividends credited to your bank account. Added to your income and taxed at your slab rate.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 140, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'RENT_RECEIVED', 'INCOME', 'RENT', 'HOUSE_PROPERTY', '22-24', 'Rent received (after municipal tax)', 'Yearly rent from a house or shop you have let out, minus municipal / property tax paid. 30% is cut automatically for repairs.', 'SLAB', NULL, NULL, NULL, 0.3, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 150, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'CRYPTO_VDA', 'INCOME', 'CRYPTO_LOTTERY', 'OTHER_SOURCES', '115BBH', 'Crypto / NFT profit', 'Profit from selling crypto or other virtual digital assets. Flat 30% tax; losses cannot be adjusted.', 'SPECIAL_RATE', 0.3, NULL, NULL, NULL, 0, 'OLD', NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 160, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'LOTTERY_GAMES', 'INCOME', 'CRYPTO_LOTTERY', 'OTHER_SOURCES', '115BB / 115BBJ', 'Lottery, game show & online game winnings', 'Winnings from lotteries, quizzes, betting or online games. Flat 30% tax.', 'SPECIAL_RATE', 0.3, NULL, NULL, NULL, 0, 'OLD', NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 170, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'OTHER_INCOME', 'INCOME', 'INTEREST_DIVIDEND', 'OTHER_SOURCES', '56', 'Any other income', 'Gifts above Rs 50,000 from non-relatives, family pension, interest on income-tax refund etc.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 180, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'AGRICULTURE', 'INCOME', 'EXEMPT', 'EXEMPT', '10(1)', 'Farming income', 'Income from agriculture is not taxed. We only show it in your return.', 'EXEMPT', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 190, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'EXEMPT_OTHER', 'INCOME', 'EXEMPT', 'EXEMPT', '10', 'Other tax-free income', 'PPF / EPF interest and maturity, tax-free bond interest, gifts from relatives. Not taxed, only reported.', 'EXEMPT', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 200, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_PROF_TAX', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '16(iii)', 'Professional tax paid', 'Professional tax cut from your salary (Form 16). Max Rs 2,500.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 2500, NULL, 'OLD', NULL, NULL, 210, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80C', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80C', 'Savings & investments (80C)', 'PF, PPF, ELSS mutual funds, life insurance, home-loan principal, children''s school fees, 5-year FD. Max Rs 1.5 lakh.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 150000, NULL, 'OLD', NULL, NULL, 220, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80CCD1B', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80CCD(1B)', 'Extra NPS contribution', 'Your own extra contribution to NPS, over and above 80C. Max Rs 50,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', NULL, NULL, 230, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80CCD2', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80CCD(2)', 'Employer''s NPS contribution', 'NPS contribution made by your employer (Form 16). Allowed up to 14% of basic salary in the new regime and 10% in the old regime.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD,NEW', NULL, NULL, 240, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80D_SELF', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - self & family', 'Medical insurance premium for you, spouse and children (and preventive check-up up to Rs 5,000). Max Rs 25,000, or Rs 50,000 if you are 60+.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 25000, 50000, 'OLD', NULL, NULL, 250, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80D_PARENTS', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - parents (below 60)', 'Medical insurance premium for parents younger than 60. Max Rs 25,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 25000, NULL, 'OLD', NULL, NULL, 260, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80D_PARENTS_SENIOR', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80D', 'Health insurance - senior citizen parents', 'Medical insurance premium or medical bills for parents aged 60+. Max Rs 50,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', NULL, NULL, 270, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80TTA', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80TTA', 'Savings interest deduction', 'Filled for you: savings account interest is tax-free up to Rs 10,000.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 10000, NULL, 'OLD', 'BELOW_60', 'INTEREST_SAVINGS', 280, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80TTB', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80TTB', 'Senior citizen interest deduction', 'Filled for you: bank & post office interest is tax-free up to Rs 50,000 for people aged 60+.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 50000, NULL, 'OLD', 'SENIOR,SUPER_SENIOR', 'INTEREST_SAVINGS,INTEREST_DEPOSITS', 290, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_24B_SELF', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '24(b)', 'Home loan interest (own house)', 'Interest on a home loan for the house you live in. Max Rs 2 lakh.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, 200000, NULL, 'OLD', NULL, NULL, 300, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80E', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80E', 'Education loan interest', 'Interest paid on a loan for higher studies. No upper limit.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 310, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_80G', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80G', 'Donations', 'Eligible amount of donations to approved charities / relief funds (50% or 100% as per receipt).', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 320, 1, 'system', NOW()),
+ROW(UUID(), '2025-26', 'DED_OTHER', 'DEDUCTION', 'DEDUCTIONS', 'DEDUCTION', '80DD / 80U / 80EEB', 'Other deductions', 'Disability (80U / 80DD), EV loan interest (80EEB) and other Chapter VI-A deductions.', 'SLAB', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, 'OLD', NULL, NULL, 330, 1, 'system', NOW())
+) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM tax_category_rates WHERE financial_year = '2025-26');
