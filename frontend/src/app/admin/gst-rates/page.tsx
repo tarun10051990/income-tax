@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Card, { CardDescription, CardTitle } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import {
-  BUSINESS_TYPES, GstItc, GstRateBook, GstRateCategory, GstRule, GstRuleKind, GstTreatment, RULE_KINDS, adminGstRatesApi,
+  BUSINESS_TYPES, GstItc, GstRateBook, GstRateCategory, GstRule, GstRuleKind, GstTreatment, RULE_KINDS, adminGstRatesApi, hintRateIsStale,
 } from "@/lib/gst-rates";
 
 const pct = (v: number | null) => (v === null || v === undefined ? "" : String(+(v * 100).toFixed(4)));
@@ -102,7 +102,10 @@ function CategoryRow({ row, onSaved, onError }: { row: GstRateCategory; onSaved:
   return (
     <tr className="border-t border-border align-top">
       <td className="p-2 min-w-56"><input className={`${cell} w-full`} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-        <input className={`${cell} mt-1 w-full text-xs`} value={f.hint} placeholder="Plain-language hint" onChange={(e) => setF({ ...f, hint: e.target.value })} /></td>
+        <input className={`${cell} mt-1 w-full text-xs`} value={f.hint} placeholder="Plain-language hint" onChange={(e) => setF({ ...f, hint: e.target.value })} />
+        {hintRateIsStale(f.hint, (num(f.rate) ?? 0) / 100) && (
+          <span className="mt-1 block text-xs text-amber-700">The hint mentions a different rate. Customers won&apos;t see it until you update it.</span>
+        )}</td>
       <td className="p-2"><input className={`${cell} w-20`} value={f.hsnSac} onChange={(e) => setF({ ...f, hsnSac: e.target.value })} /></td>
       <td className="p-2"><select className={cell} value={f.treatment} onChange={(e) => setF({ ...f, treatment: e.target.value as GstTreatment })}>
         {TREATMENTS.map((t) => <option key={t}>{t}</option>)}</select></td>

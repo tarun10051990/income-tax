@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   BUSINESS_TYPES, GstCalculation, GstRateBook, GstRuleKind, ITC_LABELS, RULE_KINDS,
-  gstRatesApi, percent, rateLabel,
+  cleanAmount, gstRatesApi, hintRateIsStale, percent, rateLabel,
 } from "@/lib/gst-rates";
 
 const rupee = (n: number | null | undefined) =>
@@ -44,7 +44,8 @@ export default function GstRateFinderPage() {
     gstRatesApi.calculate({ categoryCode: code, taxableValue: value, invoiceDate: date, interState })
       .then(setCalc).catch((e: Error) => { setCalc(null); setError(e.message); });
   }, [code, amount, date, interState]);
-  const shown = code && amount !== "" && calc?.categoryCode === code ? calc : null;
+  const shown = code && amount !== "" && calc?.categoryCode === code && Number(calc.taxableValue) === Number(amount)
+    && calc.interState === interState ? calc : null;
 
   const kinds = Object.keys(RULE_KINDS) as GstRuleKind[];
 
@@ -99,7 +100,7 @@ export default function GstRateFinderPage() {
                   {rateLabel(c)}
                 </span>
               </div>
-              {c.hint && <p className="mt-1 text-sm text-gray-600">{c.hint}</p>}
+              {c.hint && !hintRateIsStale(c.hint, c.rate) && <p className="mt-1 text-sm text-gray-600">{c.hint}</p>}
               <div className="mt-2 flex flex-wrap gap-2 text-xs">
                 {c.hsnSac && <span className="rounded-full bg-gray-100 px-2 py-0.5">HSN/SAC {c.hsnSac}</span>}
                 {c.reverseCharge && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-amber-800">Buyer pays (reverse charge)</span>}
@@ -116,7 +117,7 @@ export default function GstRateFinderPage() {
         <div className="flex flex-wrap items-end gap-4 text-sm">
           <label className="space-y-1">
             <span className="block text-gray-600">Bill amount before GST</span>
-            <input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+            <input inputMode="decimal" value={amount} onChange={(e) => setAmount(cleanAmount(e.target.value))}
               className="w-44 rounded-lg border border-border px-3 py-2" />
           </label>
           <div className="flex rounded-full bg-gray-100 p-1">

@@ -189,4 +189,11 @@ class GstRateIntegrationTest {
                 + ratePercent + ",\"reverseCharge\":false,\"itcAllowed\":true,\"effectiveFrom\":\"2017-07-01\","
                 + "\"active\":true}";
     }
+
+    @Test
+    void notANumberIsABadRequest() throws Exception {
+        mockMvc.perform(post("/api/public/gst/calculate").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"categoryCode\":\"IT_SOFTWARE_SERVICES\",\"taxableValue\":\"abc\"}"))
+                .andExpect(status().isBadRequest());
+    }
 }

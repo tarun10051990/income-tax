@@ -132,3 +132,15 @@ export const adminGstRatesApi = {
   updateRule: (id: string, body: Record<string, unknown>) =>
     apiRequest<GstRule>(`/admin/gst-rates/rules/${id}`, { ...admin, method: "PUT", body }),
 };
+
+/** A hint that starts with a rate (e.g. "18% ...") is out of date once an admin changes the rate. */
+export function hintRateIsStale(hint: string | null | undefined, rate: number): boolean {
+  const match = hint?.match(/^\s*(\d+(?:\.\d+)?)%/);
+  return !!match && Math.abs(Number(match[1]) - rate * 100) > 0.0001;
+}
+
+/** Keeps digits and the first decimal point only, so "1.2.3" becomes "1.23". */
+export function cleanAmount(value: string): string {
+  const [whole, ...rest] = value.replace(/[^0-9.]/g, "").split(".");
+  return rest.length ? `${whole}.${rest.join("")}` : whole;
+}
