@@ -723,6 +723,7 @@ CREATE TABLE IF NOT EXISTS gst_invoices (
     counterparty_name varchar(255),
     filing_id varchar(255) not null,
     hsn_sac_code varchar(255),
+    gst_category_code varchar(40),
     id varchar(255) not null,
     invoice_number varchar(255) not null,
     place_of_supply varchar(255),
@@ -744,6 +745,7 @@ CALL tf_sync_column('gst_invoices', 'counterparty_gstin', 'counterparty_gstin va
 CALL tf_sync_column('gst_invoices', 'counterparty_name', 'counterparty_name varchar(255)', 'text', '', 255, '');
 CALL tf_sync_column('gst_invoices', 'filing_id', 'filing_id varchar(255) not null', 'text', '', 255, '');
 CALL tf_sync_column('gst_invoices', 'hsn_sac_code', 'hsn_sac_code varchar(255)', 'text', '', 255, '');
+CALL tf_sync_column('gst_invoices', 'gst_category_code', 'gst_category_code varchar(40)', 'text', '', 40, '');
 CALL tf_sync_column('gst_invoices', 'id', 'id varchar(255) not null', 'text', '', 255, '');
 CALL tf_sync_column('gst_invoices', 'invoice_number', 'invoice_number varchar(255) not null', 'text', '', 255, '');
 CALL tf_sync_column('gst_invoices', 'place_of_supply', 'place_of_supply varchar(255)', 'text', '', 255, '');
@@ -1534,6 +1536,86 @@ CALL tf_sync_column('itr_tax_lines', 'id', 'id varchar(255) not null', 'text', '
 CALL tf_sync_column('itr_tax_lines', 'name', 'name varchar(255) not null', 'text', '', 255, '');
 CALL tf_sync_column('itr_tax_lines', 'result_id', 'result_id varchar(255) not null', 'text', '', 255, '');
 
+-- Table: gst_rate_categories
+CREATE TABLE IF NOT EXISTS gst_rate_categories (
+    active bit not null,
+    cess_rate decimal(6,4),
+    effective_from date not null,
+    effective_to date,
+    itc_allowed bit not null,
+    rate decimal(6,4) not null,
+    reverse_charge bit not null,
+    sort_order integer not null,
+    updated_at datetime(6),
+    kind enum ('GOODS','SERVICE') not null,
+    treatment enum ('TAXABLE','NIL','EXEMPT','ZERO_RATED') not null,
+    hsn_sac varchar(20),
+    business_type varchar(30) not null,
+    code varchar(40) not null,
+    hint varchar(1000),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    updated_by varchar(255),
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CALL tf_sync_column('gst_rate_categories', 'active', 'active bit not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'cess_rate', 'cess_rate decimal(6,4)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'effective_from', 'effective_from date not null', 'other', '', 0, '(CURRENT_DATE)');
+CALL tf_sync_column('gst_rate_categories', 'effective_to', 'effective_to date', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'itc_allowed', 'itc_allowed bit not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'rate', 'rate decimal(6,4) not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'reverse_charge', 'reverse_charge bit not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'sort_order', 'sort_order integer not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'updated_at', 'updated_at datetime(6)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'kind', 'kind enum (''GOODS'',''SERVICE'') not null', 'enum', 'enum(''goods'',''service'')', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'treatment', 'treatment enum (''TAXABLE'',''NIL'',''EXEMPT'',''ZERO_RATED'') not null', 'enum', 'enum(''taxable'',''nil'',''exempt'',''zero_rated'')', 0, '');
+CALL tf_sync_column('gst_rate_categories', 'hsn_sac', 'hsn_sac varchar(20)', 'text', '', 20, '');
+CALL tf_sync_column('gst_rate_categories', 'business_type', 'business_type varchar(30) not null', 'text', '', 30, '');
+CALL tf_sync_column('gst_rate_categories', 'code', 'code varchar(40) not null', 'text', '', 40, '');
+CALL tf_sync_column('gst_rate_categories', 'hint', 'hint varchar(1000)', 'text', '', 1000, '');
+CALL tf_sync_column('gst_rate_categories', 'id', 'id varchar(255) not null', 'text', '', 255, '');
+CALL tf_sync_column('gst_rate_categories', 'name', 'name varchar(255) not null', 'text', '', 255, '');
+CALL tf_sync_column('gst_rate_categories', 'updated_by', 'updated_by varchar(255)', 'text', '', 255, '');
+
+-- Table: gst_rules
+CREATE TABLE IF NOT EXISTS gst_rules (
+    active bit not null,
+    amount decimal(15,2),
+    effective_from date not null,
+    effective_to date,
+    max_amount decimal(15,2),
+    rate decimal(6,4),
+    sort_order integer not null,
+    special_state_amount decimal(15,2),
+    updated_at datetime(6),
+    itc enum ('FULL','BLOCKED','CONDITIONAL','NOT_APPLICABLE'),
+    kind enum ('SCHEME','OPTION','THRESHOLD','LEVY','INVESTMENT') not null,
+    code varchar(40) not null,
+    section varchar(40),
+    hint varchar(1000),
+    id varchar(255) not null,
+    name varchar(255) not null,
+    updated_by varchar(255),
+    primary key (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+CALL tf_sync_column('gst_rules', 'active', 'active bit not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'amount', 'amount decimal(15,2)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'effective_from', 'effective_from date not null', 'other', '', 0, '(CURRENT_DATE)');
+CALL tf_sync_column('gst_rules', 'effective_to', 'effective_to date', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'max_amount', 'max_amount decimal(15,2)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'rate', 'rate decimal(6,4)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'sort_order', 'sort_order integer not null', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'special_state_amount', 'special_state_amount decimal(15,2)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'updated_at', 'updated_at datetime(6)', 'other', '', 0, '');
+CALL tf_sync_column('gst_rules', 'itc', 'itc enum (''FULL'',''BLOCKED'',''CONDITIONAL'',''NOT_APPLICABLE'')', 'enum', 'enum(''full'',''blocked'',''conditional'',''not_applicable'')', 0, '');
+CALL tf_sync_column('gst_rules', 'kind', 'kind enum (''SCHEME'',''OPTION'',''THRESHOLD'',''LEVY'',''INVESTMENT'') not null', 'enum', 'enum(''scheme'',''option'',''threshold'',''levy'',''investment'')', 0, '');
+CALL tf_sync_column('gst_rules', 'code', 'code varchar(40) not null', 'text', '', 40, '');
+CALL tf_sync_column('gst_rules', 'section', 'section varchar(40)', 'text', '', 40, '');
+CALL tf_sync_column('gst_rules', 'hint', 'hint varchar(1000)', 'text', '', 1000, '');
+CALL tf_sync_column('gst_rules', 'id', 'id varchar(255) not null', 'text', '', 255, '');
+CALL tf_sync_column('gst_rules', 'name', 'name varchar(255) not null', 'text', '', 255, '');
+CALL tf_sync_column('gst_rules', 'updated_by', 'updated_by varchar(255)', 'text', '', 255, '');
+
 -- Indexes and unique keys (skipped when an index with the same name or columns already exists)
 CALL tf_add_index('audit_logs', 'idx_audit_entity', 'entity_type,entity_id', 0);
 CALL tf_add_index('audit_logs', 'idx_audit_actor', 'actor_email', 0);
@@ -1578,6 +1660,8 @@ CALL tf_add_index('tax_refunds', 'idx_tr_owner_fy', 'owner_id,financial_year', 0
 CALL tf_add_index('tax_rules', 'idx_rule_key', 'rule_key', 0);
 CALL tf_add_index('tax_rules', 'idx_rule_tax_type', 'tax_type', 0);
 CALL tf_add_index('tax_slabs', 'idx_tax_slab_fy', 'financial_year,regime,slab_type', 0);
+CALL tf_add_index('gst_rate_categories', 'idx_gst_rate_business', 'business_type', 0);
+CALL tf_add_index('gst_rules', 'idx_gst_rule_kind', 'kind', 0);
 CALL tf_add_index('cms_entries', 'UKcnqsjtpv7i0wv34h5s7xf2j03', 'collection,slug', 1);
 CALL tf_add_index('consultant_holidays', 'UK5b1kgwcqkydywr2o1ghofbdk3', 'consultant_id,holiday_date', 1);
 CALL tf_add_index('consultant_payouts', 'UK_mw6lf67iurvklrtk7q3lie6kp', 'reference', 1);
@@ -1606,6 +1690,8 @@ CALL tf_add_index('itr_regime_results', 'uk_itr_regime_result', 'computation_id,
 CALL tf_add_index('itr_tax_computations', 'uk_itr_computation_user_fy', 'user_id,financial_year', 1);
 CALL tf_add_index('tax_category_rates', 'uk_tax_category_fy_code', 'financial_year,code', 1);
 CALL tf_add_index('tax_regime_settings', 'uk_regime_setting_fy', 'financial_year,regime', 1);
+CALL tf_add_index('gst_rate_categories', 'uk_gst_rate_code_from', 'code,effective_from', 1);
+CALL tf_add_index('gst_rules', 'uk_gst_rule_code_from', 'code,effective_from', 1);
 
 -- Foreign keys (skipped when the same link already exists)
 CALL tf_add_fk('case_events', 'FKmekv6vya5ahg3d10gyxhxfnxq', 'actor_id', 'users', 'id');

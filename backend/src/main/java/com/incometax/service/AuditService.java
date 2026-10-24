@@ -23,7 +23,12 @@ public class AuditService {
     private final ObjectMapper objectMapper;
 
     public void record(String action, String entityType, String entityId, Object oldValue, Object newValue) {
-        User actor = currentUser.find().orElse(null);
+        recordAs(currentUser.find().orElse(null), action, entityType, entityId, oldValue, newValue);
+    }
+
+    /** For events before the user is signed in (login, registration), where the actor is known but not in context. */
+    public void recordAs(User actor, String action, String entityType, String entityId, Object oldValue,
+                         Object newValue) {
         HttpServletRequest request = currentRequest();
         AuditLog entry = AuditLog.builder()
                 .actorId(actor == null ? null : actor.getId())

@@ -58,6 +58,10 @@ public class GstInvoice {
 
     private String hsnSacCode;
 
+    /** GST rate row (gst_rate_categories.code) used to work out the tax, when the user picked one. */
+    @Column(length = 40)
+    private String gstCategoryCode;
+
     @Column(nullable = false)
     @Builder.Default
     private BigDecimal taxableValue = BigDecimal.ZERO;

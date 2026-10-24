@@ -34,6 +34,7 @@ export default function GstOverviewPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Link href="/gst/rates"><Button variant="outline">GST rate finder</Button></Link>
           <Link href="/gst/profile"><Button variant="outline">Registrations</Button></Link>
           <Link href="/gst/returns"><Button>Prepare a return</Button></Link>
         </div>

@@ -68,6 +68,8 @@ public final class GstRequests {
         private String counterpartyName;
         private String placeOfSupply;
         private String hsnSacCode;
+        /** Pick a GST rate (gst_rate_categories.code) and leave the tax blank to have it worked out. */
+        private String gstCategoryCode;
         @NotNull
         @PositiveOrZero
         private BigDecimal taxableValue;
